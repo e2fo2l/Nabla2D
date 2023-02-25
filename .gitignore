@@ -1,0 +1,57 @@
+# CMake
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+
+# C++
+*.d
+*.slo
+*.lo
+*.o
+*.obj
+*.gch
+*.pch
+*.so
+*.dylib
+*.dll
+*.mod
+*.smod
+*.lai
+*.la
+*.a
+*.lib
+*.exe
+*.out
+*.app
+
+# conan
+bin/
+conan.lock
+conanbuildinfo.cmake
+conanbuildinfo.txt
+conaninfo.txt
+graph_info.json
+
+# Ninja build generated files
+*.ninja*
+*.cmake
+
+# IDE project files
+.vscode/
+.idea/
+*.cbp
+*.workspace
+*.sln
+*.vcproj
+*.xcodeproj
+
+# build directory
+build/

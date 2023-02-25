@@ -1,0 +1,73 @@
+name: Debug build
+
+on: [push, pull_request]
+
+env:
+  BUILD_TYPE: Debug
+
+permissions:
+  checks: write
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install dependencies
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: ninja-build clang-format
+        version: 1.0
+
+    - name: Cache Conan packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.conan/data
+        key: conan-packages-${{ hashFiles('conanfile.txt') }}
+        restore-keys: conan-packages-
+
+    - name: Install Conan
+      uses: turtlebrowser/get-conan@main
+      with:
+        version: 1.59.0
+
+    - name: Create Conan profile
+      run: |
+        conan profile new default --detect
+        conan profile update settings.compiler.libcxx=libstdc++11 default
+
+    - name: Cache CMake build
+      uses: actions/cache@v3
+      with:
+        path: build
+        key: cmake-build-${{ hashFiles('CMakeLists.txt') }}
+        restore-keys: cmake-build-
+
+    - name: Install conan packages
+      run: |
+        mkdir -p build
+        cd build
+        conan install .. --build missing -pr default -c tools.system.package_manager:mode=install -c tools.system.package_manager:sudo=True
+
+    - name: CMake init
+      run: |
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -GNinja ..
+
+    - name: Build
+      run: |
+        cd build
+        cmake --build . --config $BUILD_TYPE
+    
+    - name: Archive build
+      run: |
+        cd build/bin
+        tar -cvzf ../../debug.tar.gz *
+    
+    - uses: actions/upload-artifact@v3
+      with:
+        name: debug.tar.gz
+        path: debug.tar.gz
