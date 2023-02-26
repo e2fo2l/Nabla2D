@@ -23,9 +23,8 @@
 #include <array>
 #include <cstdint>
 #include <stdexcept>
-
-#define GLEW_STATIC 1
 #include <GL/glew.h>
+
 #include "../../logger.hpp"
 
 constexpr uint32_t MAX_LOG_LENGTH = 1024U;
