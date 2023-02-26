@@ -1,4 +1,5 @@
 [requires]
+fmt/9.1.0
 glew/2.2.0
 glm/cci.20230113
 opengl/system
