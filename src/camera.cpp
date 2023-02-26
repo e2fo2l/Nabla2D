@@ -76,6 +76,11 @@ namespace nabla2d
         return mProjectionMatrix;
     }
 
+    const glm::mat4 &Camera::GetProjectionViewMatrix() const
+    {
+        return mProjectionViewMatrix;
+    }
+
     void Camera::Translate(const glm::vec3 &aTranslation)
     {
         mNextPosition += aTranslation;
@@ -88,7 +93,7 @@ namespace nabla2d
 
     void Camera::LookAt(const glm::vec3 &aPosition)
     {
-        glm::vec3 direction = glm::normalize(aPosition - mPosition);
+        const glm::vec3 direction = glm::normalize(aPosition - mPosition);
         mNextRotation.x = glm::degrees(glm::asin(-direction.y));
         mNextRotation.y = glm::degrees(glm::atan(direction.x, direction.z));
     }
@@ -110,6 +115,8 @@ namespace nabla2d
                                              mProjectionSettings.aspectRatio,
                                              mProjectionSettings.near,
                                              mProjectionSettings.far);
+
+        mProjectionViewMatrix = mProjectionMatrix * mViewMatrix;
     }
 
 } // namespace nabla2d

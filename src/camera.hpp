@@ -53,6 +53,7 @@ namespace nabla2d
 
         const glm::mat4 &GetViewMatrix() const;
         const glm::mat4 &GetProjectionMatrix() const;
+        const glm::mat4 &GetProjectionViewMatrix() const;
 
         void Translate(const glm::vec3 &aTranslation);
         void Rotate(const glm::vec3 &aRotation);
@@ -72,6 +73,7 @@ namespace nabla2d
 
         glm::mat4 mViewMatrix;
         glm::mat4 mProjectionMatrix;
+        glm::mat4 mProjectionViewMatrix;
     };
 } // namespace nabla2d
 
