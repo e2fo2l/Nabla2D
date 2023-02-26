@@ -115,6 +115,40 @@ namespace nabla2d
         SDL_GL_SwapWindow(mWindow);
     }
 
+    Renderer::DataHandle SDLGLRenderer::LoadData(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData)
+    {
+        try
+        {
+            std::vector<float> vertices;
+            for (auto &vertex : aData)
+            {
+                // Position
+                vertices.push_back(vertex.first.x);
+                vertices.push_back(vertex.first.y);
+                vertices.push_back(vertex.first.z);
+                // Texture coordinates
+                vertices.push_back(vertex.second.x);
+                vertices.push_back(vertex.second.y);
+            }
+            auto data = std::make_shared<GLData>(vertices);
+            mData[data->GetVAO()] = data;
+            return data->GetVAO();
+        }
+        catch (std::runtime_error &e)
+        {
+            Logger::error("Failed to load data: {}", e.what());
+            return 0;
+        }
+    }
+
+    void SDLGLRenderer::DeleteData(DataHandle aHandle)
+    {
+        if (mData.erase(aHandle) == 0)
+        {
+            Logger::warn("Tried to delete data #{}, which does not exist", aHandle);
+        }
+    }
+
     Renderer::ShaderHandle SDLGLRenderer::LoadShader(const std::string &aVertexPath, const std::string &aFragmentPath)
     {
         try

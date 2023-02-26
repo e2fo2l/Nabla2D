@@ -22,7 +22,9 @@
 #define NABLA2D_RENDERER_HPP
 
 #include <string>
+#include <vector>
 #include <cstdint>
+#include <glm/glm.hpp>
 
 namespace nabla2d
 {
@@ -41,6 +43,9 @@ namespace nabla2d
         virtual bool PollWindowEvents() = 0;
         virtual void Clear() = 0;
         virtual void Render() = 0;
+
+        virtual DataHandle LoadData(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData) = 0;
+        virtual void DeleteData(DataHandle aHandle) = 0;
 
         virtual ShaderHandle LoadShader(const std::string &aVertexPath, const std::string &aFragmentPath) = 0;
         virtual void DeleteShader(ShaderHandle aHandle) = 0;

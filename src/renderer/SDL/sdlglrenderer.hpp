@@ -30,6 +30,7 @@
 #include <GL/glew.h>
 
 #include "../renderer.hpp"
+#include "../OpenGL/gldata.hpp"
 #include "../OpenGL/glshader.hpp"
 
 namespace nabla2d
@@ -44,6 +45,9 @@ namespace nabla2d
         void Clear() override;
         void Render() override;
 
+        DataHandle LoadData(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData) override;
+        void DeleteData(DataHandle aHandle) override;
+
         ShaderHandle LoadShader(const std::string &aVertexPath, const std::string &aFragmentPath) override;
         void DeleteShader(ShaderHandle aHandle) override;
         void UseShader(ShaderHandle aHandle) override;
@@ -52,6 +56,7 @@ namespace nabla2d
         int mWidth;
         int mHeight;
 
+        std::unordered_map<DataHandle, std::shared_ptr<GLData>> mData;
         std::unordered_map<ShaderHandle, std::shared_ptr<GLShader>> mShaders;
 
         SDL_Window *mWindow;
