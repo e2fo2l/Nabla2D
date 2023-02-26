@@ -52,7 +52,6 @@ jobs:
           libxv-dev
           libxvmc-dev
           libxxf86vm-dev
-          xcb-util
         version: 1.0
 
     - name: Cache Conan packages
