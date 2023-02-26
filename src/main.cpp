@@ -26,7 +26,9 @@
 int main()
 {
   nabla2d::Logger::setLevel(nabla2d::Logger::Level::LOG_DEBUG);
+
   nabla2d::Game game;
+  game.Run();
 
   return 0;
 }

@@ -11,6 +11,8 @@ set(SOURCES
   src/main.cpp
   src/logger.cpp
   src/game.cpp
+  src/renderer.cpp
+  src/sdlglrenderer.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

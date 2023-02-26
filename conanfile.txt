@@ -1,4 +1,8 @@
 [requires]
+glew/2.2.0
+glm/cci.20230113
+opengl/system
+sdl/2.26.1
 spdlog/1.11.0
 
 [generators]

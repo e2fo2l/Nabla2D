@@ -18,30 +18,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef NABLA2D_GAME_HPP
-#define NABLA2D_GAME_HPP
-
-#include <memory>
-
 #include "renderer.hpp"
+#include "sdlglrenderer.hpp"
 
 namespace nabla2d
 {
-    class Game
+    Renderer *Renderer::Create(const std::string &aTitle, const std::pair<int, int> &aSize)
     {
-    public:
-        Game();
-
-        float GetDeltaTime() const;
-
-        void Run();
-
-    private:
-        float mDeltaTime;
-        std::unique_ptr<Renderer> mRenderer;
-    };
+        return new SDLGLRenderer(aTitle, aSize);
+    }
 } // namespace nabla2d
-
-#endif // NABLA2D_GAME_HPP
 
 // くコ:彡
