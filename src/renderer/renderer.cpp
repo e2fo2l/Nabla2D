@@ -19,7 +19,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "renderer.hpp"
-#include "sdlglrenderer.hpp"
+#include "SDL/sdlglrenderer.hpp"
 
 namespace nabla2d
 {

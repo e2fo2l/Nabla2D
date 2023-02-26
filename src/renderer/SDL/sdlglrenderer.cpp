@@ -19,16 +19,18 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "sdlglrenderer.hpp"
-#include "logger.hpp"
 
 #include <stdexcept>
 
 #define GLEW_STATIC 1
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
+#include "../../logger.hpp"
+#include "../renderer.hpp"
 
 namespace nabla2d
 {
+
     SDLGLRenderer::SDLGLRenderer(const std::string &aTitle, const std::pair<int, int> &aSize) : mWidth(aSize.first), mHeight(aSize.second)
     {
         if (SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -115,6 +117,41 @@ namespace nabla2d
     {
         SDL_GL_SwapWindow(mWindow);
     }
+
+    Renderer::ShaderHandle SDLGLRenderer::LoadShader(const std::string &aVertexPath, const std::string &aFragmentPath)
+    {
+        try
+        {
+            auto shader = std::make_shared<GLShader>(aVertexPath, aFragmentPath);
+            mShaders[shader->GetProgram()] = shader;
+            return shader->GetProgram();
+        }
+        catch (std::runtime_error &e)
+        {
+            Logger::error("Failed to load shader: {}", e.what());
+            return 0;
+        }
+    }
+
+    void SDLGLRenderer::DeleteShader(ShaderHandle aHandle)
+    {
+        if (mShaders.erase(aHandle) == 0)
+        {
+            Logger::warn("Tried to delete shader #{}, which does not exist", aHandle);
+        }
+    }
+
+    void SDLGLRenderer::UseShader(ShaderHandle aHandle)
+    {
+        auto shader = mShaders.find(aHandle);
+        if (shader == mShaders.end())
+        {
+            Logger::error("Shader #{} does not exist, it can not be used", aHandle);
+            return;
+        }
+        glUseProgram(shader->second->GetProgram()); // should be equivalent to glUseProgram(aHandle)
+    }
+
 } // namespace nabla2d
 
 // くコ:彡

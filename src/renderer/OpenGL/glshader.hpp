@@ -18,39 +18,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef NABLA2D_RENDERER_HPP
-#define NABLA2D_RENDERER_HPP
+#ifndef NABLA2D_GLSHADER_HPP
+#define NABLA2D_GLSHADER_HPP
 
 #include <string>
-#include <cstdint>
+#include <GL/glew.h>
 
 namespace nabla2d
 {
-    // Abstract class for rendering
-    class Renderer
+    class GLShader
     {
     public:
-        typedef uint64_t DataHandle;
-        typedef uint64_t ShaderHandle;
-        typedef uint64_t TextureHandle;
+        GLShader(const std::string &aVertexShader, const std::string &aFragmentShader);
+        ~GLShader();
 
-        virtual ~Renderer() = default;
+        GLuint GetProgram() const;
 
-        static Renderer *Create(const std::string &aTitle, const std::pair<int, int> &aSize);
-
-        virtual bool PollWindowEvents() = 0;
-        virtual void Clear() = 0;
-        virtual void Render() = 0;
-
-        // virtual ShaderHandle LoadShader(const std::string &aVertexPath, const std::string &aFragmentPath) = 0;
-        // virtual void DeleteShader(ShaderHandle aHandle) = 0;
-        // virtual void UseShader(ShaderHandle aHandle) = 0;
-
-        // virtual TextureHandle LoadTexture(const std::string &aPath) = 0;
-        // virtual void DeleteTexture(TextureHandle aHandle) = 0;
+    private:
+        GLuint mProgram{0};
     };
 } // namespace nabla2d
 
-#endif // NABLA2D_RENDERER_HPP
+#endif // NABLA2D_GLSHADER_HPP
 
 // くコ:彡

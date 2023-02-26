@@ -18,35 +18,39 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef NABLA2D_SDLGLRENDERER_HPP
-#define NABLA2D_SDLGLRENDERER_HPP
+#ifndef NABLA2D_RENDERER_HPP
+#define NABLA2D_RENDERER_HPP
 
 #include <string>
-#include <SDL2/SDL.h>
-
-#include "renderer.hpp"
+#include <cstdint>
 
 namespace nabla2d
 {
-    class SDLGLRenderer : public Renderer
+    // Abstract class for rendering
+    class Renderer
     {
     public:
-        SDLGLRenderer(const std::string &aTitle, const std::pair<int, int> &aSize);
-        ~SDLGLRenderer() override;
+        typedef uint64_t DataHandle;
+        typedef uint64_t ShaderHandle;
+        typedef uint64_t TextureHandle;
 
-        bool PollWindowEvents() override;
-        void Clear() override;
-        void Render() override;
+        virtual ~Renderer() = default;
 
-    private:
-        int mWidth;
-        int mHeight;
+        static Renderer *Create(const std::string &aTitle, const std::pair<int, int> &aSize);
 
-        SDL_Window *mWindow;
-        SDL_GLContext mGLContext;
+        virtual bool PollWindowEvents() = 0;
+        virtual void Clear() = 0;
+        virtual void Render() = 0;
+
+        virtual ShaderHandle LoadShader(const std::string &aVertexPath, const std::string &aFragmentPath) = 0;
+        virtual void DeleteShader(ShaderHandle aHandle) = 0;
+        virtual void UseShader(ShaderHandle aHandle) = 0;
+
+        // virtual TextureHandle LoadTexture(const std::string &aPath) = 0;
+        // virtual void DeleteTexture(TextureHandle aHandle) = 0;
     };
 } // namespace nabla2d
 
-#endif // NABLA2D_SDLGLRENDERER_HPP
+#endif // NABLA2D_RENDERER_HPP
 
 // くコ:彡

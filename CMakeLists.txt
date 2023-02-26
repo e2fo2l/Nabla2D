@@ -11,8 +11,9 @@ set(SOURCES
   src/main.cpp
   src/logger.cpp
   src/game.cpp
-  src/renderer.cpp
-  src/sdlglrenderer.cpp
+  src/renderer/renderer.cpp
+  src/renderer/OpenGL/glshader.cpp
+  src/renderer/SDL/sdlglrenderer.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

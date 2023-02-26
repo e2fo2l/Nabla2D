@@ -18,30 +18,44 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef NABLA2D_GAME_HPP
-#define NABLA2D_GAME_HPP
+#ifndef NABLA2D_SDLGLRENDERER_HPP
+#define NABLA2D_SDLGLRENDERER_HPP
 
+#include <string>
 #include <memory>
+#include <unordered_map>
+#include <SDL2/SDL.h>
 
-#include "renderer/renderer.hpp"
+#include "../renderer.hpp"
+#include "../OpenGL/glshader.hpp"
 
 namespace nabla2d
 {
-    class Game
+    class SDLGLRenderer : public Renderer
     {
     public:
-        Game();
+        SDLGLRenderer(const std::string &aTitle, const std::pair<int, int> &aSize);
+        ~SDLGLRenderer() override;
 
-        float GetDeltaTime() const;
+        bool PollWindowEvents() override;
+        void Clear() override;
+        void Render() override;
 
-        void Run();
+        ShaderHandle LoadShader(const std::string &aVertexPath, const std::string &aFragmentPath) override;
+        void DeleteShader(ShaderHandle aHandle) override;
+        void UseShader(ShaderHandle aHandle) override;
 
     private:
-        float mDeltaTime;
-        std::unique_ptr<Renderer> mRenderer;
+        int mWidth;
+        int mHeight;
+
+        std::unordered_map<ShaderHandle, std::shared_ptr<GLShader>> mShaders;
+
+        SDL_Window *mWindow;
+        SDL_GLContext mGLContext;
     };
 } // namespace nabla2d
 
-#endif // NABLA2D_GAME_HPP
+#endif // NABLA2D_SDLGLRENDERER_HPP
 
 // くコ:彡
