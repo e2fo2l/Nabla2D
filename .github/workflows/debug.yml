@@ -25,6 +25,7 @@ jobs:
           libopengl-dev
           libegl1-mesa-dev
           libfontenc-dev
+          libglu1-mesa-dev
           libx11-xcb-dev
           libxaw7-dev
           libxcb-dri3-dev
