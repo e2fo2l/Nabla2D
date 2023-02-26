@@ -30,15 +30,17 @@ namespace nabla2d
     class GLVertex
     {
     public:
+        constexpr static std::size_t ElementCount = 5;
+
         GLVertex(glm::vec3 aPosition, glm::vec2 aUV);
         ~GLVertex() = default;
 
         glm::vec3 GetPosition() const;
         glm::vec2 GetUV() const;
-        const std::array<float, 5> &GetData() const;
+        const std::array<float, ElementCount> &GetData() const;
 
     private:
-        std::array<float, 5> mData{};
+        std::array<float, ElementCount> mData{};
     };
 } // namespace nabla2d
 

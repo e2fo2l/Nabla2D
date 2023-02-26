@@ -40,7 +40,7 @@ namespace nabla2d
         return {mData[3], mData[4]};
     }
 
-    const std::array<float, 5> &GLVertex::GetData() const
+    const std::array<float, GLVertex::ElementCount> &GLVertex::GetData() const
     {
         return mData;
     }

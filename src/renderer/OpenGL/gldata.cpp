@@ -20,6 +20,8 @@
 
 #include "gldata.hpp"
 
+#include "glvertex.hpp"
+
 namespace nabla2d
 {
     GLData::GLData(const std::vector<float> &aVertices) : mSize(aVertices.size())
@@ -33,11 +35,11 @@ namespace nabla2d
         glBufferData(GL_ARRAY_BUFFER, mSize * sizeof(float), &aVertices[0], GL_STATIC_DRAW);
 
         // Position (x, y, z)
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, GLVertex::ElementCount * sizeof(float), (void *)0);
         glEnableVertexAttribArray(0);
 
         // Texture coordinates (u, v)
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, GLVertex::ElementCount * sizeof(float), (void *)(3 * sizeof(float)));
         glEnableVertexAttribArray(1);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
