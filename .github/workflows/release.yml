@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       uses: awalsh128/cache-apt-pkgs-action@latest
       with:
-        packages: ninja-build clang-format libopengl-dev
+        packages: ninja-build clang-format libopengl-dev libegl1-mesa-dev
         version: 1.0
 
     - name: Cache Conan packages
