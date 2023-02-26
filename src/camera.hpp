@@ -61,10 +61,14 @@ namespace nabla2d
         void Update();
 
     private:
-        glm::vec3 mPosition, mNextPosition;
-        glm::vec3 mRotation, mNextRotation;
+        glm::vec3 mPosition;
+        glm::vec3 mRotation;
 
-        ProjectionSettings mProjectionSettings, mNextProjectionSettings;
+        ProjectionSettings mProjectionSettings;
+
+        glm::vec3 mNextPosition;
+        glm::vec3 mNextRotation;
+        ProjectionSettings mNextProjectionSettings;
 
         glm::mat4 mViewMatrix;
         glm::mat4 mProjectionMatrix;
