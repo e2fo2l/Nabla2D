@@ -22,7 +22,7 @@
 #define NABLA2D_TRANSFORMCOMPONENT_HPP
 
 #include <glm/glm.hpp>
-#include <gtx/transform.hpp>
+#include <glm/gtx/transform.hpp>
 
 namespace nabla2d
 {
