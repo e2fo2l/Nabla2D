@@ -22,9 +22,6 @@
 
 #include <stdexcept>
 
-#define GLEW_STATIC 1
-#include <GL/glew.h>
-#include <SDL2/SDL.h>
 #include "../../logger.hpp"
 #include "../renderer.hpp"
 

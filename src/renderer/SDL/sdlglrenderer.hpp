@@ -26,6 +26,9 @@
 #include <unordered_map>
 #include <SDL2/SDL.h>
 
+#define GLEW_STATIC 1
+#include <GL/glew.h>
+
 #include "../renderer.hpp"
 #include "../OpenGL/glshader.hpp"
 
