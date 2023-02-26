@@ -39,7 +39,7 @@ jobs:
           libxcb-render-util0-dev
           libxcb-shape0-dev
           libxcb-sync-dev
-          libxcb-util1-dev
+          libxcb-util-dev
           libxcb-xfixes0-dev
           libxcb-xinerama0-dev
           libxcb-xkb-dev
