@@ -51,19 +51,27 @@ namespace nabla2d
         std::array<GLchar, MAX_LOG_LENGTH> infoLog{};
 
         glGetShaderiv(mVertexShader, GL_COMPILE_STATUS, &success);
+        glGetShaderInfoLog(mVertexShader, infoLog.size(), nullptr, infoLog.data());
         if (success == 0)
         {
-            glGetShaderInfoLog(mVertexShader, infoLog.size(), nullptr, infoLog.data());
             Logger::error("Vertex shader compilation failed: {}", infoLog.data());
             throw std::runtime_error("Vertex shader compilation failed");
         }
+        if (infoLog[0] != '\0')
+        {
+            Logger::warn("Vertex shader compilation warning: {}", infoLog.data());
+        }
 
         glGetShaderiv(mFragmentShader, GL_COMPILE_STATUS, &success);
+        glGetShaderInfoLog(mFragmentShader, infoLog.size(), nullptr, infoLog.data());
         if (success == 0)
         {
-            glGetShaderInfoLog(mFragmentShader, infoLog.size(), nullptr, infoLog.data());
             Logger::error("Fragment shader compilation failed: {}", infoLog.data());
             throw std::runtime_error("Fragment shader compilation failed");
+        }
+        if (infoLog[0] != '\0')
+        {
+            Logger::warn("Fragment shader compilation warning: {}", infoLog.data());
         }
 
         mProgram = glCreateProgram();
@@ -72,11 +80,15 @@ namespace nabla2d
         glLinkProgram(mProgram);
 
         glGetProgramiv(mProgram, GL_LINK_STATUS, &success);
+        glGetProgramInfoLog(mProgram, infoLog.size(), nullptr, infoLog.data());
         if (success == 0)
         {
-            glGetProgramInfoLog(mProgram, infoLog.size(), nullptr, infoLog.data());
             Logger::error("Shader program linking failed: {}", infoLog.data());
             throw std::runtime_error("Shader program linking failed");
+        }
+        if (infoLog[0] != '\0')
+        {
+            Logger::warn("Shader program linking warning: {}", infoLog.data());
         }
 
         glDeleteShader(mVertexShader);
