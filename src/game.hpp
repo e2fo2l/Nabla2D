@@ -23,6 +23,7 @@
 
 #include <memory>
 
+#include "camera.hpp"
 #include "renderer/renderer.hpp"
 
 namespace nabla2d
@@ -31,14 +32,19 @@ namespace nabla2d
     {
     public:
         Game();
+        ~Game();
 
         float GetDeltaTime() const;
 
         void Run();
 
     private:
-        float mDeltaTime;
+        float mDeltaTime{0.0F};
         std::unique_ptr<Renderer> mRenderer;
+
+        Camera mCamera;
+        Renderer::ShaderHandle mTestShader;
+        Renderer::DataHandle mTestTriangle;
     };
 } // namespace nabla2d
 

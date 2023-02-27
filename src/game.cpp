@@ -20,15 +20,52 @@
 
 #include "game.hpp"
 
+#include <cmath>
 #include <chrono>
+#include <glm/glm.hpp>
 #include "logger.hpp"
 
 namespace nabla2d
 {
     Game::Game() : mDeltaTime(0.0F)
     {
+        mCamera = Camera({0.0F, 0.0F, 5.0F});
         mRenderer = std::unique_ptr<Renderer>(Renderer::Create("Nabla2D", {1600, 900}));
+
+        mTestTriangle = mRenderer->LoadData({{{0.5F, 0.5F, 0.0F}, {0.0, 0.0}},
+                                             {{-0.5F, 0.5F, 0.0F}, {0.0, 0.0}},
+                                             {{0.0F, -0.5F, 0.0F}, {0.0, 0.0}}});
+
+        mTestShader = mRenderer->LoadShader(R"(
+        #version 330 core
+        uniform mat4 u_ModelViewProjectionMatrix;
+        layout (location = 0) in vec3 a_Position;
+        layout (location = 1) in vec2 a_TexCoord;
+        out vec2 v_TexCoord;
+        void main()
+        {
+            gl_Position = u_ModelViewProjectionMatrix * vec4(a_Position, 1.0);
+            v_TexCoord = a_TexCoord;
+        }
+        )",
+                                            R"(
+        #version 330 core
+        uniform sampler2D u_Texture;
+        in vec2 v_TexCoord;
+        out vec4 FragColor;
+        void main()
+        {
+            FragColor = texture(u_Texture, v_TexCoord);
+        }
+        )");
+
         Logger::info("Game created");
+    }
+
+    Game::~Game()
+    {
+        mRenderer->DeleteData(mTestTriangle);
+        Logger::info("Game destroyed");
     }
 
     float Game::GetDeltaTime() const
@@ -48,7 +85,17 @@ namespace nabla2d
             lastTime = currentTime;
             Logger::debug("DeltaTime: {}", mDeltaTime);
 
+            mCamera.Update();
+
             mRenderer->Clear();
+
+            static float totalDelta = 0.0F;
+            totalDelta += mDeltaTime;
+            mCamera.SetPosition({std::cos(totalDelta), std::sin(totalDelta), 5.0F});
+
+            mRenderer->UseShader(mTestShader);
+            mRenderer->DrawData(mTestTriangle, mCamera, glm::mat4(1.0F));
+
             mRenderer->Render();
         }
         Logger::info("Game ended");
