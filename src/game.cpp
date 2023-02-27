@@ -27,7 +27,7 @@
 
 namespace nabla2d
 {
-    Game::Game() : mDeltaTime(0.0F)
+    Game::Game()
     {
         mCamera = Camera({0.0F, 0.0F, 5.0F});
         mRenderer = std::unique_ptr<Renderer>(Renderer::Create("Nabla2D", {1600, 900}));
@@ -83,7 +83,6 @@ namespace nabla2d
             currentTime = std::chrono::high_resolution_clock::now();
             mDeltaTime = std::chrono::duration_cast<std::chrono::duration<float>>(currentTime - lastTime).count();
             lastTime = currentTime;
-            Logger::debug("DeltaTime: {}", mDeltaTime);
 
             mCamera.Update();
 
