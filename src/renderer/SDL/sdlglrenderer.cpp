@@ -21,6 +21,8 @@
 #include "sdlglrenderer.hpp"
 
 #include <stdexcept>
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "../../logger.hpp"
 #include "../renderer.hpp"
@@ -28,7 +30,7 @@
 namespace nabla2d
 {
 
-    SDLGLRenderer::SDLGLRenderer(const std::string &aTitle, const std::pair<int, int> &aSize) : mWidth(aSize.first), mHeight(aSize.second)
+    SDLGLRenderer::SDLGLRenderer(const std::string &aTitle, const std::pair<int, int> &aSize) : mWidth(aSize.first), mHeight(aSize.second), mCurrentShader(nullptr)
     {
         if (SDL_Init(SDL_INIT_VIDEO) < 0)
         {
@@ -149,6 +151,35 @@ namespace nabla2d
         }
     }
 
+    void SDLGLRenderer::DrawData(DataHandle aHandle, const Camera &aCamera, const glm::mat4 &aTransform)
+    {
+        auto data = mData.find(aHandle);
+        if (data == mData.end())
+        {
+            Logger::warn("Tried to draw data #{}, which does not exist", aHandle);
+            return;
+        }
+
+        GLuint VAO = data->second->GetVAO();
+        GLuint VBO = data->second->GetVBO();
+
+        if (mCurrentShader == nullptr)
+        {
+            Logger::warn("Tried to draw data #{}, but no shader is set", aHandle);
+        }
+
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+        glm::mat4 mvp = aCamera.GetProjectionViewMatrix() * aTransform;
+        glUniformMatrix4fv(mCurrentShader->GetModelViewProjectionLocation(), 1, GL_FALSE, glm::value_ptr(mvp));
+
+        glDrawArrays(GL_TRIANGLES, 0, data->second->GetSize());
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+    }
+
     Renderer::ShaderHandle SDLGLRenderer::LoadShader(const std::string &aVertexPath, const std::string &aFragmentPath)
     {
         try
@@ -166,10 +197,19 @@ namespace nabla2d
 
     void SDLGLRenderer::DeleteShader(ShaderHandle aHandle)
     {
-        if (mShaders.erase(aHandle) == 0)
+        auto shader = mShaders.find(aHandle);
+        if (shader == mShaders.end())
         {
             Logger::warn("Tried to delete shader #{}, which does not exist", aHandle);
+            return;
         }
+
+        if (mCurrentShader == shader->second)
+        {
+            mCurrentShader = nullptr;
+        }
+
+        mShaders.erase(shader);
     }
 
     void SDLGLRenderer::UseShader(ShaderHandle aHandle)
@@ -180,7 +220,9 @@ namespace nabla2d
             Logger::error("Shader #{} does not exist, it can not be used", aHandle);
             return;
         }
-        glUseProgram(shader->second->GetProgram()); // should be equivalent to glUseProgram(aHandle)
+
+        mCurrentShader = shader->second;
+        glUseProgram(mCurrentShader->GetProgram());
     }
 
 } // namespace nabla2d

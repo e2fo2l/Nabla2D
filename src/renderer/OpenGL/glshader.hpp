@@ -33,9 +33,11 @@ namespace nabla2d
         ~GLShader();
 
         GLuint GetProgram() const;
+        GLint GetModelViewProjectionLocation() const;
 
     private:
         GLuint mProgram{0};
+        GLint mModelViewProjectionLocation{0};
     };
 } // namespace nabla2d
 

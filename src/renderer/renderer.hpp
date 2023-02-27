@@ -26,6 +26,7 @@
 #include <cstdint>
 #include <glm/glm.hpp>
 
+#include "../camera.hpp"
 namespace nabla2d
 {
     // Abstract class for rendering
@@ -46,6 +47,7 @@ namespace nabla2d
 
         virtual DataHandle LoadData(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData) = 0;
         virtual void DeleteData(DataHandle aHandle) = 0;
+        virtual void DrawData(DataHandle aHandle, const Camera &aCamera, const glm::mat4 &aTransform) = 0;
 
         virtual ShaderHandle LoadShader(const std::string &aVertexPath, const std::string &aFragmentPath) = 0;
         virtual void DeleteShader(ShaderHandle aHandle) = 0;
