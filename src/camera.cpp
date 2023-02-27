@@ -93,10 +93,10 @@ namespace nabla2d
 
     void Camera::LookAt(const glm::vec3 &aPosition)
     {
-        // TODO: fix
         const glm::vec3 direction = glm::normalize(aPosition - mPosition);
         mNextRotation.x = glm::degrees(glm::asin(-direction.y));
-        mNextRotation.y = glm::degrees(glm::atan(direction.x, direction.z));
+        mNextRotation.y = 180.0F + glm::degrees(glm::atan(direction.x, direction.z));
+        mNextRotation.z = 0.0F;
     }
 
     void Camera::Update()

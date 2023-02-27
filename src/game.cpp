@@ -29,7 +29,7 @@ namespace nabla2d
 {
     Game::Game()
     {
-        mCamera = Camera({0.0F, 0.0F, 5.0F});
+        mCamera = Camera({1.0F, 0.0F, 5.0F});
         mRenderer = std::unique_ptr<Renderer>(Renderer::Create("Nabla2D", {1600, 900}));
 
         mTestTriangle = mRenderer->LoadData({{{0.5F, 0.5F, 0.0F}, {0.0, 0.0}},
@@ -90,7 +90,8 @@ namespace nabla2d
 
             static float totalDelta = 0.0F;
             totalDelta += mDeltaTime;
-            mCamera.SetPosition({std::cos(totalDelta), std::sin(totalDelta), 5.0F});
+            mCamera.SetPosition({5.0F * std::cos(totalDelta), 0.0F, 5.0F * std::sin(totalDelta)});
+            mCamera.LookAt({0.0F, 0.0F, 0.0F});
 
             mRenderer->UseShader(mTestShader);
             mRenderer->DrawData(mTestTriangle, mCamera, glm::mat4(1.0F));
