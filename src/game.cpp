@@ -107,6 +107,6 @@ namespace nabla2d
         }
         Logger::info("Game ended");
     }
-}
+} // namespace nabla2d
 
 // くコ:彡
