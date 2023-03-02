@@ -39,7 +39,7 @@ namespace nabla2d
         explicit Camera(const glm::vec3 &aPosition = {0.0F, 0.0F, 0.0F},
                         const glm::vec3 &aRotation = {0.0F, 0.0F, 0.0F},
                         const ProjectionSettings &aSettings = {
-                            45.0F, 1.0F, 0.1F, 100.0F});
+                            45.0F, 16.0F / 9.0F, 0.1F, 100.0F});
         ~Camera() = default;
 
         const glm::vec3 &GetPosition() const;
