@@ -30,7 +30,7 @@
 namespace nabla2d
 {
 
-    SDLGLRenderer::SDLGLRenderer(const std::string &aTitle, const std::pair<int, int> &aSize) : mWidth(aSize.first), mHeight(aSize.second), mCurrentShader(nullptr)
+    SDLGLRenderer::SDLGLRenderer(const std::string &aTitle, const std::pair<int, int> &aSize) : mWidth(aSize.first), mHeight(aSize.second), mCurrentShader(nullptr), mCurrentTexture(nullptr)
     {
         if (SDL_Init(SDL_INIT_VIDEO) < 0)
         {
@@ -121,7 +121,7 @@ namespace nabla2d
     {
         try
         {
-            std::vector<float> vertices;
+            std::vector<float> vertices{};
             for (auto &vertex : aData)
             {
                 // Position
@@ -168,14 +168,30 @@ namespace nabla2d
             Logger::warn("Tried to draw data #{}, but no shader is set", aHandle);
         }
 
+        if (mCurrentTexture == nullptr)
+        {
+            Logger::warn("Tried to draw data #{}, but no texture is set", aHandle);
+        }
+
         glBindVertexArray(VAO);
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-        glm::mat4 mvp = aCamera.GetProjectionViewMatrix() * aTransform;
-        glUniformMatrix4fv(mCurrentShader->GetModelViewProjectionLocation(), 1, GL_FALSE, glm::value_ptr(mvp));
+        if (mCurrentShader != nullptr)
+        {
+            glm::mat4 mvp = aCamera.GetProjectionViewMatrix() * aTransform;
+            glUniformMatrix4fv(mCurrentShader->GetModelViewProjectionLocation(), 1, GL_FALSE, glm::value_ptr(mvp));
+
+            if (mCurrentTexture != nullptr)
+            {
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, mCurrentTexture->GetTexture());
+                glUniform1i(mCurrentShader->GetTextureLocation(), 0);
+            }
+        }
 
         glDrawArrays(GL_TRIANGLES, 0, data->second->GetSize());
 
+        glBindTexture(GL_TEXTURE_2D, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
     }
@@ -223,6 +239,77 @@ namespace nabla2d
 
         mCurrentShader = shader->second;
         glUseProgram(mCurrentShader->GetProgram());
+    }
+
+    Renderer::TextureHandle SDLGLRenderer::LoadTexture(const std::string &aPath, Renderer::TextureFilter aFilter)
+    {
+        GLTexture::GLTextureFilter filter = GLTexture::GLTextureFilter::LINEAR;
+        switch (aFilter)
+        {
+        case TextureFilter::NEAREST:
+            filter = GLTexture::GLTextureFilter::NEAREST;
+            break;
+        case TextureFilter::LINEAR:
+            filter = GLTexture::GLTextureFilter::LINEAR;
+            break;
+        case TextureFilter::NEAREST_MIPMAP_NEAREST:
+            filter = GLTexture::GLTextureFilter::NEAREST_MIPMAP_NEAREST;
+            break;
+        case TextureFilter::LINEAR_MIPMAP_NEAREST:
+            filter = GLTexture::GLTextureFilter::LINEAR_MIPMAP_NEAREST;
+            break;
+        case TextureFilter::NEAREST_MIPMAP_LINEAR:
+            filter = GLTexture::GLTextureFilter::NEAREST_MIPMAP_LINEAR;
+            break;
+        case TextureFilter::LINEAR_MIPMAP_LINEAR:
+            filter = GLTexture::GLTextureFilter::LINEAR_MIPMAP_LINEAR;
+            break;
+        default:
+            Logger::error("Unknown texture filter: {}", static_cast<int>(aFilter));
+            return 0;
+        }
+
+        try
+        {
+            auto texture = std::make_shared<GLTexture>(aPath, filter);
+            mTextures[texture->GetTexture()] = texture;
+            return texture->GetTexture();
+        }
+        catch (std::runtime_error &e)
+        {
+            Logger::error("Failed to load texture: {}", e.what());
+            return 0;
+        }
+    }
+
+    void SDLGLRenderer::DeleteTexture(TextureHandle aHandle)
+    {
+        auto texture = mTextures.find(aHandle);
+        if (texture == mTextures.end())
+        {
+            Logger::warn("Tried to delete texture #{}, which does not exist", aHandle);
+            return;
+        }
+
+        if (mCurrentTexture == texture->second)
+        {
+            mCurrentTexture = nullptr;
+        }
+
+        mTextures.erase(texture);
+    }
+
+    void SDLGLRenderer::UseTexture(TextureHandle aHandle)
+    {
+        auto texture = mTextures.find(aHandle);
+        if (texture == mTextures.end())
+        {
+            Logger::error("Texture #{} does not exist, it can not be used", aHandle);
+            return;
+        }
+
+        mCurrentTexture = texture->second;
+        glBindTexture(GL_TEXTURE_2D, mCurrentTexture->GetTexture());
     }
 
 } // namespace nabla2d

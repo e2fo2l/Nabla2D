@@ -95,6 +95,7 @@ namespace nabla2d
         glDeleteShader(mFragmentShader);
 
         mModelViewProjectionLocation = glGetUniformLocation(mProgram, "u_ModelViewProjectionMatrix");
+        mTextureLocation = glGetUniformLocation(mProgram, "u_Texture");
     }
 
     GLShader::~GLShader()
@@ -110,6 +111,11 @@ namespace nabla2d
     GLint GLShader::GetModelViewProjectionLocation() const
     {
         return mModelViewProjectionLocation;
+    }
+
+    GLint GLShader::GetTextureLocation() const
+    {
+        return mTextureLocation;
     }
 
 } // namespace nabla2d

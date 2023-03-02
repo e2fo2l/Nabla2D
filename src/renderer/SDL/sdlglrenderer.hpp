@@ -32,6 +32,7 @@
 #include "../renderer.hpp"
 #include "../OpenGL/gldata.hpp"
 #include "../OpenGL/glshader.hpp"
+#include "../OpenGL/gltexture.hpp"
 
 namespace nabla2d
 {
@@ -53,14 +54,20 @@ namespace nabla2d
         void DeleteShader(ShaderHandle aHandle) override;
         void UseShader(ShaderHandle aHandle) override;
 
+        TextureHandle LoadTexture(const std::string &aPath, Renderer::TextureFilter aFilter) override;
+        void DeleteTexture(TextureHandle aHandle) override;
+        void UseTexture(TextureHandle aHandle) override;
+
     private:
         int mWidth;
         int mHeight;
 
         std::shared_ptr<GLShader> mCurrentShader;
+        std::shared_ptr<GLTexture> mCurrentTexture;
 
-        std::unordered_map<DataHandle, std::shared_ptr<GLData>> mData;
-        std::unordered_map<ShaderHandle, std::shared_ptr<GLShader>> mShaders;
+        std::unordered_map<DataHandle, std::shared_ptr<GLData>> mData{};
+        std::unordered_map<ShaderHandle, std::shared_ptr<GLShader>> mShaders{};
+        std::unordered_map<TextureHandle, std::shared_ptr<GLTexture>> mTextures{};
 
         SDL_Window *mWindow;
         SDL_GLContext mGLContext;

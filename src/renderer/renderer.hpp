@@ -37,6 +37,16 @@ namespace nabla2d
         typedef uint64_t ShaderHandle;
         typedef uint64_t TextureHandle;
 
+        typedef enum
+        {
+            NEAREST,
+            LINEAR,
+            NEAREST_MIPMAP_NEAREST,
+            LINEAR_MIPMAP_NEAREST,
+            NEAREST_MIPMAP_LINEAR,
+            LINEAR_MIPMAP_LINEAR
+        } TextureFilter;
+
         virtual ~Renderer() = default;
 
         static Renderer *Create(const std::string &aTitle, const std::pair<int, int> &aSize);
@@ -53,8 +63,9 @@ namespace nabla2d
         virtual void DeleteShader(ShaderHandle aHandle) = 0;
         virtual void UseShader(ShaderHandle aHandle) = 0;
 
-        // virtual TextureHandle LoadTexture(const std::string &aPath) = 0;
-        // virtual void DeleteTexture(TextureHandle aHandle) = 0;
+        virtual TextureHandle LoadTexture(const std::string &aPath, TextureFilter aFilter) = 0;
+        virtual void DeleteTexture(TextureHandle aHandle) = 0;
+        virtual void UseTexture(TextureHandle aHandle) = 0;
     };
 } // namespace nabla2d
 
