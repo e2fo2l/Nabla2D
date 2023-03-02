@@ -29,12 +29,16 @@ namespace nabla2d
 {
     Game::Game()
     {
-        mCamera = Camera({1.0F, 0.0F, 5.0F});
+        mCamera = Camera({1.0F, 0.0F, 5.0F}, {0.0F, 0.0F, 0.0F}, {45.0F, 16.0F / 9.0F, 0.1F, 100.0F});
         mRenderer = std::unique_ptr<Renderer>(Renderer::Create("Nabla2D", {1600, 900}));
 
-        mTestTriangle = mRenderer->LoadData({{{0.5F, 0.5F, 0.0F}, {0.0, 0.0}},
-                                             {{-0.5F, 0.5F, 0.0F}, {0.0, 0.0}},
-                                             {{0.0F, -0.5F, 0.0F}, {0.0, 0.0}}});
+        // Load square mesh
+        mTestTriangle = mRenderer->LoadData({{{-0.5F, -0.5F, 0.0F}, {0.0, 0.0}},
+                                             {{-0.5F, 0.5F, 0.0F}, {0.0, 1.0}},
+                                             {{0.5F, -0.5F, 0.0F}, {1.0, 0.0}},
+                                             {{-0.5F, 0.5F, 0.0F}, {0.0, 1.0}},
+                                             {{0.5F, 0.5F, 0.0F}, {1.0, 1.0}},
+                                             {{0.5F, -0.5F, 0.0F}, {1.0, 0.0}}});
 
         mTestShader = mRenderer->LoadShader(R"(
         #version 330 core
@@ -58,6 +62,8 @@ namespace nabla2d
             FragColor = texture(u_Texture, v_TexCoord);
         }
         )");
+
+        mTestTexture = mRenderer->LoadTexture("assets/logo.png", Renderer::NEAREST);
 
         Logger::info("Game created");
     }
@@ -94,6 +100,7 @@ namespace nabla2d
             mCamera.LookAt({0.0F, 0.0F, 0.0F});
 
             mRenderer->UseShader(mTestShader);
+            mRenderer->UseTexture(mTestTexture);
             mRenderer->DrawData(mTestTriangle, mCamera, glm::mat4(1.0F));
 
             mRenderer->Render();

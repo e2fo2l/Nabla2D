@@ -45,6 +45,7 @@ namespace nabla2d
         Camera mCamera;
         Renderer::ShaderHandle mTestShader;
         Renderer::DataHandle mTestTriangle;
+        Renderer::TextureHandle mTestTexture;
     };
 } // namespace nabla2d
 
