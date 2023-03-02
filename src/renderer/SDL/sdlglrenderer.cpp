@@ -80,6 +80,13 @@ namespace nabla2d
 
     SDLGLRenderer::~SDLGLRenderer()
     {
+        mCurrentShader = nullptr;
+        mCurrentTexture = nullptr;
+
+        mData.clear();
+        mShaders.clear();
+        mTextures.clear();
+
         SDL_GL_DeleteContext(mGLContext);
         SDL_DestroyWindow(mWindow);
         SDL_Quit();
