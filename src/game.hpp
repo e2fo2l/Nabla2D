@@ -24,6 +24,7 @@
 #include <memory>
 
 #include "camera.hpp"
+#include "sprite.hpp"
 #include "renderer/renderer.hpp"
 
 namespace nabla2d
@@ -40,12 +41,11 @@ namespace nabla2d
 
     private:
         float mDeltaTime{0.0F};
-        std::unique_ptr<Renderer> mRenderer;
+        std::shared_ptr<Renderer> mRenderer;
 
         Camera mCamera;
         Renderer::ShaderHandle mTestShader;
-        Renderer::DataHandle mTestTriangle;
-        Renderer::TextureHandle mTestTexture;
+        std::shared_ptr<Sprite> mTestSprite;
     };
 } // namespace nabla2d
 

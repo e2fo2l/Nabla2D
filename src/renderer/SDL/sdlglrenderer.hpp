@@ -57,6 +57,7 @@ namespace nabla2d
         TextureHandle LoadTexture(const std::string &aPath, Renderer::TextureFilter aFilter) override;
         void DeleteTexture(TextureHandle aHandle) override;
         void UseTexture(TextureHandle aHandle) override;
+        TextureInfo GetTextureInfo(TextureHandle aHandle) override;
 
     private:
         int mWidth;

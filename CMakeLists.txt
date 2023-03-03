@@ -12,6 +12,7 @@ set(SOURCES
   src/logger.cpp
   src/game.cpp
   src/camera.cpp
+  src/sprite.cpp
   src/renderer/renderer.cpp
   src/renderer/SDL/sdlglrenderer.cpp
   src/renderer/OpenGL/gltexture.cpp

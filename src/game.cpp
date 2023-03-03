@@ -30,15 +30,7 @@ namespace nabla2d
     Game::Game()
     {
         mCamera = Camera({1.0F, 0.0F, 5.0F}, {0.0F, 0.0F, 0.0F}, {45.0F, 16.0F / 9.0F, 0.1F, 100.0F});
-        mRenderer = std::unique_ptr<Renderer>(Renderer::Create("Nabla2D", {1600, 900}));
-
-        // Load square mesh
-        mTestTriangle = mRenderer->LoadData({{{-0.5F, -0.5F, 0.0F}, {0.0, 0.0}},
-                                             {{-0.5F, 0.5F, 0.0F}, {0.0, 1.0}},
-                                             {{0.5F, -0.5F, 0.0F}, {1.0, 0.0}},
-                                             {{-0.5F, 0.5F, 0.0F}, {0.0, 1.0}},
-                                             {{0.5F, 0.5F, 0.0F}, {1.0, 1.0}},
-                                             {{0.5F, -0.5F, 0.0F}, {1.0, 0.0}}});
+        mRenderer = std::shared_ptr<Renderer>(Renderer::Create("Nabla2D", {1600, 900}));
 
         mTestShader = mRenderer->LoadShader(R"(
         #version 330 core
@@ -63,14 +55,18 @@ namespace nabla2d
         }
         )");
 
-        mTestTexture = mRenderer->LoadTexture("assets/logo.png", Renderer::NEAREST);
+        mTestSprite = std::shared_ptr<Sprite>(new Sprite(mRenderer.get(),
+                                                         "assets/logo.png",
+                                                         {2, 2},
+                                                         {1.0F, 1.0F},
+                                                         Renderer::NEAREST));
 
         Logger::info("Game created");
     }
 
     Game::~Game()
     {
-        mRenderer->DeleteData(mTestTriangle);
+        mTestSprite->Clear(mRenderer.get());
         Logger::info("Game destroyed");
     }
 
@@ -99,9 +95,10 @@ namespace nabla2d
             mCamera.SetPosition({5.0F * std::cos(totalDelta), 0.0F, 5.0F * std::sin(totalDelta)});
             mCamera.LookAt({0.0F, 0.0F, 0.0F});
 
+            mTestSprite->SetSubsprite(std::floor(std::fmod(totalDelta / 2.0F, 4.0F)));
+
             mRenderer->UseShader(mTestShader);
-            mRenderer->UseTexture(mTestTexture);
-            mRenderer->DrawData(mTestTriangle, mCamera, glm::mat4(1.0F));
+            mTestSprite->Draw(mRenderer.get(), mCamera, glm::mat4(1.0F));
 
             mRenderer->Render();
         }

@@ -319,6 +319,18 @@ namespace nabla2d
         glBindTexture(GL_TEXTURE_2D, mCurrentTexture->GetTexture());
     }
 
+    Renderer::TextureInfo SDLGLRenderer::GetTextureInfo(TextureHandle aHandle)
+    {
+        auto texture = mTextures.find(aHandle);
+        if (texture == mTextures.end())
+        {
+            Logger::error("Texture #{} does not exist, can't get info", aHandle);
+            return {0, 0, 0};
+        }
+
+        return {texture->second->GetWidth(), texture->second->GetHeight(), texture->second->GetChannels()};
+    }
+
 } // namespace nabla2d
 
 // くコ:彡

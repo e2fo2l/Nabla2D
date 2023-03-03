@@ -47,6 +47,13 @@ namespace nabla2d
             LINEAR_MIPMAP_LINEAR
         } TextureFilter;
 
+        typedef struct
+        {
+            int width;
+            int height;
+            int channels;
+        } TextureInfo;
+
         virtual ~Renderer() = default;
 
         static Renderer *Create(const std::string &aTitle, const std::pair<int, int> &aSize);
@@ -66,6 +73,7 @@ namespace nabla2d
         virtual TextureHandle LoadTexture(const std::string &aPath, TextureFilter aFilter) = 0;
         virtual void DeleteTexture(TextureHandle aHandle) = 0;
         virtual void UseTexture(TextureHandle aHandle) = 0;
+        virtual TextureInfo GetTextureInfo(TextureHandle aHandle) = 0;
     };
 } // namespace nabla2d
 
