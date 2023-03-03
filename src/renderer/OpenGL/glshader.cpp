@@ -96,6 +96,8 @@ namespace nabla2d
 
         mModelViewProjectionLocation = glGetUniformLocation(mProgram, "u_ModelViewProjectionMatrix");
         mTextureLocation = glGetUniformLocation(mProgram, "u_Texture");
+
+        mAtlasInfoLocation = glGetUniformLocation(mProgram, "u_AtlasInfo");
     }
 
     GLShader::~GLShader()
@@ -116,6 +118,11 @@ namespace nabla2d
     GLint GLShader::GetTextureLocation() const
     {
         return mTextureLocation;
+    }
+
+    GLint GLShader::GetAtlasInfoLocation() const
+    {
+        return mAtlasInfoLocation;
     }
 
 } // namespace nabla2d

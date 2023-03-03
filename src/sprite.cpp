@@ -25,105 +25,65 @@
 namespace nabla2d
 {
     const std::vector<std::pair<glm::vec3, glm::vec2>> kDefaultSquare = {
-        {{-0.5F, -0.5F, 0.0F}, {0.0, 0.0}},
-        {{-0.5F, 0.5F, 0.0F}, {0.0, 1.0}},
-        {{0.5F, -0.5F, 0.0F}, {1.0, 0.0}},
-        {{-0.5F, 0.5F, 0.0F}, {0.0, 1.0}},
-        {{0.5F, 0.5F, 0.0F}, {1.0, 1.0}},
-        {{0.5F, -0.5F, 0.0F}, {1.0, 0.0}}};
+        {{-0.5F, -0.5F, 0.0F}, {0.0, 1.0}},
+        {{-0.5F, 0.5F, 0.0F}, {0.0, 0.0}},
+        {{0.5F, -0.5F, 0.0F}, {1.0, 1.0}},
+        {{-0.5F, 0.5F, 0.0F}, {0.0, 0.0}},
+        {{0.5F, 0.5F, 0.0F}, {1.0, 0.0}},
+        {{0.5F, -0.5F, 0.0F}, {1.0, 1.0}}};
 
     Sprite::Sprite(Renderer *mRenderer,
                    const std::string &aPath,
-                   const glm::ivec2 &aSubspriteCount,
                    const glm::vec2 &aSize,
                    Renderer::TextureFilter aFilter) : mPath(aPath),
-                                                      mSubspriteCount(aSubspriteCount),
                                                       mSize(aSize),
-                                                      mFilter(aFilter),
-                                                      mTexture(mRenderer->LoadTexture(mPath, mFilter))
+                                                      mFilter(aFilter)
     {
-        if (mSubspriteCount.x <= 0 || mSubspriteCount.y <= 0)
-        {
-            Logger::error("Sprite::Sprite: Subsprite count must be greater than 0 ({},{})", mSubspriteCount.x, mSubspriteCount.y);
-            throw std::runtime_error("Sprite::Sprite: Subsprite count must be greater than 0");
-        }
+        mTexture = mRenderer->LoadTexture(mPath, mFilter);
+        mTextureInfo = mRenderer->GetTextureInfo(mTexture);
 
-        const float ratio = (float)mSubspriteCount.x / (float)mSubspriteCount.y;
-        auto baseSquare = kDefaultSquare;
+        const float ratio = (float)mTextureInfo.width / (float)mTextureInfo.height;
+        auto square = kDefaultSquare;
 
         if (ratio > 1.0F)
         {
-            for (auto &v : baseSquare)
-            {
-                v.first.x *= ratio;
-            }
-        }
-        else
-        {
-            for (auto &v : baseSquare)
+            for (auto &v : square)
             {
                 v.first.y /= ratio;
             }
         }
-        for (auto &v : baseSquare)
+        else
+        {
+            for (auto &v : square)
+            {
+                v.first.x *= ratio;
+            }
+        }
+
+        for (auto &v : square)
         {
             v.first.x *= mSize.x;
             v.first.y *= mSize.y;
         }
 
-        for (int j = mSubspriteCount.y - 1; j >= 0; j--)
-        {
-            for (int i = 0; i < mSubspriteCount.x; i++)
-            {
-                const glm::vec4 minMaxUV = {
-                    (float)i / (float)mSubspriteCount.x,
-                    (float)(i + 1) / (float)mSubspriteCount.x,
-                    (float)j / (float)mSubspriteCount.y,
-                    (float)(j + 1) / (float)mSubspriteCount.y,
-                };
-
-                auto square = baseSquare;
-
-                square[0].second = {minMaxUV.x, minMaxUV.z};
-                square[1].second = {minMaxUV.x, minMaxUV.w};
-                square[2].second = {minMaxUV.y, minMaxUV.z};
-                square[3].second = {minMaxUV.x, minMaxUV.w};
-                square[4].second = {minMaxUV.y, minMaxUV.w};
-                square[5].second = {minMaxUV.y, minMaxUV.z};
-
-                mSubsprites.push_back(mRenderer->LoadData(square));
-            }
-        }
-    }
-
-    Sprite::~Sprite()
-    {
-        mSubsprites.clear();
+        mSpriteData = mRenderer->LoadData(square);
     }
 
     void Sprite::Clear(Renderer *mRenderer)
     {
-        for (auto &e : mSubsprites)
-        {
-            mRenderer->DeleteData(e);
-        }
+        mRenderer->DeleteData(mSpriteData);
         mRenderer->DeleteTexture(mTexture);
     }
 
     void Sprite::Draw(Renderer *mRenderer, Camera &mCamera, const glm::mat4 &aParentTransform)
     {
         mRenderer->UseTexture(mTexture);
-        mRenderer->DrawData(mSubsprites[mCurrentSubsprite], mCamera, aParentTransform);
+        mRenderer->DrawData(mSpriteData, mCamera, aParentTransform, mAtlasInfo);
     }
 
     const std::string &Sprite::GetPath() const
     {
         return mPath;
-    }
-
-    const glm::ivec2 &Sprite::GetSubspriteCount() const
-    {
-        return mSubspriteCount;
     }
 
     const glm::vec2 &Sprite::GetSize() const
@@ -136,29 +96,14 @@ namespace nabla2d
         return mFilter;
     }
 
-    int Sprite::GetSubsprite() const
+    const Renderer::TextureInfo &Sprite::GetTextureInfo() const
     {
-        return mCurrentSubsprite;
+        return mTextureInfo;
     }
 
-    glm::ivec2 Sprite::GetSubsprite2D() const
+    void Sprite::SetAtlasInfo(const glm::vec4 &aAtlasInfo)
     {
-        return {mCurrentSubsprite % mSubspriteCount.x, mCurrentSubsprite / mSubspriteCount.x};
-    }
-
-    void Sprite::SetSubsprite(const glm::ivec2 &aSubsprite)
-    {
-        SetSubsprite(aSubsprite.x + aSubsprite.y * mSubspriteCount.x);
-    }
-
-    void Sprite::SetSubsprite(int aSubsprite)
-    {
-        if (aSubsprite < 0 || aSubsprite >= mSubspriteCount.x * mSubspriteCount.y)
-        {
-            Logger::warn("Sprite::SetSubsprite: Subsprite out of range ({})", aSubsprite);
-            return;
-        }
-        mCurrentSubsprite = aSubsprite;
+        mAtlasInfo = aAtlasInfo;
     }
 
 } // namespace nabla2d

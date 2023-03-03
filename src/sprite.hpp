@@ -32,32 +32,29 @@ namespace nabla2d
     class Sprite
     {
     public:
-        Sprite(Renderer *mRenderer, const std::string &aPath, const glm::ivec2 &aSubspriteCount = {1, 1}, const glm::vec2 &aSize = {1.0F, 1.0F}, Renderer::TextureFilter aFilter = Renderer::TextureFilter::LINEAR);
-        ~Sprite();
+        Sprite(Renderer *mRenderer, const std::string &aPath, const glm::vec2 &aSize, Renderer::TextureFilter aFilter = Renderer::TextureFilter::LINEAR);
+        ~Sprite() = default;
         void Clear(Renderer *mRenderer);
 
         void Draw(Renderer *mRenderer, Camera &mCamera, const glm::mat4 &aParentTransform);
 
         const std::string &GetPath() const;
-        const glm::ivec2 &GetSubspriteCount() const;
         const glm::vec2 &GetSize() const;
         const Renderer::TextureFilter &GetFilter() const;
+        const Renderer::TextureInfo &GetTextureInfo() const;
 
-        int GetSubsprite() const;
-        glm::ivec2 GetSubsprite2D() const;
-
-        void SetSubsprite(const glm::ivec2 &aSubsprite);
-        void SetSubsprite(int aSubsprite);
+        const glm::vec4 &GetAtlasInfo() const;
+        void SetAtlasInfo(const glm::vec4 &aAtlasInfo);
 
     private:
         std::string mPath;
-        glm::ivec2 mSubspriteCount;
         glm::vec2 mSize;
         Renderer::TextureFilter mFilter;
+        Renderer::TextureInfo mTextureInfo;
 
-        int mCurrentSubsprite{0};
         Renderer::TextureHandle mTexture;
-        std::vector<Renderer::DataHandle> mSubsprites;
+        Renderer::DataHandle mSpriteData{0};
+        glm::vec4 mAtlasInfo{0.0F, 0.0F, 1.0F, 1.0F};
     };
 } // namespace nabla2d
 

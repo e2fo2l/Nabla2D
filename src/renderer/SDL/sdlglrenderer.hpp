@@ -48,7 +48,7 @@ namespace nabla2d
 
         DataHandle LoadData(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData) override;
         void DeleteData(DataHandle aHandle) override;
-        void DrawData(DataHandle aHandle, const Camera &aCamera, const glm::mat4 &aTransform) override;
+        void DrawData(DataHandle aHandle, const Camera &aCamera, const glm::mat4 &aTransform, const glm::vec4 &aAtlasInfo) override;
 
         ShaderHandle LoadShader(const std::string &aVertexPath, const std::string &aFragmentPath) override;
         void DeleteShader(ShaderHandle aHandle) override;

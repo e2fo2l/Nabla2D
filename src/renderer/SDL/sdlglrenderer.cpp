@@ -158,7 +158,7 @@ namespace nabla2d
         }
     }
 
-    void SDLGLRenderer::DrawData(DataHandle aHandle, const Camera &aCamera, const glm::mat4 &aTransform)
+    void SDLGLRenderer::DrawData(DataHandle aHandle, const Camera &aCamera, const glm::mat4 &aTransform, const glm::vec4 &aAtlasInfo)
     {
         auto data = mData.find(aHandle);
         if (data == mData.end())
@@ -193,6 +193,8 @@ namespace nabla2d
                 glActiveTexture(GL_TEXTURE0);
                 glBindTexture(GL_TEXTURE_2D, mCurrentTexture->GetTexture());
                 glUniform1i(mCurrentShader->GetTextureLocation(), 0);
+
+                glUniform4fv(mCurrentShader->GetAtlasInfoLocation(), 1, glm::value_ptr(aAtlasInfo));
             }
         }
 

@@ -47,17 +47,19 @@ namespace nabla2d
                                             R"(
         #version 330 core
         uniform sampler2D u_Texture;
+        uniform vec4 u_AtlasInfo;
         in vec2 v_TexCoord;
         out vec4 FragColor;
         void main()
         {
-            FragColor = texture(u_Texture, v_TexCoord);
+            vec2 texCoord = v_TexCoord * u_AtlasInfo.zw + u_AtlasInfo.xy;
+            texCoord.y = 1.0 - texCoord.y;
+            FragColor = texture(u_Texture, texCoord);
         }
         )");
 
         mTestSprite = std::shared_ptr<Sprite>(new Sprite(mRenderer.get(),
                                                          "assets/logo.png",
-                                                         {2, 2},
                                                          {1.0F, 1.0F},
                                                          Renderer::NEAREST));
 
@@ -95,7 +97,13 @@ namespace nabla2d
             mCamera.SetPosition({5.0F * std::cos(totalDelta), 0.0F, 5.0F * std::sin(totalDelta)});
             mCamera.LookAt({0.0F, 0.0F, 0.0F});
 
-            mTestSprite->SetSubsprite(std::floor(std::fmod(totalDelta / 2.0F, 4.0F)));
+            const static std::array<glm::vec4, 4> spriteAtlas{
+                {glm::vec4(0.0F, 0.0F, 0.5F, 0.5F),
+                 glm::vec4(0.5F, 0.0F, 0.5F, 0.5F),
+                 glm::vec4(0.0F, 0.5F, 0.5F, 0.5F),
+                 glm::vec4(0.5F, 0.5F, 0.5F, 0.5F)}};
+
+            mTestSprite->SetAtlasInfo(spriteAtlas.at((int)std::floor(std::fmod(totalDelta / 2.0F, 4.0F))));
 
             mRenderer->UseShader(mTestShader);
             mTestSprite->Draw(mRenderer.get(), mCamera, glm::mat4(1.0F));
