@@ -6,7 +6,7 @@
   <br>
 </h1>
 
-<h4 align="center">(WIP) Cross-platform modern C++ game engine with a focus on 2D.</h4>
+<h4 align="center">(WIP) Cross-platform modern C++ game engine with a focus on (but not limited to!) 2D.</h4>
 
 <p align="center">
 <img src="https://img.shields.io/github/license/e2fo2l/Nabla2D">
