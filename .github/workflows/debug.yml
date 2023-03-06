@@ -94,12 +94,12 @@ jobs:
       run: |
         cd build
         cmake --build . --config $BUILD_TYPE
-    
+
     - name: Archive build
       run: |
         cd build/bin
         tar -cvzf ../../debug.tar.gz *
-    
+
     - uses: actions/upload-artifact@v3
       with:
         name: debug.tar.gz
