@@ -1,0 +1,23 @@
+var NAVTREEINDEX0 =
+{
+"annotated.html":[5,0],
+"camera_8hpp_source.html":[6,0,0,0],
+"classes.html":[5,1],
+"classnabla2d_1_1Camera.html":[5,0,0,0],
+"classnabla2d_1_1Game.html":[5,0,0,1],
+"classnabla2d_1_1Logger.html":[5,0,0,2],
+"classnabla2d_1_1Sprite.html":[5,0,0,3],
+"dir_68267d1309a1af8e8297ef4c3efbcdba.html":[6,0,0],
+"files.html":[6,0],
+"game_8hpp_source.html":[6,0,0,1],
+"index.html":[],
+"index.html#autotoc_md0":[0],
+"index.html#autotoc_md1":[1],
+"index.html#autotoc_md2":[2],
+"index.html#autotoc_md3":[3],
+"index.html#autotoc_md4":[4],
+"logger_8hpp_source.html":[6,0,0,2],
+"pages.html":[],
+"sprite_8hpp_source.html":[6,0,0,3],
+"structnabla2d_1_1Camera_1_1ProjectionSettings.html":[5,0,0,0,0]
+};

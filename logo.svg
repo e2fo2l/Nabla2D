@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="64"
+   height="64"
+   viewBox="0 0 16.933329 16.933328"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09, custom)"
+   sodipodi:docname="Logo-Nabla2D.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="4"
+     inkscape:cx="-160.875"
+     inkscape:cy="27.25"
+     inkscape:window-width="3440"
+     inkscape:window-height="1403"
+     inkscape:window-x="1024"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g993" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g993"
+       transform="matrix(1.0920285,0,0,1.0920285,0.55159302,-0.2181617)">
+      <g
+         id="g1168">
+        <g
+           id="g1051">
+          <path
+             id="path411"
+             style="fill:#000000;stroke-width:0.264583"
+             inkscape:transform-center-y="1.4997099"
+             sodipodi:type="inkscape:offset"
+             inkscape:radius="1.1191571"
+             inkscape:original="M 2.0527344 3.2988281 L 7.2480469 12.296875 L 12.443359 3.2988281 L 2.0527344 3.2988281 z "
+             d="m 2.0527344,2.1796875 a 1.119269,1.119269 0 0 0 -0.96875,1.6796875 l 5.1953125,8.998047 a 1.119269,1.119269 0 0 0 1.9375,0 L 13.412109,3.859375 a 1.119269,1.119269 0 0 0 -0.96875,-1.6796875 z"
+             transform="translate(0,2.1166667)" />
+          <path
+             id="path533"
+             style="fill:#ffffff;stroke-width:0.264583"
+             inkscape:transform-center-y="1.098364"
+             sodipodi:type="inkscape:offset"
+             inkscape:radius="0.64602059"
+             inkscape:original="M 10.101562 6.2695312 L 15.072266 14.880859 L 20.044922 6.2695312 L 10.101562 6.2695312 z "
+             d="m 10.101562,5.6230469 a 0.64608519,0.64608519 0 0 0 -0.5585932,0.96875 l 4.9707032,8.6113281 a 0.64608519,0.64608519 0 0 0 1.117187,0 l 4.972657,-8.6113281 a 0.64608519,0.64608519 0 0 0 -0.558594,-0.96875 z"
+             transform="matrix(0.76534587,0,0,0.76534587,-4.2881971,1.3357011)" />
+        </g>
+      </g>
+      <g
+         id="g954"
+         transform="translate(-15.064734,-21.534956)">
+        <rect
+           style="fill:#000000;stroke-width:0.284979"
+           id="rect888"
+           width="9.4330921"
+           height="1.1164148"
+           x="17.145193"
+           y="23.230526"
+           ry="0.55820739" />
+        <g
+           id="g948">
+          <rect
+             style="fill:#000000;stroke-width:0.264583"
+             id="rect890-7"
+             width="2.8847234"
+             height="0.81190521"
+             x="33.480541"
+             y="-2.7351243"
+             ry="0.4059526"
+             transform="rotate(45)" />
+          <rect
+             style="fill:#000000;stroke-width:0.264583"
+             id="rect890-7-5"
+             width="2.8847234"
+             height="0.81190521"
+             x="-0.16180894"
+             y="-36.377472"
+             ry="0.4059526"
+             transform="matrix(0.70710678,-0.70710678,-0.70710678,-0.70710678,0,0)" />
+        </g>
+      </g>
+      <text
+         xml:space="preserve"
+         style="font-size:4.016px;font-family:'Awe Mono Gold';-inkscape-font-specification:'Awe Mono Gold';fill:#338000;stroke-width:0.154881"
+         x="9.5957012"
+         y="15.17783"
+         id="text1062"><tspan
+           sodipodi:role="line"
+           id="tspan1060"
+           style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:4.016px;font-family:FreeSans;-inkscape-font-specification:'FreeSans Semi-Bold';fill:#338000;stroke-width:0.154881"
+           x="9.5957012"
+           y="15.17783">2D</tspan></text>
+    </g>
+  </g>
+</svg>
