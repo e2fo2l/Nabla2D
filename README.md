@@ -20,6 +20,7 @@
 Nabla2D is licensed under the [GNU General Public License v3.0](https://www.gnu.org/licenses/).
 
 # Features
+**Note:** This is a work in progress, you can check the [Projects page](https://github.com/users/e2fo2l/projects/1) to see what's left to implement.
 * Cross-platform
 * 2D/3D rendering
 * In-engine editor
