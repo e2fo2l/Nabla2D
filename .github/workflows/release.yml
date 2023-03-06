@@ -98,12 +98,12 @@ jobs:
       run: |
         cd build
         cmake --build . --config "${{ env.BUILD_TYPE }}"
-    
+
     - name: Archive build
       run: |
         cd build/bin
         tar -cvzf $PROJECT_NAME.ubuntu-x64.tar.gz *
-    
+
     - uses: actions/upload-artifact@v3
       with:
         name: ${{ env.PROJECT_NAME }}.ubuntu-x64.tar.gz
@@ -155,7 +155,7 @@ jobs:
         cd build
         cmake --build . --config "${{ env.BUILD_TYPE }}"
         move bin/Release.zip bin/${{ env.PROJECT_NAME }}.windows-x86.zip
-    
+
     - uses: actions/upload-artifact@v3
       with:
         name: ${{ env.PROJECT_NAME }}.windows-x86.zip
@@ -175,7 +175,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: ${{ env.PROJECT_NAME }}.windows-x86.zip
-    
+
     - name: List files
       run: |
         ls -lah
