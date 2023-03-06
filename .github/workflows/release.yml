@@ -102,7 +102,7 @@ jobs:
     - name: Archive build
       run: |
         cd build/bin
-        tar -cvzf $PROJECT_NAME.ubuntu-x64.tar.gz *
+        a=$PROJECT_NAME.ubuntu-x64.tar.gz; touch a; tar --exclude $a -cvzf $a .
 
     - uses: actions/upload-artifact@v3
       with:
