@@ -154,7 +154,8 @@ jobs:
       run: |
         cd build
         cmake --build . --config "${{ env.BUILD_TYPE }}"
-        move bin/Release.zip bin/${{ env.PROJECT_NAME }}.windows-x86.zip
+        cd bin
+        7z a -tzip ${{ env.PROJECT_NAME }}.windows-x86.zip *
 
     - uses: actions/upload-artifact@v3
       with:
