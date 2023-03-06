@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="http://github.com/e2fo2l/Nabla2D"><img src="assets/logo.svg" alt="Markdownify" width="200"></a>
+  <a href="http://github.com/e2fo2l/Nabla2D"><img src="https://raw.githubusercontent.com/e2fo2l/Nabla2D/master/assets/logo.svg" alt="Nabla2D" width="200"></a>
   <br>
   Nabla2D
   <br>
