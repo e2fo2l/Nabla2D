@@ -86,6 +86,14 @@ namespace nabla2d
         mChanged = true;
     }
 
+    void Transform::LookAt(const glm::vec3 &aTarget)
+    {
+        const glm::vec3 direction = glm::normalize(aTarget - mPosition);
+        mRotation.x = glm::degrees(glm::asin(-direction.y));
+        mRotation.y = 180.0F + glm::degrees(glm::atan(direction.x, direction.z));
+        mRotation.z = 0.0F;
+    }
+
     const glm::mat4 &Transform::GetMatrix()
     {
         if (mChanged)
@@ -98,9 +106,9 @@ namespace nabla2d
     void Transform::UpdateMatrix()
     {
         mMatrix = glm::translate(glm::mat4(1.0F), mPosition);
-        mMatrix = glm::rotate(mMatrix, mRotation.x, glm::vec3(1.0F, 0.0F, 0.0F));
-        mMatrix = glm::rotate(mMatrix, mRotation.y, glm::vec3(0.0F, 1.0F, 0.0F));
-        mMatrix = glm::rotate(mMatrix, mRotation.z, glm::vec3(0.0F, 0.0F, 1.0F));
+        mMatrix = glm::rotate(mMatrix, glm::radians(mRotation.x), glm::vec3(1.0F, 0.0F, 0.0F));
+        mMatrix = glm::rotate(mMatrix, glm::radians(mRotation.y), glm::vec3(0.0F, 1.0F, 0.0F));
+        mMatrix = glm::rotate(mMatrix, glm::radians(mRotation.z), glm::vec3(0.0F, 0.0F, 1.0F));
         mMatrix = glm::scale(mMatrix, mScale);
         mChanged = false;
     }

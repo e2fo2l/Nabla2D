@@ -47,6 +47,7 @@ namespace nabla2d
         void Translate(const glm::vec3 &aTranslation);
         void Rotate(float aAngle, const glm::vec3 &aAxis);
         void Scale(const glm::vec3 &aScale);
+        void LookAt(const glm::vec3 &aTarget);
 
         const glm::mat4 &GetMatrix();
 
@@ -59,7 +60,7 @@ namespace nabla2d
 
         glm::mat4 mMatrix;
 
-        bool mChanged;
+        bool mChanged{true};
     };
 } // namespace nabla2d
 
