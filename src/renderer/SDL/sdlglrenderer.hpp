@@ -43,6 +43,10 @@ namespace nabla2d
         SDLGLRenderer(const std::string &aTitle, const std::pair<int, int> &aSize);
         ~SDLGLRenderer() override;
 
+        int GetWidth() const override;
+        int GetHeight() const override;
+        const std::string &GetRendererInfo() const override;
+
         bool PollWindowEvents() override;
         void SetMouseCapture(bool aCapture) override;
 
@@ -65,6 +69,7 @@ namespace nabla2d
     private:
         int mWidth;
         int mHeight;
+        std::string mRendererInfo;
 
         std::shared_ptr<GLShader> mCurrentShader;
         std::shared_ptr<GLTexture> mCurrentTexture;

@@ -36,7 +36,11 @@
 namespace nabla2d
 {
 
-    SDLGLRenderer::SDLGLRenderer(const std::string &aTitle, const std::pair<int, int> &aSize) : mWidth(aSize.first), mHeight(aSize.second), mCurrentShader(nullptr), mCurrentTexture(nullptr)
+    SDLGLRenderer::SDLGLRenderer(const std::string &aTitle, const std::pair<int, int> &aSize) : mWidth(aSize.first),
+                                                                                                mHeight(aSize.second),
+                                                                                                mRendererInfo("SDL2 w/ OpenGL"),
+                                                                                                mCurrentShader(nullptr),
+                                                                                                mCurrentTexture(nullptr)
     {
         if (SDL_Init(SDL_INIT_VIDEO) < 0)
         {
@@ -113,6 +117,21 @@ namespace nabla2d
         SDL_GL_DeleteContext(mGLContext);
         SDL_DestroyWindow(mWindow);
         SDL_Quit();
+    }
+
+    int SDLGLRenderer::GetWidth() const
+    {
+        return mWidth;
+    }
+
+    int SDLGLRenderer::GetHeight() const
+    {
+        return mHeight;
+    }
+
+    const std::string &SDLGLRenderer::GetRendererInfo() const
+    {
+        return mRendererInfo;
     }
 
     void SDLGLRenderer::UpdateInput(const uint8_t *aKeys, float aMouseScroll)

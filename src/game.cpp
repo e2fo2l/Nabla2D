@@ -22,7 +22,9 @@
 
 #include <cmath>
 #include <chrono>
+#include <numeric>
 #include <imgui.h>
+#include <fmt/format.h>
 #include <glm/glm.hpp>
 
 #include "logger.hpp"
@@ -34,6 +36,8 @@ namespace nabla2d
     {
         mCamera = Camera({0.0F, 0.0F, 5.0F}, {0.0F, 0.0F, 0.0F}, {45.0F, 16.0F / 9.0F, 0.1F, 100.0F});
         mRenderer = std::shared_ptr<Renderer>(Renderer::Create("Nabla2D", {1600, 900}));
+
+        mFPSs.fill(0.0F);
 
         mTestShader = mRenderer->LoadShader(R"(
         #version 330 core
@@ -105,6 +109,10 @@ namespace nabla2d
             mDeltaTime = std::chrono::duration_cast<std::chrono::duration<float>>(currentTime - lastTime).count();
             lastTime = currentTime;
 
+            std::copy(mFPSs.begin() + 1, mFPSs.end(), mFPSs.begin());
+            mFPSs.back() = 1.0F / mDeltaTime;
+            mAverageFPS = std::accumulate(mFPSs.begin(), mFPSs.end(), 0.0F) / static_cast<float>(mFPSs.size());
+
             mCamera.Update();
 
             mRenderer->Clear();
@@ -153,13 +161,90 @@ namespace nabla2d
             mRenderer->UseShader(mTestShader);
             mTestSprite->Draw(mRenderer.get(), mCamera, mTestTransform.GetMatrix());
 
-            // ImGui stuff
-            ImGui::ShowDemoWindow();
+            // --------------- EDITOR ---------------
+            DrawEditorWindows();
 
             mRenderer->Render();
             Input::Update();
         }
         Logger::info("Game ended");
+    }
+
+    // TODO : Move these methods to a separate Editor class
+
+    void ImGuiBeginCornerWindow(int aCorner = 0)
+    {
+        // https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp#L7310=
+        const float PAD = 10.0f;
+        const ImGuiViewport *viewport = ImGui::GetMainViewport();
+        ImVec2 work_pos = viewport->WorkPos;
+        ImVec2 work_size = viewport->WorkSize;
+        ImVec2 window_pos, window_pos_pivot;
+        window_pos.x = (aCorner & 1) ? (work_pos.x + work_size.x - PAD) : (work_pos.x + PAD);
+        window_pos.y = (aCorner & 2) ? (work_pos.y + work_size.y - PAD) : (work_pos.y + PAD);
+        window_pos_pivot.x = (aCorner & 1) ? 1.0f : 0.0f;
+        window_pos_pivot.y = (aCorner & 2) ? 1.0f : 0.0f;
+        ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
+                                        ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing |
+                                        ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove;
+        ImGui::SetNextWindowBgAlpha(0.6f);
+        ImGui::Begin(
+            fmt::format("##CornerWindow{}", aCorner).c_str(),
+            nullptr, window_flags);
+    }
+
+    void ImGuiVec3(const std::string &aTitle,
+                   glm::vec3 &aVec,
+                   float aSpeed = 0.02F,
+                   const std::string &aXLabel = "x",
+                   const std::string &aYLabel = "y",
+                   const std::string &aZLabel = "z")
+    {
+        ImGui::Text("%s", aTitle.c_str());
+        ImGui::PushItemWidth((0.65f * ImGui::GetWindowSize().x) / 3.0f);
+        ImGui::DragFloat(fmt::format("{}##{}X", aXLabel, aTitle).c_str(), &aVec.x, aSpeed);
+        ImGui::SameLine();
+        ImGui::DragFloat(fmt::format("{}##{}Y", aYLabel, aTitle).c_str(), &aVec.y, aSpeed);
+        ImGui::SameLine();
+        ImGui::DragFloat(fmt::format("{}##{}Z", aZLabel, aTitle).c_str(), &aVec.z, aSpeed);
+        ImGui::PopItemWidth();
+    }
+
+    void Game::DrawEditorWindows()
+    {
+        // --------------- General Info ---------------
+        ImGuiBeginCornerWindow(0);
+        ImGui::Text("Nabla2D");
+        ImGui::Text("Efflam - 2023");
+        ImGui::Text("Built on %s %s", __DATE__, __TIME__);
+        ImGui::Text("Renderer: %s", mRenderer->GetRendererInfo().c_str());
+        ImGui::Text("Resolution: %dx%d", mRenderer->GetWidth(), mRenderer->GetHeight());
+        ImGui::Text("FPS: %d", static_cast<int>(std::round(mAverageFPS)));
+        ImGui::PlotLines("", mFPSs.data(), mFPSs.size(), 0, nullptr, 0);
+        ImGui::End();
+
+        // --------------- Camera Info ---------------
+        ImGui::Begin("Camera");
+        glm::vec3 cameraPos = mCamera.GetPosition();
+        ImGuiVec3("Position", cameraPos, 0.1F);
+        if (cameraPos != mCamera.GetPosition())
+        {
+            mCamera.SetPosition(cameraPos);
+        }
+        glm::vec3 cameraRot = mCamera.GetRotation();
+        ImGuiVec3("Rotation", cameraRot, 0.1F);
+        if (cameraRot != mCamera.GetRotation())
+        {
+            mCamera.SetRotation(cameraRot);
+        }
+        static glm::vec3 cameraTarget = {0.0F, 0.0F, 0.0F};
+        ImGuiVec3("Target", cameraTarget, 0.1F);
+        if (ImGui::Button("Set target", ImVec2(-1, 0)))
+        {
+            mCamera.LookAt(cameraTarget);
+        }
+        ImGui::End();
     }
 } // namespace nabla2d
 

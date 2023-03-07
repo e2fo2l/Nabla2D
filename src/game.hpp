@@ -21,6 +21,7 @@
 #ifndef NABLA2D_GAME_HPP
 #define NABLA2D_GAME_HPP
 
+#include <array>
 #include <memory>
 
 #include "camera.hpp"
@@ -53,6 +54,11 @@ namespace nabla2d
         Renderer::ShaderHandle mTestShader;
         std::shared_ptr<Sprite> mTestSprite;
         Transform mTestTransform;
+
+        std::array<float, 120> mFPSs;
+        float mAverageFPS{0.0F};
+
+        void DrawEditorWindows();
     };
 } // namespace nabla2d
 
