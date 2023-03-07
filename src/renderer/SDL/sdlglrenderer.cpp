@@ -115,7 +115,7 @@ namespace nabla2d
     void SDLGLRenderer::Clear()
     {
         glViewport(0, 0, mWidth, mHeight);
-        glClearColor(1.0F, 0.0F, 0.0F, 1.0F);
+        glClearColor(0.5F, 0.5F, 0.5F, 1.0F);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
