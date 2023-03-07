@@ -11,6 +11,7 @@ set(SOURCES
   src/main.cpp
   src/logger.cpp
   src/game.cpp
+  src/transform.cpp
   src/camera.cpp
   src/sprite.cpp
   src/renderer/renderer.cpp
