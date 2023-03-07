@@ -20,6 +20,7 @@
 
 #include "transform.hpp"
 
+#include <cmath>
 #include <glm/gtx/transform.hpp>
 
 namespace nabla2d
@@ -58,7 +59,9 @@ namespace nabla2d
 
     void Transform::SetRotation(const glm::vec3 &aRotation)
     {
-        mRotation = aRotation;
+        mRotation = {std::fmod(aRotation.x, 360.0F),
+                     std::fmod(aRotation.y, 360.0F),
+                     std::fmod(aRotation.z, 360.0F)};
         mChanged = true;
     }
 
