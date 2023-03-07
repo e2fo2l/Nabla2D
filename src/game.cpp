@@ -104,9 +104,11 @@ namespace nabla2d
                  glm::vec4(0.5F, 0.5F, 0.5F, 0.5F)}};
 
             mTestSprite->SetAtlasInfo(spriteAtlas.at((int)std::floor(std::fmod(totalDelta / 2.0F, 4.0F))));
+            mTestTransform.SetPosition({0.0F, std::sin(totalDelta), 0.0F});
+            mTestTransform.SetScale({1.0F, std::cos(totalDelta), 1.0F});
 
             mRenderer->UseShader(mTestShader);
-            mTestSprite->Draw(mRenderer.get(), mCamera, glm::mat4(1.0F));
+            mTestSprite->Draw(mRenderer.get(), mCamera, mTestTransform.GetMatrix());
 
             mRenderer->Render();
         }

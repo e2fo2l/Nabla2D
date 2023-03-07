@@ -25,6 +25,7 @@
 
 #include "camera.hpp"
 #include "sprite.hpp"
+#include "transform.hpp"
 #include "renderer/renderer.hpp"
 
 namespace nabla2d
@@ -46,6 +47,7 @@ namespace nabla2d
         Camera mCamera;
         Renderer::ShaderHandle mTestShader;
         std::shared_ptr<Sprite> mTestSprite;
+        Transform mTestTransform;
     };
 } // namespace nabla2d
 
