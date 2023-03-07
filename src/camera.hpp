@@ -22,6 +22,7 @@
 #define NABLA2D_CAMERA_HPP
 
 #include <glm/glm.hpp>
+#include "transform.hpp"
 
 namespace nabla2d
 {
@@ -48,6 +49,10 @@ namespace nabla2d
         void SetPosition(const glm::vec3 &aPosition);
         void SetRotation(const glm::vec3 &aRotation);
 
+        void Translate(const glm::vec3 &aTranslation);
+        void Rotate(float aAngle, const glm::vec3 &aAxis);
+        void LookAt(const glm::vec3 &aPosition);
+
         const ProjectionSettings &GetProjectionSettings() const;
         void SetProjectionSettings(const ProjectionSettings &aSettings);
 
@@ -55,21 +60,16 @@ namespace nabla2d
         const glm::mat4 &GetProjectionMatrix() const;
         const glm::mat4 &GetProjectionViewMatrix() const;
 
-        void Translate(const glm::vec3 &aTranslation);
-        void Rotate(const glm::vec3 &aRotation);
-        void LookAt(const glm::vec3 &aPosition);
-
         void Update();
 
     private:
-        glm::vec3 mPosition;
-        glm::vec3 mRotation;
+        Transform mTransform;
+        Transform mNextTransform;
+        bool mTransformChanged{true};
 
         ProjectionSettings mProjectionSettings;
-
-        glm::vec3 mNextPosition;
-        glm::vec3 mNextRotation;
         ProjectionSettings mNextProjectionSettings;
+        bool mProjectionSettingsChanged{true};
 
         glm::mat4 mViewMatrix;
         glm::mat4 mProjectionMatrix;

@@ -27,33 +27,55 @@ namespace nabla2d
 {
     Camera::Camera(const glm::vec3 &aPosition,
                    const glm::vec3 &aRotation,
-                   const ProjectionSettings &aSettings) : mPosition(aPosition),
-                                                          mRotation(aRotation),
+                   const ProjectionSettings &aSettings) : mTransform(aPosition, aRotation, {1.0F, 1.0F, 1.0F}),
+                                                          mNextTransform(mTransform),
                                                           mProjectionSettings(aSettings),
-                                                          mNextPosition(aPosition),
-                                                          mNextRotation(aRotation),
-                                                          mNextProjectionSettings(aSettings)
+                                                          mNextProjectionSettings(aSettings),
+                                                          mViewMatrix(1.0F),
+                                                          mProjectionMatrix(1.0F),
+                                                          mProjectionViewMatrix(1.0F)
     {
+        Update();
     }
 
     const glm::vec3 &Camera::GetPosition() const
     {
-        return mPosition;
+        return mTransform.GetPosition();
     }
 
     const glm::vec3 &Camera::GetRotation() const
     {
-        return mRotation;
+        return mTransform.GetRotation();
     }
 
     void Camera::SetPosition(const glm::vec3 &aPosition)
     {
-        mNextPosition = aPosition;
+        mNextTransform.SetPosition(aPosition);
+        mTransformChanged = true;
     }
 
     void Camera::SetRotation(const glm::vec3 &aRotation)
     {
-        mNextRotation = aRotation;
+        mNextTransform.SetRotation(aRotation);
+        mTransformChanged = true;
+    }
+
+    void Camera::Translate(const glm::vec3 &aTranslation)
+    {
+        mNextTransform.Translate(aTranslation);
+        mTransformChanged = true;
+    }
+
+    void Camera::Rotate(float aAngle, const glm::vec3 &aAxis)
+    {
+        mNextTransform.Rotate(aAngle, aAxis);
+        mTransformChanged = true;
+    }
+
+    void Camera::LookAt(const glm::vec3 &aPosition)
+    {
+        mNextTransform.LookAt(aPosition);
+        mTransformChanged = true;
     }
 
     const Camera::ProjectionSettings &Camera::GetProjectionSettings() const
@@ -61,9 +83,10 @@ namespace nabla2d
         return mProjectionSettings;
     }
 
-    void Camera::SetProjectionSettings(const Camera::ProjectionSettings &aSettings)
+    void Camera::SetProjectionSettings(const ProjectionSettings &aSettings)
     {
         mNextProjectionSettings = aSettings;
+        mProjectionSettingsChanged = true;
     }
 
     const glm::mat4 &Camera::GetViewMatrix() const
@@ -81,43 +104,27 @@ namespace nabla2d
         return mProjectionViewMatrix;
     }
 
-    void Camera::Translate(const glm::vec3 &aTranslation)
-    {
-        mNextPosition += aTranslation;
-    }
-
-    void Camera::Rotate(const glm::vec3 &aRotation)
-    {
-        mNextRotation += aRotation;
-    }
-
-    void Camera::LookAt(const glm::vec3 &aPosition)
-    {
-        const glm::vec3 direction = glm::normalize(aPosition - mPosition);
-        mNextRotation.x = glm::degrees(glm::asin(-direction.y));
-        mNextRotation.y = 180.0F + glm::degrees(glm::atan(direction.x, direction.z));
-        mNextRotation.z = 0.0F;
-    }
-
     void Camera::Update()
     {
-        mPosition = mNextPosition;
-        mRotation = mNextRotation;
-        mProjectionSettings = mNextProjectionSettings;
+        if (mTransformChanged)
+        {
+            mTransform = mNextTransform;
+            mViewMatrix = glm::inverse(mTransform.GetMatrix());
+        }
 
-        mViewMatrix = glm::mat4(1.0F);
-        mViewMatrix = glm::translate(mViewMatrix, mPosition);
-        mViewMatrix = glm::rotate(mViewMatrix, glm::radians(mRotation.x), {1.0F, 0.0F, 0.0F});
-        mViewMatrix = glm::rotate(mViewMatrix, glm::radians(mRotation.y), {0.0F, 1.0F, 0.0F});
-        mViewMatrix = glm::rotate(mViewMatrix, glm::radians(mRotation.z), {0.0F, 0.0F, 1.0F});
-        mViewMatrix = glm::inverse(mViewMatrix);
+        if (mProjectionSettingsChanged)
+        {
+            mProjectionSettings = mNextProjectionSettings;
+            mProjectionMatrix = glm::perspective(mProjectionSettings.fov, mProjectionSettings.aspectRatio, mProjectionSettings.near, mProjectionSettings.far);
+        }
 
-        mProjectionMatrix = glm::perspective(glm::radians(mProjectionSettings.fov),
-                                             mProjectionSettings.aspectRatio,
-                                             mProjectionSettings.near,
-                                             mProjectionSettings.far);
+        if (mTransformChanged || mProjectionSettingsChanged)
+        {
+            mProjectionViewMatrix = mProjectionMatrix * mViewMatrix;
+        }
 
-        mProjectionViewMatrix = mProjectionMatrix * mViewMatrix;
+        mTransformChanged = false;
+        mProjectionSettingsChanged = false;
     }
 
 } // namespace nabla2d
