@@ -134,8 +134,11 @@ namespace nabla2d
 
             // --------------- GRID ---------------
 
-            float gridScaleIndex = std::floor(mCamera.GetPosition().z / 20.0F) + 1;
+            auto cameraPos = mCamera.GetPosition();
+            float gridScaleIndex = std::floor(cameraPos.z / 20.0F) + 1;
             mGridTransform.SetScale({40.0F * gridScaleIndex, 40.0F * gridScaleIndex, 1.0F});
+            mGridTransform.SetPosition({std::floor(cameraPos.x / gridScaleIndex) * gridScaleIndex,
+                                        std::floor(cameraPos.y / gridScaleIndex) * gridScaleIndex, -0.01F});
 
             mRenderer->UseShader(mTestShader);
             mRenderer->UseTexture(mGridTexture);
