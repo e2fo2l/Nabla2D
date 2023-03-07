@@ -80,7 +80,10 @@ namespace nabla2d
 
     Game::~Game()
     {
+        mRenderer->DeleteData(mGridData);
+        mRenderer->DeleteTexture(mGridTexture);
         mTestSprite->Clear(mRenderer.get());
+        mRenderer->DeleteShader(mTestShader);
         Logger::info("Game destroyed");
     }
 
