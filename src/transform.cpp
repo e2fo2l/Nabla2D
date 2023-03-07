@@ -97,11 +97,11 @@ namespace nabla2d
 
     void Transform::UpdateMatrix()
     {
-        mMatrix = glm::translate(glm::mat4(1.0F), mPosition) *
-                  glm::rotate(glm::mat4(1.0F), mRotation.x, glm::vec3(1.0F, 0.0F, 0.0F)) *
-                  glm::rotate(glm::mat4(1.0F), mRotation.y, glm::vec3(0.0F, 1.0F, 0.0F)) *
-                  glm::rotate(glm::mat4(1.0F), mRotation.z, glm::vec3(0.0F, 0.0F, 1.0F)) *
-                  glm::scale(glm::mat4(1.0F), mScale);
+        mMatrix = glm::translate(glm::mat4(1.0F), mPosition);
+        mMatrix = glm::rotate(mMatrix, mRotation.x, glm::vec3(1.0F, 0.0F, 0.0F));
+        mMatrix = glm::rotate(mMatrix, mRotation.y, glm::vec3(0.0F, 1.0F, 0.0F));
+        mMatrix = glm::rotate(mMatrix, mRotation.z, glm::vec3(0.0F, 0.0F, 1.0F));
+        mMatrix = glm::scale(mMatrix, mScale);
         mChanged = false;
     }
 
