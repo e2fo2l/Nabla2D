@@ -60,10 +60,20 @@ namespace nabla2d
         }
         )");
 
+        mGridTexture = mRenderer->LoadTexture("assets/grid.png", Renderer::LINEAR_MIPMAP_LINEAR);
+        mGridData = mRenderer->LoadData({{{-0.5F, -0.5F, 0.0F}, {0.0, 40.0}},
+                                         {{-0.5F, 0.5F, 0.0F}, {0.0, 0.0}},
+                                         {{0.5F, -0.5F, 0.0F}, {40.0, 40.0}},
+                                         {{-0.5F, 0.5F, 0.0F}, {0.0, 0.0}},
+                                         {{0.5F, 0.5F, 0.0F}, {40.0, 0.0}},
+                                         {{0.5F, -0.5F, 0.0F}, {40.0, 40.0}}});
+        mGridTransform = Transform({0.0F, 0.0F, -0.01F}, {0.0F, 0.0F, 0.0F}, {40.0F, 40.0F, 40.0F});
+
         mTestSprite = std::shared_ptr<Sprite>(new Sprite(mRenderer.get(),
                                                          "assets/logo.png",
                                                          {1.0F, 1.0F},
                                                          Renderer::NEAREST));
+        mTestTransform = Transform({0.5F, 0.5F, 0.0F}, {0.0F, 0.0F, 0.0F}, {1.0F, 1.0F, 1.0F});
 
         Logger::info("Game created");
     }
@@ -101,9 +111,10 @@ namespace nabla2d
             float scroll = Input::GetMouseScroll();
             if (scroll != 0.0F)
             {
-                if (mCamera.GetPosition().z > 2.0F || scroll < 0.0F)
+                if ((mCamera.GetPosition().z > 2.0F || scroll < 0.0F) &&
+                    (mCamera.GetPosition().z < 80.0F || scroll > 0.0F))
                 {
-                    mCamera.Translate({0.0F, 0.0F, -scroll * 0.3F});
+                    mCamera.Translate({0.0F, 0.0F, -scroll * 0.6F});
                 }
             }
 
@@ -121,6 +132,16 @@ namespace nabla2d
                 mRenderer->SetMouseCapture(false);
             }
 
+            // --------------- GRID ---------------
+
+            float gridScaleIndex = std::floor(mCamera.GetPosition().z / 20.0F) + 1;
+            mGridTransform.SetScale({40.0F * gridScaleIndex, 40.0F * gridScaleIndex, 1.0F});
+
+            mRenderer->UseShader(mTestShader);
+            mRenderer->UseTexture(mGridTexture);
+            mRenderer->DrawData(mGridData, mCamera, mGridTransform.GetMatrix(), {0.0F, 0.0F, 1.0F, 1.0F});
+
+            // --------------- TEST SPRITE ---------------
             mRenderer->UseShader(mTestShader);
             mTestSprite->Draw(mRenderer.get(), mCamera, mTestTransform.GetMatrix());
 

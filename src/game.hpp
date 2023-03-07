@@ -45,6 +45,11 @@ namespace nabla2d
         std::shared_ptr<Renderer> mRenderer;
 
         Camera mCamera;
+
+        Renderer::TextureHandle mGridTexture;
+        Renderer::DataHandle mGridData;
+        Transform mGridTransform;
+
         Renderer::ShaderHandle mTestShader;
         std::shared_ptr<Sprite> mTestSprite;
         Transform mTestTransform;
