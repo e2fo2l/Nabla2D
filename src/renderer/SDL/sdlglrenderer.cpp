@@ -20,11 +20,13 @@
 
 #include "sdlglrenderer.hpp"
 
+#include <array>
 #include <stdexcept>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include "../../logger.hpp"
+#include "../../input.hpp"
 #include "../renderer.hpp"
 
 namespace nabla2d
@@ -92,8 +94,41 @@ namespace nabla2d
         SDL_Quit();
     }
 
+    void SDLGLRenderer::UpdateInput(const uint8_t *aKeys, float aMouseScroll)
+    {
+        std::array<bool, Input::Key::KEY_COUNT> keys;
+        keys.fill(false);
+
+        keys[Input::Key::KEY_UP] = aKeys[SDL_SCANCODE_UP];
+        keys[Input::Key::KEY_DOWN] = aKeys[SDL_SCANCODE_DOWN];
+        keys[Input::Key::KEY_LEFT] = aKeys[SDL_SCANCODE_LEFT];
+        keys[Input::Key::KEY_RIGHT] = aKeys[SDL_SCANCODE_RIGHT];
+        keys[Input::Key::KEY_SPACE] = aKeys[SDL_SCANCODE_SPACE];
+        keys[Input::Key::KEY_ENTER] = aKeys[SDL_SCANCODE_RETURN];
+        keys[Input::Key::KEY_ESCAPE] = aKeys[SDL_SCANCODE_ESCAPE];
+        keys[Input::Key::KEY_BACKSPACE] = aKeys[SDL_SCANCODE_BACKSPACE];
+        keys[Input::Key::KEY_TAB] = aKeys[SDL_SCANCODE_TAB];
+        keys[Input::Key::KEY_LCTRL] = aKeys[SDL_SCANCODE_LCTRL];
+        keys[Input::Key::KEY_LSHIFT] = aKeys[SDL_SCANCODE_LSHIFT];
+        keys[Input::Key::KEY_LALT] = aKeys[SDL_SCANCODE_LALT];
+
+        // Mouse input
+        keys[Input::Key::KEY_MOUSE0] = mMouseButtons[0];
+        keys[Input::Key::KEY_MOUSE1] = mMouseButtons[1];
+        keys[Input::Key::KEY_MOUSE2] = mMouseButtons[2];
+
+        Input::FeedKeys(keys);
+        Input::FeedMouseScroll(aMouseScroll);
+
+        int x, y;
+        SDL_GetMouseState(&x, &y);
+        Input::FeedMousePos({(float)x / mWidth - 0.5F, (float)y / mHeight - 0.5F});
+    }
+
     bool SDLGLRenderer::PollWindowEvents()
     {
+        float mouseScroll = 0.0F;
+
         SDL_Event event;
         while (SDL_PollEvent(&event) != 0)
         {
@@ -108,8 +143,59 @@ namespace nabla2d
                     return false;
                 }
             }
+            if (event.type == SDL_MOUSEBUTTONDOWN)
+            {
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
+                    mMouseButtons[0] = true;
+                }
+                if (event.button.button == SDL_BUTTON_RIGHT)
+                {
+                    mMouseButtons[1] = true;
+                }
+                if (event.button.button == SDL_BUTTON_MIDDLE)
+                {
+                    mMouseButtons[2] = true;
+                }
+            }
+            if (event.type == SDL_MOUSEBUTTONUP)
+            {
+                if (event.button.button == SDL_BUTTON_LEFT)
+                {
+                    mMouseButtons[0] = false;
+                }
+                if (event.button.button == SDL_BUTTON_RIGHT)
+                {
+                    mMouseButtons[1] = false;
+                }
+                if (event.button.button == SDL_BUTTON_MIDDLE)
+                {
+                    mMouseButtons[2] = false;
+                }
+            }
+            if (event.type == SDL_MOUSEWHEEL)
+            {
+                mouseScroll = event.wheel.preciseY;
+            }
         }
+
+        const uint8_t *keys = SDL_GetKeyboardState(nullptr);
+        UpdateInput(keys, mouseScroll);
+
         return true;
+    }
+
+    void SDLGLRenderer::SetMouseCapture(bool aCapture)
+    {
+        if (aCapture)
+        {
+            SDL_SetRelativeMouseMode(SDL_TRUE);
+        }
+        else
+        {
+            SDL_SetRelativeMouseMode(SDL_FALSE);
+        }
+        mMouseCapured = aCapture;
     }
 
     void SDLGLRenderer::Clear()

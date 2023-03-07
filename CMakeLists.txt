@@ -10,6 +10,7 @@ conan_basic_setup()
 set(SOURCES
   src/main.cpp
   src/logger.cpp
+  src/input.cpp
   src/game.cpp
   src/transform.cpp
   src/camera.cpp

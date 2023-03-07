@@ -23,13 +23,15 @@
 #include <cmath>
 #include <chrono>
 #include <glm/glm.hpp>
+
 #include "logger.hpp"
+#include "input.hpp"
 
 namespace nabla2d
 {
     Game::Game()
     {
-        mCamera = Camera({1.0F, 0.0F, 5.0F}, {0.0F, 0.0F, 0.0F}, {45.0F, 16.0F / 9.0F, 0.1F, 100.0F});
+        mCamera = Camera({0.0F, 0.0F, 5.0F}, {0.0F, 0.0F, 0.0F}, {45.0F, 16.0F / 9.0F, 0.1F, 100.0F});
         mRenderer = std::shared_ptr<Renderer>(Renderer::Create("Nabla2D", {1600, 900}));
 
         mTestShader = mRenderer->LoadShader(R"(
@@ -80,6 +82,7 @@ namespace nabla2d
     void Game::Run()
     {
         Logger::info("Game started");
+        Input::Init();
         auto lastTime = std::chrono::high_resolution_clock::now();
         auto currentTime = std::chrono::high_resolution_clock::now();
         while (mRenderer->PollWindowEvents())
@@ -94,23 +97,35 @@ namespace nabla2d
 
             static float totalDelta = 0.0F;
             totalDelta += mDeltaTime;
-            mCamera.SetPosition({5.0F * std::cos(totalDelta), 0.0F, 5.0F * std::sin(totalDelta)});
-            mCamera.LookAt({0.0F, 0.0F, 0.0F});
 
-            const static std::array<glm::vec4, 4> spriteAtlas{
-                {glm::vec4(0.0F, 0.0F, 0.5F, 0.5F),
-                 glm::vec4(0.5F, 0.0F, 0.5F, 0.5F),
-                 glm::vec4(0.0F, 0.5F, 0.5F, 0.5F),
-                 glm::vec4(0.5F, 0.5F, 0.5F, 0.5F)}};
+            float scroll = Input::GetMouseScroll();
+            if (scroll != 0.0F)
+            {
+                if (mCamera.GetPosition().z > 2.0F || scroll < 0.0F)
+                {
+                    mCamera.Translate({0.0F, 0.0F, -scroll * 0.3F});
+                }
+            }
 
-            mTestSprite->SetAtlasInfo(spriteAtlas.at((int)std::floor(std::fmod(totalDelta / 2.0F, 4.0F))));
-            mTestTransform.SetPosition({0.0F, std::sin(totalDelta), 0.0F});
-            mTestTransform.SetScale({1.0F, std::cos(totalDelta), 1.0F});
+            if (Input::KeyDown(Input::KEY_MOUSE1))
+            {
+                mRenderer->SetMouseCapture(true);
+            }
+            if (Input::KeyHeld(Input::KEY_MOUSE1))
+            {
+                glm::vec2 deltaPos = Input::GetMouseDelta();
+                mCamera.Translate({deltaPos.x * 8.0F, -deltaPos.y * 8.0F / (16.0F / 9.0F), 0.0F});
+            }
+            if (Input::KeyUp(Input::KEY_MOUSE1))
+            {
+                mRenderer->SetMouseCapture(false);
+            }
 
             mRenderer->UseShader(mTestShader);
             mTestSprite->Draw(mRenderer.get(), mCamera, mTestTransform.GetMatrix());
 
             mRenderer->Render();
+            Input::Update();
         }
         Logger::info("Game ended");
     }

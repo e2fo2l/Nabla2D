@@ -23,6 +23,7 @@
 
 #include <string>
 #include <memory>
+#include <cstdint>
 #include <unordered_map>
 #include <SDL2/SDL.h>
 
@@ -43,6 +44,8 @@ namespace nabla2d
         ~SDLGLRenderer() override;
 
         bool PollWindowEvents() override;
+        void SetMouseCapture(bool aCapture) override;
+
         void Clear() override;
         void Render() override;
 
@@ -72,6 +75,10 @@ namespace nabla2d
 
         SDL_Window *mWindow;
         SDL_GLContext mGLContext;
+
+        void UpdateInput(const uint8_t *aKeys, float aMouseScroll);
+        bool mMouseButtons[3]{false, false, false};
+        bool mMouseCapured{false};
     };
 } // namespace nabla2d
 

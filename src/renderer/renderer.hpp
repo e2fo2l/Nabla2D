@@ -59,6 +59,8 @@ namespace nabla2d
         static Renderer *Create(const std::string &aTitle, const std::pair<int, int> &aSize);
 
         virtual bool PollWindowEvents() = 0;
+        virtual void SetMouseCapture(bool aCapture) = 0;
+
         virtual void Clear() = 0;
         virtual void Render() = 0;
 
