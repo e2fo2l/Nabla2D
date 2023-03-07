@@ -66,10 +66,12 @@ namespace nabla2d
 
         SDL_GL_SetSwapInterval(1); // VSync
 
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, 0.01f);
 
         glViewport(0, 0, mWidth, mHeight);
 

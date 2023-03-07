@@ -148,6 +148,8 @@ namespace nabla2d
             mRenderer->DrawData(mGridData, mCamera, mGridTransform.GetMatrix(), {0.0F, 0.0F, 1.0F, 1.0F});
 
             // --------------- TEST SPRITE ---------------
+
+            mTestTransform.Rotate(mDeltaTime * 180.0F, {0.0F, 1.0F, 0.0F});
             mRenderer->UseShader(mTestShader);
             mTestSprite->Draw(mRenderer.get(), mCamera, mTestTransform.GetMatrix());
 
