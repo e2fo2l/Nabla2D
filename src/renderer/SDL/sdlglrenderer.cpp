@@ -25,6 +25,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <imgui.h>
+#include "imgui/imgui_impl_sdl2.h"
+#include "../OpenGL/imgui/imgui_impl_opengl3.h"
+
 #include "../../logger.hpp"
 #include "../../input.hpp"
 #include "../renderer.hpp"
@@ -80,6 +84,17 @@ namespace nabla2d
         Logger::info("OpenGL vendor: {}", (char *)glGetString(GL_VENDOR));
         Logger::info("OpenGL renderer: {}", (char *)glGetString(GL_RENDERER));
         Logger::info("OpenGL GLSL version: {}", (char *)glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+        // ImGui
+
+        ImGui::CreateContext();
+        ImGuiIO &io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+        ImGui::StyleColorsDark();
+
+        ImGui_ImplSDL2_InitForOpenGL(mWindow, mGLContext);
+        ImGui_ImplOpenGL3_Init("#version 330");
     }
 
     SDLGLRenderer::~SDLGLRenderer()
@@ -90,6 +105,10 @@ namespace nabla2d
         mData.clear();
         mShaders.clear();
         mTextures.clear();
+
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplSDL2_Shutdown();
+        ImGui::DestroyContext();
 
         SDL_GL_DeleteContext(mGLContext);
         SDL_DestroyWindow(mWindow);
@@ -134,6 +153,7 @@ namespace nabla2d
         SDL_Event event;
         while (SDL_PollEvent(&event) != 0)
         {
+            ImGui_ImplSDL2_ProcessEvent(&event);
             if (event.type == SDL_QUIT)
             {
                 return false;
@@ -205,10 +225,16 @@ namespace nabla2d
         glViewport(0, 0, mWidth, mHeight);
         glClearColor(0.5F, 0.5F, 0.5F, 1.0F);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplSDL2_NewFrame(mWindow);
+        ImGui::NewFrame();
     }
 
     void SDLGLRenderer::Render()
     {
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         SDL_GL_SwapWindow(mWindow);
     }
 

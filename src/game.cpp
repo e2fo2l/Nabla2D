@@ -22,6 +22,7 @@
 
 #include <cmath>
 #include <chrono>
+#include <imgui.h>
 #include <glm/glm.hpp>
 
 #include "logger.hpp"
@@ -149,9 +150,11 @@ namespace nabla2d
 
             // --------------- TEST SPRITE ---------------
 
-            mTestTransform.Rotate(mDeltaTime * 180.0F, {0.0F, 1.0F, 0.0F});
             mRenderer->UseShader(mTestShader);
             mTestSprite->Draw(mRenderer.get(), mCamera, mTestTransform.GetMatrix());
+
+            // ImGui stuff
+            ImGui::ShowDemoWindow();
 
             mRenderer->Render();
             Input::Update();

@@ -17,10 +17,12 @@ set(SOURCES
   src/sprite.cpp
   src/renderer/renderer.cpp
   src/renderer/SDL/sdlglrenderer.cpp
+  src/renderer/SDL/imgui/imgui_impl_sdl2.cpp
   src/renderer/OpenGL/gltexture.cpp
   src/renderer/OpenGL/glshader.cpp
   src/renderer/OpenGL/glvertex.cpp
   src/renderer/OpenGL/gldata.cpp
+  src/renderer/OpenGL/imgui/imgui_impl_opengl3.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})

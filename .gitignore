@@ -60,3 +60,6 @@ build/
 docs/html
 docs/latex
 *.py
+
+# ImGui
+imgui.ini
