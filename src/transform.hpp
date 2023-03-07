@@ -51,8 +51,6 @@ namespace nabla2d
 
         const glm::mat4 &GetMatrix();
 
-        void UpdateMatrix();
-
     private:
         glm::vec3 mPosition;
         glm::vec3 mRotation;
@@ -61,6 +59,8 @@ namespace nabla2d
         glm::mat4 mMatrix;
 
         bool mChanged{true};
+
+        void UpdateMatrix();
     };
 } // namespace nabla2d
 
