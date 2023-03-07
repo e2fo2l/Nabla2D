@@ -28,9 +28,9 @@ namespace nabla2d
     class Transform
     {
     public:
-        Transform(const glm::vec3 &aPosition = {1.0F, 1.0F, 1.0F},
-                  const glm::vec3 &aRotation = {0.0F, 0.0F, 0.0F},
-                  const glm::vec3 &aScale = {1.0F, 1.0F, 1.0F});
+        explicit Transform(const glm::vec3 &aPosition = {1.0F, 1.0F, 1.0F},
+                           const glm::vec3 &aRotation = {0.0F, 0.0F, 0.0F},
+                           const glm::vec3 &aScale = {1.0F, 1.0F, 1.0F});
         Transform(const Transform &aTransform) = default;
         Transform(Transform &&aTransform) = default;
         Transform &operator=(const Transform &aTransform) = default;
