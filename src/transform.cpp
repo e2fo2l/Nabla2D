@@ -22,14 +22,17 @@
 
 #include <cmath>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/euler_angles.hpp>
+#include "logger.hpp"
 
 namespace nabla2d
 {
     Transform::Transform(const glm::vec3 &aPosition,
                          const glm::vec3 &aRotation,
                          const glm::vec3 &aScale) : mPosition(aPosition),
-                                                    mRotation(aRotation),
+                                                    mRotation(glm::radians(aRotation)),
+                                                    mEulerRotation(aRotation),
                                                     mScale(aScale),
                                                     mMatrix(1.0F),
                                                     mChanged(true)
@@ -43,6 +46,11 @@ namespace nabla2d
     }
 
     const glm::vec3 &Transform::GetRotation() const
+    {
+        return mEulerRotation;
+    }
+
+    const glm::quat &Transform::GetRotationQuat() const
     {
         return mRotation;
     }
@@ -60,9 +68,15 @@ namespace nabla2d
 
     void Transform::SetRotation(const glm::vec3 &aRotation)
     {
-        mRotation = {std::fmod(aRotation.x, 360.0F),
-                     std::fmod(aRotation.y, 360.0F),
-                     std::fmod(aRotation.z, 360.0F)};
+        mRotation = glm::quat(glm::radians(aRotation));
+        RecalculateEuler();
+        mChanged = true;
+    }
+
+    void Transform::SetRotation(const glm::quat &aRotation)
+    {
+        mRotation = aRotation;
+        RecalculateEuler();
         mChanged = true;
     }
 
@@ -80,7 +94,8 @@ namespace nabla2d
 
     void Transform::Rotate(float aAngle, const glm::vec3 &aAxis)
     {
-        mRotation += aAngle * glm::normalize(aAxis);
+        mRotation = glm::rotate(mRotation, glm::radians(aAngle), aAxis);
+        RecalculateEuler();
         mChanged = true;
     }
 
@@ -90,24 +105,24 @@ namespace nabla2d
         mChanged = true;
     }
 
-    void Transform::LookAt(const glm::vec3 &aTarget)
+    void Transform::LookAt(const glm::vec3 &aTarget, const glm::vec3 &aUp)
     {
         if (aTarget == mPosition)
         {
             return;
         }
+        const glm::vec3 forward = glm::normalize(aTarget - mPosition);
+        mRotation = glm::quatLookAt(forward, aUp);
 
-        glm::vec3 up = glm::vec3(0.0f, 0.0f, 1.0f);
-        glm::mat4 view = glm::lookAt(mPosition, aTarget, up);
-        glm::quat rotation = glm::quat_cast(view);
-        mRotation = -glm::degrees(glm::eulerAngles(rotation));
+        RecalculateEuler();
         mChanged = true;
     }
 
     void Transform::Lerp(const Transform &aTarget, float aInterpolation)
     {
         mPosition = glm::lerp(mPosition, aTarget.GetPosition(), aInterpolation);
-        mRotation = glm::lerp(mRotation, aTarget.GetRotation(), aInterpolation);
+        mRotation = glm::slerp(mRotation, aTarget.GetRotationQuat(), aInterpolation);
+        RecalculateEuler();
         mScale = glm::lerp(mScale, aTarget.GetScale(), aInterpolation);
         mChanged = true;
     }
@@ -158,9 +173,7 @@ namespace nabla2d
     void Transform::UpdateMatrix()
     {
         mMatrix = glm::translate(glm::mat4(1.0F), mPosition);
-        mMatrix = glm::rotate(mMatrix, glm::radians(mRotation.x), glm::vec3(1.0F, 0.0F, 0.0F));
-        mMatrix = glm::rotate(mMatrix, glm::radians(mRotation.y), glm::vec3(0.0F, 1.0F, 0.0F));
-        mMatrix = glm::rotate(mMatrix, glm::radians(mRotation.z), glm::vec3(0.0F, 0.0F, 1.0F));
+        mMatrix = mMatrix * glm::mat4_cast(mRotation);
         mMatrix = glm::scale(mMatrix, mScale);
 
         mForward = -glm::normalize(glm::vec3(mMatrix[2][0], mMatrix[2][1], mMatrix[2][2]));
@@ -168,6 +181,11 @@ namespace nabla2d
         mRight = glm::normalize(glm::vec3(mMatrix[0][0], mMatrix[0][1], mMatrix[0][2]));
 
         mChanged = false;
+    }
+
+    void Transform::RecalculateEuler()
+    {
+        mEulerRotation = glm::degrees(glm::eulerAngles(mRotation));
     }
 
 } // namespace nabla2d

@@ -22,6 +22,7 @@
 #define NABLA2D_TRANSFORM_HPP
 
 #include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 namespace nabla2d
 {
@@ -38,16 +39,18 @@ namespace nabla2d
 
         const glm::vec3 &GetPosition() const;
         const glm::vec3 &GetRotation() const;
+        const glm::quat &GetRotationQuat() const;
         const glm::vec3 &GetScale() const;
 
         void SetPosition(const glm::vec3 &aPosition);
         void SetRotation(const glm::vec3 &aRotation);
+        void SetRotation(const glm::quat &aRotation);
         void SetScale(const glm::vec3 &aScale);
 
         void Translate(const glm::vec3 &aTranslation);
         void Rotate(float aAngle, const glm::vec3 &aAxis);
         void Scale(const glm::vec3 &aScale);
-        void LookAt(const glm::vec3 &aTarget);
+        void LookAt(const glm::vec3 &aTarget, const glm::vec3 &aUp = {0.0F, 0.0F, 1.0F});
 
         void Lerp(const Transform &aTarget, float aInterpolation);
         static Transform Lerp(const Transform &aT1, const Transform &aT2, float aInterpolation);
@@ -59,7 +62,8 @@ namespace nabla2d
 
     private:
         glm::vec3 mPosition;
-        glm::vec3 mRotation;
+        glm::quat mRotation;
+        glm::vec3 mEulerRotation;
         glm::vec3 mScale;
 
         glm::mat4 mMatrix;
@@ -70,6 +74,7 @@ namespace nabla2d
         bool mChanged{true};
 
         void UpdateMatrix();
+        void RecalculateEuler();
     };
 } // namespace nabla2d
 
