@@ -80,7 +80,7 @@ namespace nabla2d
 
     void Transform::Rotate(float aAngle, const glm::vec3 &aAxis)
     {
-        mRotation += aAxis * aAngle;
+        mRotation += aAngle * glm::normalize(aAxis);
         mChanged = true;
     }
 
