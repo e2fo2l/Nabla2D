@@ -65,30 +65,24 @@ namespace nabla2d
         }
         )");
 
-        mGridTexture = mRenderer->LoadTexture("assets/grid.png", Renderer::LINEAR_MIPMAP_LINEAR);
-        mGridData = mRenderer->LoadData({{{-0.5F, -0.5F, 0.0F}, {0.0, 40.0}},
-                                         {{-0.5F, 0.5F, 0.0F}, {0.0, 0.0}},
-                                         {{0.5F, -0.5F, 0.0F}, {40.0, 40.0}},
-                                         {{-0.5F, 0.5F, 0.0F}, {0.0, 0.0}},
-                                         {{0.5F, 0.5F, 0.0F}, {40.0, 0.0}},
-                                         {{0.5F, -0.5F, 0.0F}, {40.0, 40.0}}});
-        mGridTransform = Transform({0.0F, 0.0F, -0.01F}, {0.0F, 0.0F, 0.0F}, {40.0F, 40.0F, 40.0F});
-
         mTestSprite = std::shared_ptr<Sprite>(new Sprite(mRenderer.get(),
                                                          "assets/logo.png",
                                                          {1.0F, 1.0F},
                                                          Renderer::NEAREST));
         mTestTransform = Transform({0.5F, 0.5F, 0.0F}, {0.0F, 0.0F, 0.0F}, {1.0F, 1.0F, 1.0F});
 
+        mEditor.Init(mRenderer.get());
+
         Logger::info("Game created");
     }
 
     Game::~Game()
     {
-        mRenderer->DeleteData(mGridData);
-        mRenderer->DeleteTexture(mGridTexture);
         mTestSprite->Clear(mRenderer.get());
         mRenderer->DeleteShader(mTestShader);
+
+        mEditor.Destroy(mRenderer.get());
+
         Logger::info("Game destroyed");
     }
 
@@ -144,23 +138,12 @@ namespace nabla2d
                 mRenderer->SetMouseCapture(false);
             }
 
-            // --------------- GRID ---------------
-
-            auto cameraPos = mCamera.GetPosition();
-            float gridScaleIndex = std::floor(cameraPos.z / 20.0F) + 1;
-            mGridTransform.SetScale({40.0F * gridScaleIndex, 40.0F * gridScaleIndex, 1.0F});
-            mGridTransform.SetPosition({std::floor(cameraPos.x / gridScaleIndex) * gridScaleIndex,
-                                        std::floor(cameraPos.y / gridScaleIndex) * gridScaleIndex, -0.01F});
-
-            mRenderer->UseShader(mTestShader);
-            mRenderer->UseTexture(mGridTexture);
-            mRenderer->DrawData(mGridData, mCamera, mGridTransform.GetMatrix(), {0.0F, 0.0F, 1.0F, 1.0F});
+            // --------------- EDITOR ---------------
+            mEditor.Update(mDeltaTime, totalDelta);
+            mEditor.Render(mRenderer.get(), mCamera);
 
             // --------------- TEST SPRITE ---------------
 
-            static Transform srcTransform = mTestTransform;
-            static Transform dstTransform({-0.5F, 2.0F, 2.0F}, {45.0F, 150.0F, 80.0F}, {2.0F, 0.75F, 1.0F});
-            mTestTransform = Transform::Lerp(srcTransform, dstTransform, std::min(totalDelta / 10.0F, 1.0F));
             mRenderer->UseShader(mTestShader);
             mTestSprite->Draw(mRenderer.get(), mCamera, mTestTransform.GetMatrix());
 

@@ -24,23 +24,60 @@
 
 namespace nabla2d
 {
-    GLData::GLData(const std::vector<float> &aVertices) : mSize(aVertices.size())
+    GLData::GLData(const std::vector<float> &aVertices, GLenum aMode) : mSize(aVertices.size()),
+                                                                        mEBO(0),
+                                                                        mMode(aMode)
     {
         glGenVertexArrays(1, &mVAO);
         glGenBuffers(1, &mVBO);
 
         glBindVertexArray(mVAO);
-
         glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-        glBufferData(GL_ARRAY_BUFFER, mSize * sizeof(float), &aVertices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, mSize * sizeof(float), aVertices.data(), GL_STATIC_DRAW);
+
+        GLsizei stride = GetStride(mMode);
 
         // Position (x, y, z)
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, GLVertex::ElementCount * sizeof(float), (void *)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * static_cast<GLsizei>(sizeof(float)), (void *)0);
         glEnableVertexAttribArray(0);
 
-        // Texture coordinates (u, v)
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, GLVertex::ElementCount * sizeof(float), (void *)(3 * sizeof(float)));
-        glEnableVertexAttribArray(1);
+        if (mMode == GL_TRIANGLES)
+        {
+            // Texture coordinates (u, v)
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride * static_cast<GLsizei>(sizeof(float)), (void *)(3 * sizeof(float)));
+            glEnableVertexAttribArray(1);
+        }
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+    }
+
+    GLData::GLData(const std::vector<float> &aVertices, const std::vector<unsigned int> &aIndices, GLenum aMode) : mSize(aVertices.size()),
+                                                                                                                   mMode(aMode)
+    {
+        glGenVertexArrays(1, &mVAO);
+        glGenBuffers(1, &mVBO);
+        glGenBuffers(1, &mEBO);
+
+        glBindVertexArray(mVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+        glBufferData(GL_ARRAY_BUFFER, mSize * sizeof(float), aVertices.data(), GL_STATIC_DRAW);
+
+        GLsizei stride = GetStride(mMode);
+
+        // Position (x, y, z)
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * static_cast<GLsizei>(sizeof(float)), (void *)0);
+        glEnableVertexAttribArray(0);
+
+        if (mMode == GL_TRIANGLES)
+        {
+            // Texture coordinates (u, v)
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride * static_cast<GLsizei>(sizeof(float)), (void *)(3 * sizeof(float)));
+            glEnableVertexAttribArray(1);
+        }
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, aIndices.size() * sizeof(unsigned int), aIndices.data(), GL_STATIC_DRAW);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
@@ -48,8 +85,18 @@ namespace nabla2d
 
     GLData::~GLData()
     {
-        glDeleteVertexArrays(1, &mVAO);
-        glDeleteBuffers(1, &mVBO);
+        if (mVAO != 0)
+        {
+            glDeleteVertexArrays(1, &mVAO);
+        }
+        if (mVBO != 0)
+        {
+            glDeleteBuffers(1, &mVBO);
+        }
+        if (mEBO != 0)
+        {
+            glDeleteBuffers(1, &mEBO);
+        }
     }
 
     std::size_t GLData::GetSize() const
@@ -65,6 +112,28 @@ namespace nabla2d
     GLuint GLData::GetVBO() const
     {
         return mVBO;
+    }
+
+    GLuint GLData::GetEBO() const
+    {
+        return mEBO;
+    }
+
+    GLenum GLData::GetMode() const
+    {
+        return mMode;
+    }
+
+    GLsizei GLData::GetStride(GLenum aMode)
+    {
+        switch (aMode)
+        {
+        case GL_TRIANGLES:
+            return 5;
+        case GL_LINES:
+        default:
+            return 3;
+        }
     }
 } // namespace nabla2d
 

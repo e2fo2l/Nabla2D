@@ -12,6 +12,7 @@ set(SOURCES
   src/logger.cpp
   src/input.cpp
   src/game.cpp
+  src/editor.cpp
   src/transform.cpp
   src/camera.cpp
   src/sprite.cpp

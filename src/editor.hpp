@@ -18,48 +18,42 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef NABLA2D_GAME_HPP
-#define NABLA2D_GAME_HPP
+#ifndef NABLA2D_EDITOR_HPP
+#define NABLA2D_EDITOR_HPP
 
-#include <array>
-#include <memory>
-
+#include <vector>
+#include <glm/glm.hpp>
 #include "camera.hpp"
-#include "editor.hpp"
-#include "sprite.hpp"
 #include "transform.hpp"
 #include "renderer/renderer.hpp"
 
 namespace nabla2d
 {
-    class Game
+    class Editor
     {
     public:
-        Game();
-        ~Game();
+        Editor() = default;
+        ~Editor() = default;
 
-        float GetDeltaTime() const;
-
-        void Run();
+        void Init(Renderer *aRenderer);
+        void Update(float aDeltaTime, float aTime);
+        void Render(Renderer *aRenderer, Camera &aCamera);
+        void Destroy(Renderer *aRenderer);
 
     private:
-        float mDeltaTime{0.0F};
-        std::shared_ptr<Renderer> mRenderer;
+        Renderer::ShaderHandle mGridShader;
+        Renderer::DataHandle mGridData;
+        Renderer::DataHandle mSubgridData;
+        Renderer::DataHandle mAxisData;
+        Transform mGridTransform;
+        Transform mSubgridTransform;
+        Transform mAxisTransform;
 
-        Camera mCamera;
-        Editor mEditor;
-
-        Renderer::ShaderHandle mTestShader;
-        std::shared_ptr<Sprite> mTestSprite;
-        Transform mTestTransform;
-
-        std::array<float, 120> mFPSs;
-        float mAverageFPS{0.0F};
-
-        void DrawEditorWindows();
+        static std::vector<glm::vec3> GetGridVertices(float aSize, int aSlices);
+        static std::vector<unsigned int> GetGridIndices(int aSlices);
     };
 } // namespace nabla2d
 
-#endif // NABLA2D_GAME_HPP
+#endif // NABLA2D_EDITOR_HPP
 
 // くコ:彡

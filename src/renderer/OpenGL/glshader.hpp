@@ -36,12 +36,14 @@ namespace nabla2d
         GLint GetModelViewProjectionLocation() const;
         GLint GetTextureLocation() const;
         GLint GetAtlasInfoLocation() const;
+        GLint GetColorLocation() const;
 
     private:
         GLuint mProgram{0};
         GLint mModelViewProjectionLocation{0};
         GLint mTextureLocation{0};
         GLint mAtlasInfoLocation{0};
+        GLint mColorLocation{0};
     };
 } // namespace nabla2d
 

@@ -29,17 +29,24 @@ namespace nabla2d
     class GLData
     {
     public:
-        explicit GLData(const std::vector<float> &aVertices);
+        explicit GLData(const std::vector<float> &aVertices, GLenum aMode = GL_TRIANGLES);
+        explicit GLData(const std::vector<float> &aVertices, const std::vector<unsigned int> &aIndices, GLenum aMode = GL_TRIANGLES);
         ~GLData();
 
         std::size_t GetSize() const;
         GLuint GetVAO() const;
         GLuint GetVBO() const;
+        GLuint GetEBO() const;
+        GLenum GetMode() const;
 
     private:
         std::size_t mSize{0};
         GLuint mVAO{0};
         GLuint mVBO{0};
+        GLuint mEBO;
+        GLenum mMode;
+
+        static GLsizei GetStride(GLenum aMode);
     };
 
 } // namespace nabla2d

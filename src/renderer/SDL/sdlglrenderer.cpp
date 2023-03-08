@@ -21,6 +21,7 @@
 #include "sdlglrenderer.hpp"
 
 #include <array>
+#include <algorithm>
 #include <stdexcept>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -82,6 +83,11 @@ namespace nabla2d
         glAlphaFunc(GL_GREATER, 0.01f);
 
         glViewport(0, 0, mWidth, mHeight);
+
+        float lineWidthRange[2];
+        glGetFloatv(GL_ALIASED_LINE_WIDTH_RANGE, &lineWidthRange[0]);
+        mLineWidthMin = lineWidthRange[0];
+        mLineWidthMax = lineWidthRange[1];
 
         Logger::info("SDL Renderer with OpenGL initialized");
         Logger::info("OpenGL version: {}", (char *)glGetString(GL_VERSION));
@@ -262,6 +268,7 @@ namespace nabla2d
         try
         {
             std::vector<float> vertices{};
+            vertices.reserve(aData.size() * 5);
             for (auto &vertex : aData)
             {
                 // Position
@@ -283,6 +290,31 @@ namespace nabla2d
         }
     }
 
+    Renderer::DataHandle SDLGLRenderer::LoadDataLines(const std::vector<glm::vec3> &aPoints, const std::vector<unsigned int> &aIndices)
+    {
+        try
+        {
+            std::vector<float> vertices{};
+            vertices.reserve(aPoints.size() * 3);
+            for (auto &point : aPoints)
+            {
+                // Position
+                vertices.push_back(point.x);
+                vertices.push_back(point.y);
+                vertices.push_back(point.z);
+            }
+            auto data = std::make_shared<GLData>(vertices, aIndices, GL_LINES);
+            mData[data->GetVAO()] = data;
+            return data->GetVAO();
+        }
+        catch (std::runtime_error &e)
+        {
+            Logger::error("Failed to load data: {}", e.what());
+            return 0;
+        }
+        return 0;
+    }
+
     void SDLGLRenderer::DeleteData(DataHandle aHandle)
     {
         if (mData.erase(aHandle) == 0)
@@ -291,7 +323,7 @@ namespace nabla2d
         }
     }
 
-    void SDLGLRenderer::DrawData(DataHandle aHandle, const Camera &aCamera, const glm::mat4 &aTransform, const glm::vec4 &aAtlasInfo)
+    void SDLGLRenderer::DrawData(DataHandle aHandle, const Camera &aCamera, const glm::mat4 &aTransform, const DrawParameters &aDrawParameters)
     {
         auto data = mData.find(aHandle);
         if (data == mData.end())
@@ -300,21 +332,13 @@ namespace nabla2d
             return;
         }
 
-        GLuint VAO = data->second->GetVAO();
-        GLuint VBO = data->second->GetVBO();
-
         if (mCurrentShader == nullptr)
         {
             Logger::warn("Tried to draw data #{}, but no shader is set", aHandle);
         }
 
-        if (mCurrentTexture == nullptr)
-        {
-            Logger::warn("Tried to draw data #{}, but no texture is set", aHandle);
-        }
-
+        GLuint VAO = data->second->GetVAO();
         glBindVertexArray(VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
         if (mCurrentShader != nullptr)
         {
@@ -327,14 +351,34 @@ namespace nabla2d
                 glBindTexture(GL_TEXTURE_2D, mCurrentTexture->GetTexture());
                 glUniform1i(mCurrentShader->GetTextureLocation(), 0);
 
-                glUniform4fv(mCurrentShader->GetAtlasInfoLocation(), 1, glm::value_ptr(aAtlasInfo));
+                if (aDrawParameters.atlasInfo != glm::vec4{0.0F, 0.0F, 0.0F, 0.0F})
+                {
+                    glUniform4fv(mCurrentShader->GetAtlasInfoLocation(), 1, glm::value_ptr(aDrawParameters.atlasInfo));
+                }
             }
         }
 
-        glDrawArrays(GL_TRIANGLES, 0, data->second->GetSize());
+        if (aDrawParameters.color != glm::vec4{0.0F, 0.0F, 0.0F, 0.0F})
+        {
+            glUniform4fv(mCurrentShader->GetColorLocation(), 1, glm::value_ptr(aDrawParameters.color));
+        }
+
+        if (aDrawParameters.lineWidth != 0.0F)
+        {
+            glLineWidth(std::clamp(aDrawParameters.lineWidth, mLineWidthMin, mLineWidthMax));
+        }
+
+        auto mode = data->second->GetMode();
+        if (data->second->GetEBO() != 0)
+        {
+            glDrawElements(mode, data->second->GetSize(), GL_UNSIGNED_INT, 0);
+        }
+        else
+        {
+            glDrawArrays(mode, 0, data->second->GetSize());
+        }
 
         glBindTexture(GL_TEXTURE_2D, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
     }
 

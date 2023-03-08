@@ -54,6 +54,13 @@ namespace nabla2d
             int channels;
         } TextureInfo;
 
+        typedef struct
+        {
+            glm::vec4 atlasInfo = glm::vec4(0.0F, 0.0F, 0.0F, 0.0F);
+            glm::vec4 color = glm::vec4(0.0F, 0.0f, 0.0f, 0.0f);
+            float lineWidth = 0.0F;
+        } DrawParameters;
+
         virtual ~Renderer() = default;
 
         static Renderer *Create(const std::string &aTitle, const std::pair<int, int> &aSize);
@@ -69,8 +76,9 @@ namespace nabla2d
         virtual void Render() = 0;
 
         virtual DataHandle LoadData(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData) = 0;
+        virtual DataHandle LoadDataLines(const std::vector<glm::vec3> &aPoints, const std::vector<unsigned int> &aIndices) = 0;
         virtual void DeleteData(DataHandle aHandle) = 0;
-        virtual void DrawData(DataHandle aHandle, const Camera &aCamera, const glm::mat4 &aTransform, const glm::vec4 &aAtlasInfo) = 0;
+        virtual void DrawData(DataHandle aHandle, const Camera &aCamera, const glm::mat4 &aTransform, const DrawParameters& aDrawParameters) = 0;
 
         virtual ShaderHandle LoadShader(const std::string &aVertexPath, const std::string &aFragmentPath) = 0;
         virtual void DeleteShader(ShaderHandle aHandle) = 0;

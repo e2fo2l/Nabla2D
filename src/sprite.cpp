@@ -78,7 +78,9 @@ namespace nabla2d
     void Sprite::Draw(Renderer *mRenderer, Camera &mCamera, const glm::mat4 &aParentTransform)
     {
         mRenderer->UseTexture(mTexture);
-        mRenderer->DrawData(mSpriteData, mCamera, aParentTransform, mAtlasInfo);
+        auto drawParameters = Renderer::DrawParameters();
+        drawParameters.atlasInfo = mAtlasInfo;
+        mRenderer->DrawData(mSpriteData, mCamera, aParentTransform, drawParameters);
     }
 
     const std::string &Sprite::GetPath() const

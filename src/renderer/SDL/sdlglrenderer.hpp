@@ -54,8 +54,9 @@ namespace nabla2d
         void Render() override;
 
         DataHandle LoadData(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData) override;
+        DataHandle LoadDataLines(const std::vector<glm::vec3> &aPoints, const std::vector<unsigned int> &aIndices) override;
         void DeleteData(DataHandle aHandle) override;
-        void DrawData(DataHandle aHandle, const Camera &aCamera, const glm::mat4 &aTransform, const glm::vec4 &aAtlasInfo) override;
+        void DrawData(DataHandle aHandle, const Camera &aCamera, const glm::mat4 &aTransform, const DrawParameters &aDrawParameters) override;
 
         ShaderHandle LoadShader(const std::string &aVertexPath, const std::string &aFragmentPath) override;
         void DeleteShader(ShaderHandle aHandle) override;
@@ -80,6 +81,9 @@ namespace nabla2d
 
         SDL_Window *mWindow;
         SDL_GLContext mGLContext;
+
+        float mLineWidthMin{0.0f};
+        float mLineWidthMax{0.0f};
 
         void UpdateInput(const uint8_t *aKeys, float aMouseScroll);
         bool mMouseButtons[3]{false, false, false};
