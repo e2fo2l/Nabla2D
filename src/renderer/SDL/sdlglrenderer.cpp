@@ -81,7 +81,6 @@ namespace nabla2d
         glDepthFunc(GL_LEQUAL);
         glEnable(GL_ALPHA_TEST);
         glAlphaFunc(GL_GREATER, 0.01f);
-        glEnable(GL_LINE_SMOOTH);
 
         glViewport(0, 0, mWidth, mHeight);
 
@@ -399,6 +398,11 @@ namespace nabla2d
         }
 
         auto mode = data->second->GetMode();
+        if (mode == GL_LINES)
+        {
+            glEnable(GL_LINE_SMOOTH);
+        }
+
         if (data->second->GetEBO() != 0)
         {
             glDrawElements(mode, data->second->GetSize(), GL_UNSIGNED_INT, 0);
@@ -406,6 +410,11 @@ namespace nabla2d
         else
         {
             glDrawArrays(mode, 0, data->second->GetSize());
+        }
+
+        if (mode == GL_LINES)
+        {
+            glDisable(GL_LINE_SMOOTH);
         }
 
         glBindTexture(GL_TEXTURE_2D, 0);
