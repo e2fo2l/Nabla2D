@@ -56,6 +56,8 @@ namespace nabla2d
         const ProjectionSettings &GetProjectionSettings() const;
         void SetProjectionSettings(const ProjectionSettings &aSettings);
 
+        const glm::vec3 &GetForward() const;
+
         const glm::mat4 &GetViewMatrix() const;
         const glm::mat4 &GetProjectionMatrix() const;
         const glm::mat4 &GetProjectionViewMatrix() const;
@@ -70,6 +72,8 @@ namespace nabla2d
         ProjectionSettings mProjectionSettings;
         ProjectionSettings mNextProjectionSettings;
         bool mProjectionSettingsChanged{true};
+
+        glm::vec3 mForward;
 
         glm::mat4 mViewMatrix;
         glm::mat4 mProjectionMatrix;

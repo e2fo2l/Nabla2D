@@ -104,14 +104,16 @@ namespace nabla2d
         mChanged = true;
     }
 
-    void Transform::Lerp(const Transform &aTarget, float aInterpolation) {
+    void Transform::Lerp(const Transform &aTarget, float aInterpolation)
+    {
         mPosition = glm::lerp(mPosition, aTarget.GetPosition(), aInterpolation);
         mRotation = glm::lerp(mRotation, aTarget.GetRotation(), aInterpolation);
         mScale = glm::lerp(mScale, aTarget.GetScale(), aInterpolation);
         mChanged = true;
     }
 
-    Transform Transform::Lerp(const Transform &aT1, const Transform &aT2, float aInterpolation) {
+    Transform Transform::Lerp(const Transform &aT1, const Transform &aT2, float aInterpolation)
+    {
         Transform result = aT1;
         result.Lerp(aT2, aInterpolation);
         return result;
@@ -126,6 +128,15 @@ namespace nabla2d
         return mMatrix;
     }
 
+    const glm::vec3 &Transform::GetForward()
+    {
+        if (mChanged)
+        {
+            UpdateMatrix();
+        }
+        return mForward;
+    }
+
     void Transform::UpdateMatrix()
     {
         mMatrix = glm::translate(glm::mat4(1.0F), mPosition);
@@ -133,6 +144,9 @@ namespace nabla2d
         mMatrix = glm::rotate(mMatrix, glm::radians(mRotation.y), glm::vec3(0.0F, 1.0F, 0.0F));
         mMatrix = glm::rotate(mMatrix, glm::radians(mRotation.z), glm::vec3(0.0F, 0.0F, 1.0F));
         mMatrix = glm::scale(mMatrix, mScale);
+
+        mForward = -glm::normalize(glm::vec3(mMatrix[2][0], mMatrix[2][1], mMatrix[2][2]));
+
         mChanged = false;
     }
 

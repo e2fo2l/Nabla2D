@@ -51,8 +51,9 @@ namespace nabla2d
 
         void Lerp(const Transform &aTarget, float aInterpolation);
         static Transform Lerp(const Transform &aT1, const Transform &aT2, float aInterpolation);
-        
+
         const glm::mat4 &GetMatrix();
+        const glm::vec3 &GetForward();
 
     private:
         glm::vec3 mPosition;
@@ -60,6 +61,7 @@ namespace nabla2d
         glm::vec3 mScale;
 
         glm::mat4 mMatrix;
+        glm::vec3 mForward;
 
         bool mChanged{true};
 
