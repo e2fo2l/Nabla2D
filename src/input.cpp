@@ -63,7 +63,12 @@ namespace nabla2d
     {
         sAxes = aAxes;
         for (auto &a : sAxes)
-            a = glm::normalize(a);
+        {
+            if (a.x != 0.0F || a.y != 0.0F)
+            {
+                a = glm::normalize(a);
+            }
+        }
     }
 
     void Input::FeedMousePos(const glm::vec2 &aMousePos)

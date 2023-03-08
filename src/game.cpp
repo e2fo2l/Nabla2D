@@ -108,32 +108,8 @@ namespace nabla2d
             static float totalDelta = 0.0F;
             totalDelta += mDeltaTime;
 
-            float scroll = Input::GetMouseScroll();
-            if (scroll != 0.0F)
-            {
-                if ((mCamera.GetPosition().z > 2.0F || scroll < 0.0F) &&
-                    (mCamera.GetPosition().z < 80.0F || scroll > 0.0F))
-                {
-                    mCamera.Translate({0.0F, 0.0F, -scroll * 0.6F});
-                }
-            }
-
-            if (Input::KeyDown(Input::KEY_MOUSE1))
-            {
-                mRenderer->SetMouseCapture(true);
-            }
-            if (Input::KeyHeld(Input::KEY_MOUSE1))
-            {
-                glm::vec2 deltaPos = Input::GetMouseDelta();
-                mCamera.Translate({deltaPos.x * 8.0F, -deltaPos.y * 8.0F / (16.0F / 9.0F), 0.0F});
-            }
-            if (Input::KeyUp(Input::KEY_MOUSE1))
-            {
-                mRenderer->SetMouseCapture(false);
-            }
-
             // --------------- EDITOR ---------------
-            mEditor.Update(mDeltaTime, totalDelta, mCamera);
+            mEditor.Update(mDeltaTime, totalDelta, mRenderer.get(), mCamera);
             mEditor.DrawGrid(mRenderer.get(), mCamera);
 
             // --------------- TEST SPRITE ---------------

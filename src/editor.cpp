@@ -78,7 +78,7 @@ namespace nabla2d
         aRenderer->DeleteShader(mGridShader);
     }
 
-    void Editor::Update(float aDeltaTime, float aTime, Camera &aCamera)
+    void Editor::Update(float aDeltaTime, float aTime, Renderer *aRenderer, Camera &aCamera)
     {
         mDeltaTime = aDeltaTime;
         mTime = aTime;
@@ -105,9 +105,45 @@ namespace nabla2d
         }
         else
         {
-            if (!mIs3Dmode)
+            if (!mIs3Dmode) // 2D MODE
             {
                 aCamera.SetRotation({0.0F, 0.0F, aCamera.GetRotation().z});
+
+                // --------- CONTROLS ---------
+                auto cameraPos = aCamera.GetPosition();
+                float scroll = Input::GetMouseScroll();
+                if (scroll != 0.0F)
+                {
+                    if ((cameraPos.z > 2.0F || scroll < 0.0F) &&
+                        (cameraPos.z < 80.0F || scroll > 0.0F))
+                    {
+                        aCamera.Translate({0.0F, 0.0F, -scroll * 0.6F});
+                    }
+                }
+
+                if (Input::KeyDown(Input::KEY_MOUSE1))
+                {
+                    aRenderer->SetMouseCapture(true);
+                }
+                if (Input::KeyHeld(Input::KEY_MOUSE1))
+                {
+                    glm::vec2 deltaPos = Input::GetMouseDelta();
+                    aCamera.Translate({deltaPos.x * 8.0F, -deltaPos.y * 8.0F / (16.0F / 9.0F), 0.0F});
+                }
+                if (Input::KeyUp(Input::KEY_MOUSE1))
+                {
+                    aRenderer->SetMouseCapture(false);
+                }
+
+                auto axis = Input::GetAxis(Input::AXIS_LEFT);
+                if (axis.x != 0.0F || axis.y != 0.0F)
+                {
+                    glm::vec3 cameraTranslation = {axis.x, axis.y, 0.0F};
+                    aCamera.Translate(cameraTranslation * mDeltaTime * -3.0F);
+                }
+            }
+            else // 3D MODE
+            {
             }
         }
     }
@@ -221,6 +257,10 @@ namespace nabla2d
         GUIVec3Widget("Position", cameraPos, 0.1F);
         if (cameraPos != aCamera.GetPosition())
         {
+            if (!mIs3Dmode && cameraPos.z < 1.0F)
+            {
+                cameraPos.z = 1.0F;
+            }
             aCamera.SetPosition(cameraPos);
         }
         if (mIs3Dmode)

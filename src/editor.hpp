@@ -39,7 +39,7 @@ namespace nabla2d
         void Init(Renderer *aRenderer);
         void Destroy(Renderer *aRenderer);
 
-        void Update(float aDeltaTime, float aTime, Camera &aCamera);
+        void Update(float aDeltaTime, float aTime, Renderer *aRenderer, Camera &aCamera);
 
         void DrawGrid(Renderer *aRenderer, Camera &aCamera);
         void DrawGUI(Renderer *aRenderer, Camera &aCamera);
