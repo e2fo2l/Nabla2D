@@ -232,7 +232,22 @@ namespace nabla2d
 
         if (cameraRotation.x != 0.0F || cameraRotation.y != 0.0F)
         {
-            drawParameters.color = {0.0F, 0.0F, 1.0F, 1.0F};
+            float alpha = 1.0F;
+
+            if (mIsTransitioningMode) // Fade in/out for Z axis
+            {
+                float timer = std::min((mTime - mTransitionStartTime) / mTransitionDuration, 1.0F);
+                if (mIs3Dmode)
+                {
+                    alpha = timer;
+                }
+                else
+                {
+                    alpha = 1.0F - timer;
+                }
+            }
+
+            drawParameters.color = {0.0F, 0.0F, 1.0F, alpha};
             aRenderer->DrawData(mAxisData, aCamera, mAxisTransform.GetMatrix(), drawParameters);
         }
 
