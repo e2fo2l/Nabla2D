@@ -51,16 +51,26 @@ namespace nabla2d
             KEY_UNKNOWN
         } Key;
 
+        typedef enum
+        {
+            AXIS_LEFT = 0,
+            AXIS_RIGHT,
+            AXIS_COUNT
+        } Axis;
+
         static void Init();
         static void Update();
 
         static void FeedKeys(const std::array<bool, KEY_COUNT> &aKeys);
+        static void FeedAxes(const std::array<glm::vec2, AXIS_COUNT> &aAxes);
         static void FeedMousePos(const glm::vec2 &aMousePos);
         static void FeedMouseScroll(float aMouseScroll);
 
         static bool KeyDown(Key aKey);
         static bool KeyUp(Key aKey);
         static bool KeyHeld(Key aKey);
+
+        static const glm::vec2 &GetAxis(Axis aAxis);
 
         static glm::vec2 GetMousePos();
         static glm::vec2 GetMouseDelta();
@@ -69,6 +79,8 @@ namespace nabla2d
     private:
         static std::array<bool, KEY_COUNT> sKeys;
         static std::array<bool, KEY_COUNT> sPrevKeys;
+
+        static std::array<glm::vec2, AXIS_COUNT> sAxes;
 
         static glm::vec2 sMousePos;
         static glm::vec2 sPrevMousePos;

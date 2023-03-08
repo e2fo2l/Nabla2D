@@ -28,6 +28,8 @@ namespace nabla2d
     std::array<bool, Input::KEY_COUNT> Input::sKeys;
     std::array<bool, Input::KEY_COUNT> Input::sPrevKeys;
 
+    std::array<glm::vec2, Input::AXIS_COUNT> Input::sAxes;
+
     glm::vec2 Input::sMousePos;
     glm::vec2 Input::sPrevMousePos;
 
@@ -55,6 +57,13 @@ namespace nabla2d
     void Input::FeedKeys(const std::array<bool, KEY_COUNT> &aKeys)
     {
         sKeys = aKeys;
+    }
+
+    void Input::FeedAxes(const std::array<glm::vec2, AXIS_COUNT> &aAxes)
+    {
+        sAxes = aAxes;
+        for (auto &a : sAxes)
+            a = glm::normalize(a);
     }
 
     void Input::FeedMousePos(const glm::vec2 &aMousePos)
@@ -95,6 +104,16 @@ namespace nabla2d
             return false;
         }
         return sKeys[aKey];
+    }
+
+    const glm::vec2 &Input::GetAxis(Axis aAxis)
+    {
+        if (aAxis < 0 || aAxis >= AXIS_COUNT)
+        {
+            Logger::warn("Invalid axis code: {}", static_cast<int>(aAxis));
+            return sAxes[0];
+        }
+        return sAxes[aAxis];
     }
 
     glm::vec2 Input::GetMousePos()

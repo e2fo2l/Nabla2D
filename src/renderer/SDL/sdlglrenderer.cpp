@@ -142,6 +142,7 @@ namespace nabla2d
 
     void SDLGLRenderer::UpdateInput(const uint8_t *aKeys, float aMouseScroll)
     {
+        // Keys
         std::array<bool, Input::Key::KEY_COUNT> keys;
         keys.fill(false);
 
@@ -164,11 +165,20 @@ namespace nabla2d
         keys[Input::Key::KEY_MOUSE2] = mMouseButtons[2];
 
         Input::FeedKeys(keys);
-        Input::FeedMouseScroll(aMouseScroll);
 
+        // Axes
+        std::array<glm::vec2, Input::Axis::AXIS_COUNT> axes;
+        axes.fill({0.0F, 0.0F});
+
+        axes[Input::Axis::AXIS_LEFT] = {aKeys[SDL_SCANCODE_A] - aKeys[SDL_SCANCODE_D], aKeys[SDL_SCANCODE_S] - aKeys[SDL_SCANCODE_W]};
+
+        Input::FeedAxes(axes);
+
+        // Mouse (pos + scroll)
         int x, y;
         SDL_GetMouseState(&x, &y);
         Input::FeedMousePos({(float)x / mWidth - 0.5F, (float)y / mHeight - 0.5F});
+        Input::FeedMouseScroll(aMouseScroll);
     }
 
     bool SDLGLRenderer::PollWindowEvents()
