@@ -94,6 +94,16 @@ namespace nabla2d
         return mForward;
     }
 
+    const glm::vec3 &Camera::GetUp() const
+    {
+        return mUp;
+    }
+
+    const glm::vec3 &Camera::GetRight() const
+    {
+        return mRight;
+    }
+
     const glm::mat4 &Camera::GetViewMatrix() const
     {
         return mViewMatrix;
@@ -114,8 +124,10 @@ namespace nabla2d
         if (mTransformChanged)
         {
             mTransform = mNextTransform;
-            mForward = mTransform.GetForward();
             mViewMatrix = glm::inverse(mTransform.GetMatrix());
+            mForward = mTransform.GetForward();
+            mUp = mTransform.GetUp();
+            mRight = mTransform.GetRight();
         }
 
         if (mProjectionSettingsChanged)
