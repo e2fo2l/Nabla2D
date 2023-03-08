@@ -61,11 +61,12 @@ namespace nabla2d
         Transform mTransitionStart;
         Transform mTransitionEnd;
 
-        std::array<float, 256>
-            mFPSs;
+        std::array<float, 256> mFPSs;
         float mAverageFPS{0.0F};
         float mDeltaTime{0.0F};
         float mTime{0.0F};
+
+        glm::vec3 mCameraTarget{0.0F, 0.0F, 0.0F};
 
         void GUIVec3Widget(const std::string &aTitle, glm::vec3 &aVec, float aSpeed = 0.02F, const std::string &aXLabel = "x", const std::string &aYLabel = "y", const std::string &aZLabel = "z");
 

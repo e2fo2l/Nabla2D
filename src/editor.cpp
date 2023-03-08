@@ -231,11 +231,10 @@ namespace nabla2d
             {
                 aCamera.SetRotation(cameraRot);
             }
-            static glm::vec3 cameraTarget = {0.0F, 0.0F, 0.0F};
-            GUIVec3Widget("Target", cameraTarget, 0.1F);
+            GUIVec3Widget("Target", mCameraTarget, 0.1F);
             if (ImGui::Button("Set target", ImVec2(-1, 0)))
             {
-                aCamera.LookAt(cameraTarget);
+                aCamera.LookAt(mCameraTarget);
             }
         }
         else
