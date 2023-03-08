@@ -115,7 +115,7 @@ namespace nabla2d
         drawParameters.lineWidth = 1.0F;
 
         const float scaleIndex = std::max(std::floor(std::log2(std::abs(cameraPosition.z) / 10.0F) + 1.0F), 1.0F);
-        const float scaleFactor = std::pow(2.0F, scaleIndex);
+        const float scaleFactor = std::pow(2.0F, scaleIndex - 1.0F);
         mSubgridTransform.SetScale({scaleFactor * 50.0F, scaleFactor * 50.0F, 1.0F});
         mGridTransform.SetScale({scaleFactor * 50.0F, scaleFactor * 50.0F, 1.0F});
 
