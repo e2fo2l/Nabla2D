@@ -195,7 +195,6 @@ namespace nabla2d
     void Editor::DrawGrid(Renderer *aRenderer, Camera &aCamera)
     {
         auto cameraPosition = aCamera.GetPosition();
-        auto cameraRotation = aCamera.GetRotation();
 
         aRenderer->UseShader(mGridShader);
         auto drawParameters = Renderer::DrawParameters();
@@ -230,7 +229,7 @@ namespace nabla2d
         aRenderer->DrawData(mAxisData, aCamera, mAxisTransform.GetMatrix(), drawParameters);
         mAxisTransform.SetRotation({0.0F, -90.0F, 0.0F});
 
-        if (cameraRotation.x != 0.0F || cameraRotation.y != 0.0F)
+        if (mIs3Dmode || mIsTransitioningMode)
         {
             float alpha = 1.0F;
 
