@@ -81,6 +81,7 @@ namespace nabla2d
         glDepthFunc(GL_LEQUAL);
         glEnable(GL_ALPHA_TEST);
         glAlphaFunc(GL_GREATER, 0.01f);
+        glEnable(GL_LINE_SMOOTH);
 
         glViewport(0, 0, mWidth, mHeight);
 
