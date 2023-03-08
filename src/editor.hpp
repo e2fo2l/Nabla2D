@@ -39,7 +39,7 @@ namespace nabla2d
         void Init(Renderer *aRenderer);
         void Destroy(Renderer *aRenderer);
 
-        void Update(float aDeltaTime, float aTime);
+        void Update(float aDeltaTime, float aTime, Camera &aCamera);
 
         void DrawGrid(Renderer *aRenderer, Camera &aCamera);
         void DrawGUI(Renderer *aRenderer, Camera &aCamera);
@@ -53,7 +53,16 @@ namespace nabla2d
         Transform mSubgridTransform;
         Transform mAxisTransform;
 
-        std::array<float, 256> mFPSs;
+        bool mIs3Dmode{false};
+
+        bool mIsTransitioningMode{false};
+        float mTransitionStartTime{0.0F};
+        float mTransitionDuration{0.0F};
+        Transform mTransitionStart;
+        Transform mTransitionEnd;
+
+        std::array<float, 256>
+            mFPSs;
         float mAverageFPS{0.0F};
         float mDeltaTime{0.0F};
         float mTime{0.0F};
@@ -63,7 +72,7 @@ namespace nabla2d
         void GUIBeginCornerWindow(int aCorner = 0);
         void GUIDrawFPSWindow(Renderer *aRenderer);
         void GUIDrawCameraWindow(Camera &aCamera);
-        void GUIDraw2D32Window();
+        void GUIDraw2D32Window(Camera &aCamera);
 
         static std::vector<glm::vec3> GetGridVertices(float aSize, int aSlices);
         static std::vector<unsigned int> GetGridIndices(int aSlices);

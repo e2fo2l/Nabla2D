@@ -24,6 +24,7 @@
 #include <string>
 #include <numeric>
 #include <imgui.h>
+#include "input.hpp"
 #include "logger.hpp"
 
 constexpr const char *kGridVertexShader{R"(
@@ -77,7 +78,7 @@ namespace nabla2d
         aRenderer->DeleteShader(mGridShader);
     }
 
-    void Editor::Update(float aDeltaTime, float aTime)
+    void Editor::Update(float aDeltaTime, float aTime, Camera &aCamera)
     {
         mDeltaTime = aDeltaTime;
         mTime = aTime;
@@ -85,6 +86,23 @@ namespace nabla2d
         std::copy(mFPSs.begin() + 1, mFPSs.end(), mFPSs.begin());
         mFPSs.back() = 1.0F / mDeltaTime;
         mAverageFPS = std::accumulate(mFPSs.begin(), mFPSs.end(), 0.0F) / static_cast<float>(mFPSs.size());
+
+        if (mIsTransitioningMode)
+        {
+            if (mTime - mTransitionStartTime >= mTransitionDuration)
+            {
+                mIsTransitioningMode = false;
+                aCamera.SetPosition(mTransitionEnd.GetPosition());
+                aCamera.SetRotation(mTransitionEnd.GetRotation());
+            }
+            else
+            {
+                const float t = (mTime - mTransitionStartTime) / mTransitionDuration;
+                Transform lerp = Transform::Lerp(mTransitionStart, mTransitionEnd, t);
+                aCamera.SetPosition(lerp.GetPosition());
+                aCamera.SetRotation(lerp.GetRotation());
+            }
+        }
     }
 
     void Editor::DrawGrid(Renderer *aRenderer, Camera &aCamera)
@@ -141,6 +159,7 @@ namespace nabla2d
     {
         GUIDrawFPSWindow(aRenderer);
         GUIDrawCameraWindow(aCamera);
+        GUIDraw2D32Window(aCamera);
     }
 
     void Editor::GUIVec3Widget(const std::string &aTitle, glm::vec3 &aVec, float aSpeed, const std::string &aXLabel, const std::string &aYLabel, const std::string &aZLabel)
@@ -212,10 +231,39 @@ namespace nabla2d
         ImGui::End();
     }
 
-    void Editor::GUIDraw2D32Window()
+    void Editor::GUIDraw2D32Window(Camera &aCamera)
     {
         ImGui::Begin("Editor Mode");
+        float windowWidth = ImGui::GetWindowSize().x;
+        if (ImGui::Button("2D", ImVec2(windowWidth * 0.45F, -1)) && mIs3Dmode && !mIsTransitioningMode)
+        {
+            mIs3Dmode = false;
+            mIsTransitioningMode = true;
+            mTransitionStartTime = mTime;
+            mTransitionDuration = 1.0F;
 
+            auto cameraPos = aCamera.GetPosition();
+            auto cameraRot = aCamera.GetRotation();
+
+            mTransitionStart = Transform(cameraPos, cameraRot);
+            auto transitionEndPos = cameraPos + glm::vec3{-2.0F, 2.0F, 0.0F};
+            transitionEndPos.z = 5.0F;
+            mTransitionEnd = Transform(transitionEndPos, {0.0F, 0.0F, 0.0F});
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("3D", ImVec2(windowWidth * 0.45F, -1)) && !mIs3Dmode && !mIsTransitioningMode)
+        {
+            mIs3Dmode = true;
+            mIsTransitioningMode = true;
+            mTransitionStartTime = mTime;
+            mTransitionDuration = 1.0F;
+
+            auto cameraPos = aCamera.GetPosition();
+            auto cameraRot = aCamera.GetRotation();
+
+            mTransitionStart = Transform(cameraPos, cameraRot);
+            mTransitionEnd = Transform(cameraPos - glm::vec3{-2.0F, 2.0F, 2.0F}, {30.0F, 30.0F, 30.0F});
+        }
         ImGui::End();
     }
 

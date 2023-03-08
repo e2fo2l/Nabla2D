@@ -133,7 +133,7 @@ namespace nabla2d
             }
 
             // --------------- EDITOR ---------------
-            mEditor.Update(mDeltaTime, totalDelta);
+            mEditor.Update(mDeltaTime, totalDelta, mCamera);
             mEditor.DrawGrid(mRenderer.get(), mCamera);
 
             // --------------- TEST SPRITE ---------------
