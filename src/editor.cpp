@@ -24,6 +24,8 @@
 #include <string>
 #include <numeric>
 #include <imgui.h>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtx/euler_angles.hpp>
 #include "input.hpp"
 #include "logger.hpp"
 
@@ -105,6 +107,12 @@ namespace nabla2d
         }
         else
         {
+            float movementSpeed = 3.0F;
+            if (Input::KeyHeld(Input::KEY_LSHIFT))
+            {
+                movementSpeed *= 2.0F;
+            }
+
             if (!mIs3Dmode) // 2D MODE
             {
                 aCamera.SetRotation({0.0F, 0.0F, aCamera.GetRotation().z});
@@ -139,11 +147,47 @@ namespace nabla2d
                 if (axis.x != 0.0F || axis.y != 0.0F)
                 {
                     glm::vec3 cameraTranslation = {axis.x, axis.y, 0.0F};
-                    aCamera.Translate(cameraTranslation * mDeltaTime * -3.0F);
+                    aCamera.Translate(cameraTranslation * mDeltaTime * -movementSpeed);
                 }
             }
             else // 3D MODE
             {
+                // --------- CONTROLS ---------
+
+                // auto cameraPos = aCamera.GetPosition();
+                // auto cameraRot = aCamera.GetRotation();
+
+                if (Input::KeyDown(Input::KEY_MOUSE1))
+                {
+                    aRenderer->SetMouseCapture(true);
+                }
+                if (Input::KeyHeld(Input::KEY_MOUSE1))
+                {
+                    glm::vec2 deltaPos = Input::GetMouseDelta();
+                    glm::vec3 cameraRot = aCamera.GetRotation();
+
+                    cameraRot.x -= deltaPos.y * 100.0F;
+                    cameraRot.y = 0.0F;
+                    cameraRot.z -= deltaPos.x * 100.0F;
+
+                    cameraRot.x = glm::clamp(cameraRot.x, 0.1F, 179.9F);
+
+                    aCamera.SetRotation(cameraRot);
+                }
+                if (Input::KeyUp(Input::KEY_MOUSE1))
+                {
+                    aRenderer->SetMouseCapture(false);
+                }
+
+                auto axis = Input::GetAxis(Input::AXIS_LEFT);
+                if (axis.x != 0.0F || axis.y != 0.0F)
+                {
+                    auto cameraForward = aCamera.GetForward();
+                    auto cameraRight = aCamera.GetRight();
+
+                    glm::vec3 cameraTranslation = cameraForward * axis.y + cameraRight * axis.x;
+                    aCamera.Translate(cameraTranslation * mDeltaTime * -movementSpeed);
+                }
             }
         }
     }
@@ -181,10 +225,10 @@ namespace nabla2d
         // Axes
         drawParameters.color = {1.0F, 0.0F, 0.0F, 1.0F};
         aRenderer->DrawData(mAxisData, aCamera, mAxisTransform.GetMatrix(), drawParameters);
-        mAxisTransform.Rotate(1.0F, {0.0F, 0.0F, 90.0F});
+        mAxisTransform.Rotate(90.0F, {0.0F, 0.0F, 1.0F});
         drawParameters.color = {0.0F, 1.0F, 0.0F, 1.0F};
         aRenderer->DrawData(mAxisData, aCamera, mAxisTransform.GetMatrix(), drawParameters);
-        mAxisTransform.Rotate(1.0F, {90.0F, 0.0F, 0.0F});
+        mAxisTransform.Rotate(90.0F, {1.0F, 0.0F, 0.0F});
 
         if (cameraRotation.x != 0.0F || cameraRotation.y != 0.0F)
         {
@@ -292,9 +336,11 @@ namespace nabla2d
 
     void Editor::GUIDraw2D32Window(Camera &aCamera)
     {
-        ImGui::Begin("Editor Mode");
-        float windowWidth = ImGui::GetWindowSize().x;
-        if (ImGui::Button("2D", ImVec2(windowWidth * 0.45F, -1)) && mIs3Dmode && !mIsTransitioningMode)
+        GUIBeginCornerWindow(1);
+        ImGui::Text("Editor Mode");
+        float windowWidth = 150.0F;
+        float windowHeight = 30.0F;
+        if (ImGui::Button("2D", ImVec2(windowWidth * 0.45F, windowHeight)) && mIs3Dmode && !mIsTransitioningMode)
         {
             mIs3Dmode = false;
             mIsTransitioningMode = true;
@@ -310,7 +356,7 @@ namespace nabla2d
             mTransitionEnd = Transform(transitionEndPos, {0.0F, 0.0F, 0.0F});
         }
         ImGui::SameLine();
-        if (ImGui::Button("3D", ImVec2(windowWidth * 0.45F, -1)) && !mIs3Dmode && !mIsTransitioningMode)
+        if (ImGui::Button("3D", ImVec2(windowWidth * 0.45F, windowHeight)) && !mIs3Dmode && !mIsTransitioningMode)
         {
             mIs3Dmode = true;
             mIsTransitioningMode = true;
@@ -321,7 +367,8 @@ namespace nabla2d
             auto cameraRot = aCamera.GetRotation();
 
             mTransitionStart = Transform(cameraPos, cameraRot);
-            mTransitionEnd = Transform(cameraPos - glm::vec3{-2.0F, 2.0F, 2.0F}, {30.0F, 30.0F, 30.0F});
+            mTransitionEnd = Transform(cameraPos - glm::vec3{-2.0F, 2.0F, 2.0F});
+            mTransitionEnd.LookAt({cameraPos.x, cameraPos.y, 0.0F}, {0.0F, 0.0F, 1.0F});
         }
         ImGui::End();
     }
