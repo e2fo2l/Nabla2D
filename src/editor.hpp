@@ -21,6 +21,7 @@
 #ifndef NABLA2D_EDITOR_HPP
 #define NABLA2D_EDITOR_HPP
 
+#include <array>
 #include <vector>
 #include <glm/glm.hpp>
 #include "camera.hpp"
@@ -36,9 +37,12 @@ namespace nabla2d
         ~Editor() = default;
 
         void Init(Renderer *aRenderer);
-        void Update(float aDeltaTime, float aTime);
-        void Render(Renderer *aRenderer, Camera &aCamera);
         void Destroy(Renderer *aRenderer);
+
+        void Update(float aDeltaTime, float aTime);
+
+        void DrawGrid(Renderer *aRenderer, Camera &aCamera);
+        void DrawGUI(Renderer *aRenderer, Camera &aCamera);
 
     private:
         Renderer::ShaderHandle mGridShader;
@@ -48,6 +52,18 @@ namespace nabla2d
         Transform mGridTransform;
         Transform mSubgridTransform;
         Transform mAxisTransform;
+
+        std::array<float, 256> mFPSs;
+        float mAverageFPS{0.0F};
+        float mDeltaTime{0.0F};
+        float mTime{0.0F};
+
+        void GUIVec3Widget(const std::string &aTitle, glm::vec3 &aVec, float aSpeed = 0.02F, const std::string &aXLabel = "x", const std::string &aYLabel = "y", const std::string &aZLabel = "z");
+
+        void GUIBeginCornerWindow(int aCorner = 0);
+        void GUIDrawFPSWindow(Renderer *aRenderer);
+        void GUIDrawCameraWindow(Camera &aCamera);
+        void GUIDraw2D32Window();
 
         static std::vector<glm::vec3> GetGridVertices(float aSize, int aSlices);
         static std::vector<unsigned int> GetGridIndices(int aSlices);

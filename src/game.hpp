@@ -53,9 +53,6 @@ namespace nabla2d
         std::shared_ptr<Sprite> mTestSprite;
         Transform mTestTransform;
 
-        std::array<float, 120> mFPSs;
-        float mAverageFPS{0.0F};
-
         void DrawEditorWindows();
     };
 } // namespace nabla2d

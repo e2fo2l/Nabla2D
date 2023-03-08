@@ -22,6 +22,8 @@
 
 #include <cmath>
 #include <string>
+#include <numeric>
+#include <imgui.h>
 #include "logger.hpp"
 
 constexpr const char *kGridVertexShader{R"(
@@ -63,15 +65,29 @@ namespace nabla2d
         mGridTransform = Transform({0.0F, 0.0F, 0.0F}, {0.0F, 0.0F, 0.0F}, {50.0F, 50.0F, 50.0F});
         mSubgridTransform = Transform({0.0F, 0.0F, 0.0F}, {0.0F, 0.0F, 0.0F}, {50.0F, 50.0F, 50.0F});
         mAxisTransform = Transform({0.0F, 0.0F, 0.0F}, {0.0F, 0.0F, 0.0F}, {10000.0F, 10000.0F, 10000.0F});
+
+        mFPSs.fill(0.0F);
+    }
+
+    void Editor::Destroy(Renderer *aRenderer)
+    {
+        aRenderer->DeleteData(mGridData);
+        aRenderer->DeleteData(mSubgridData);
+        aRenderer->DeleteData(mAxisData);
+        aRenderer->DeleteShader(mGridShader);
     }
 
     void Editor::Update(float aDeltaTime, float aTime)
     {
-        (void)aDeltaTime;
-        (void)aTime;
+        mDeltaTime = aDeltaTime;
+        mTime = aTime;
+
+        std::copy(mFPSs.begin() + 1, mFPSs.end(), mFPSs.begin());
+        mFPSs.back() = 1.0F / mDeltaTime;
+        mAverageFPS = std::accumulate(mFPSs.begin(), mFPSs.end(), 0.0F) / static_cast<float>(mFPSs.size());
     }
 
-    void Editor::Render(Renderer *aRenderer, Camera &aCamera)
+    void Editor::DrawGrid(Renderer *aRenderer, Camera &aCamera)
     {
         auto cameraPosition = aCamera.GetPosition();
         auto cameraRotation = aCamera.GetRotation();
@@ -121,12 +137,86 @@ namespace nabla2d
         mAxisTransform.Translate({0.0F, 0.0F, -gridOffset * 0.75});
     }
 
-    void Editor::Destroy(Renderer *aRenderer)
+    void Editor::DrawGUI(Renderer *aRenderer, Camera &aCamera)
     {
-        aRenderer->DeleteData(mGridData);
-        aRenderer->DeleteData(mSubgridData);
-        aRenderer->DeleteData(mAxisData);
-        aRenderer->DeleteShader(mGridShader);
+        GUIDrawFPSWindow(aRenderer);
+        GUIDrawCameraWindow(aCamera);
+    }
+
+    void Editor::GUIVec3Widget(const std::string &aTitle, glm::vec3 &aVec, float aSpeed, const std::string &aXLabel, const std::string &aYLabel, const std::string &aZLabel)
+    {
+        ImGui::Text("%s", aTitle.c_str());
+        ImGui::PushItemWidth((0.65f * ImGui::GetWindowSize().x) / 3.0f);
+        ImGui::DragFloat(fmt::format("{}##{}X", aXLabel, aTitle).c_str(), &aVec.x, aSpeed);
+        ImGui::SameLine();
+        ImGui::DragFloat(fmt::format("{}##{}Y", aYLabel, aTitle).c_str(), &aVec.y, aSpeed);
+        ImGui::SameLine();
+        ImGui::DragFloat(fmt::format("{}##{}Z", aZLabel, aTitle).c_str(), &aVec.z, aSpeed);
+        ImGui::PopItemWidth();
+    }
+
+    void Editor::GUIBeginCornerWindow(int aCorner)
+    {
+        // https://github.com/ocornut/imgui/blob/master/imgui_demo.cpp#L7310=
+        const float PAD = 10.0f;
+        const ImGuiViewport *viewport = ImGui::GetMainViewport();
+        ImVec2 work_pos = viewport->WorkPos;
+        ImVec2 work_size = viewport->WorkSize;
+        ImVec2 window_pos, window_pos_pivot;
+        window_pos.x = (aCorner & 1) ? (work_pos.x + work_size.x - PAD) : (work_pos.x + PAD);
+        window_pos.y = (aCorner & 2) ? (work_pos.y + work_size.y - PAD) : (work_pos.y + PAD);
+        window_pos_pivot.x = (aCorner & 1) ? 1.0f : 0.0f;
+        window_pos_pivot.y = (aCorner & 2) ? 1.0f : 0.0f;
+        ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
+                                        ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing |
+                                        ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove;
+        ImGui::SetNextWindowBgAlpha(0.6f);
+        ImGui::Begin(fmt::format("##CornerWindow{}", aCorner).c_str(), nullptr, window_flags);
+    }
+
+    void Editor::GUIDrawFPSWindow(Renderer *aRenderer)
+    {
+        GUIBeginCornerWindow(0);
+        ImGui::Text("Nabla2D");
+        ImGui::Text("Efflam - 2023");
+        ImGui::Text("Built on %s %s", __DATE__, __TIME__);
+        ImGui::Text("Renderer: %s", aRenderer->GetRendererInfo().c_str());
+        ImGui::Text("Resolution: %dx%d", aRenderer->GetWidth(), aRenderer->GetHeight());
+        ImGui::Text("FPS: %d", static_cast<int>(std::round(mAverageFPS)));
+        ImGui::PlotLines("", mFPSs.data(), mFPSs.size(), 0, nullptr, 0);
+        ImGui::End();
+    }
+
+    void Editor::GUIDrawCameraWindow(Camera &aCamera)
+    {
+        ImGui::Begin("Camera");
+        glm::vec3 cameraPos = aCamera.GetPosition();
+        GUIVec3Widget("Position", cameraPos, 0.1F);
+        if (cameraPos != aCamera.GetPosition())
+        {
+            aCamera.SetPosition(cameraPos);
+        }
+        glm::vec3 cameraRot = aCamera.GetRotation();
+        GUIVec3Widget("Rotation", cameraRot, 0.1F);
+        if (cameraRot != aCamera.GetRotation())
+        {
+            aCamera.SetRotation(cameraRot);
+        }
+        static glm::vec3 cameraTarget = {0.0F, 0.0F, 0.0F};
+        GUIVec3Widget("Target", cameraTarget, 0.1F);
+        if (ImGui::Button("Set target", ImVec2(-1, 0)))
+        {
+            aCamera.LookAt(cameraTarget);
+        }
+        ImGui::End();
+    }
+
+    void Editor::GUIDraw2D32Window()
+    {
+        ImGui::Begin("Editor Mode");
+
+        ImGui::End();
     }
 
     std::vector<glm::vec3> Editor::GetGridVertices(float aSize, int aSlices)
