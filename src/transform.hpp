@@ -49,6 +49,9 @@ namespace nabla2d
         void Scale(const glm::vec3 &aScale);
         void LookAt(const glm::vec3 &aTarget);
 
+        void Lerp(const Transform &aTarget, float aInterpolation);
+        static Transform Lerp(const Transform &aT1, const Transform &aT2, float aInterpolation);
+        
         const glm::mat4 &GetMatrix();
 
     private:

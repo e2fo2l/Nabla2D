@@ -104,6 +104,19 @@ namespace nabla2d
         mChanged = true;
     }
 
+    void Transform::Lerp(const Transform &aTarget, float aInterpolation) {
+        mPosition = glm::lerp(mPosition, aTarget.GetPosition(), aInterpolation);
+        mRotation = glm::lerp(mRotation, aTarget.GetRotation(), aInterpolation);
+        mScale = glm::lerp(mScale, aTarget.GetScale(), aInterpolation);
+        mChanged = true;
+    }
+
+    Transform Transform::Lerp(const Transform &aT1, const Transform &aT2, float aInterpolation) {
+        Transform result = aT1;
+        result.Lerp(aT2, aInterpolation);
+        return result;
+    }
+
     const glm::mat4 &Transform::GetMatrix()
     {
         if (mChanged)

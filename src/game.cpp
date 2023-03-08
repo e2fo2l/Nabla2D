@@ -158,6 +158,9 @@ namespace nabla2d
 
             // --------------- TEST SPRITE ---------------
 
+            static Transform srcTransform = mTestTransform;
+            static Transform dstTransform({-0.5F, 2.0F, 2.0F}, {45.0F, 150.0F, 80.0F}, {2.0F, 0.75F, 1.0F});
+            mTestTransform = Transform::Lerp(srcTransform, dstTransform, std::min(totalDelta / 10.0F, 1.0F));
             mRenderer->UseShader(mTestShader);
             mTestSprite->Draw(mRenderer.get(), mCamera, mTestTransform.GetMatrix());
 
