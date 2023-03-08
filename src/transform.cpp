@@ -97,7 +97,7 @@ namespace nabla2d
             return;
         }
 
-        glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+        glm::vec3 up = glm::vec3(0.0f, 0.0f, 1.0f);
         glm::mat4 view = glm::lookAt(mPosition, aTarget, up);
         glm::quat rotation = glm::quat_cast(view);
         mRotation = -glm::degrees(glm::eulerAngles(rotation));
@@ -137,6 +137,24 @@ namespace nabla2d
         return mForward;
     }
 
+    const glm::vec3 &Transform::GetUp()
+    {
+        if (mChanged)
+        {
+            UpdateMatrix();
+        }
+        return mUp;
+    }
+
+    const glm::vec3 &Transform::GetRight()
+    {
+        if (mChanged)
+        {
+            UpdateMatrix();
+        }
+        return mRight;
+    }
+
     void Transform::UpdateMatrix()
     {
         mMatrix = glm::translate(glm::mat4(1.0F), mPosition);
@@ -146,6 +164,8 @@ namespace nabla2d
         mMatrix = glm::scale(mMatrix, mScale);
 
         mForward = -glm::normalize(glm::vec3(mMatrix[2][0], mMatrix[2][1], mMatrix[2][2]));
+        mUp = glm::normalize(glm::vec3(mMatrix[1][0], mMatrix[1][1], mMatrix[1][2]));
+        mRight = glm::normalize(glm::vec3(mMatrix[0][0], mMatrix[0][1], mMatrix[0][2]));
 
         mChanged = false;
     }

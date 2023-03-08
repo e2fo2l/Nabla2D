@@ -54,6 +54,8 @@ namespace nabla2d
 
         const glm::mat4 &GetMatrix();
         const glm::vec3 &GetForward();
+        const glm::vec3 &GetUp();
+        const glm::vec3 &GetRight();
 
     private:
         glm::vec3 mPosition;
@@ -62,6 +64,8 @@ namespace nabla2d
 
         glm::mat4 mMatrix;
         glm::vec3 mForward;
+        glm::vec3 mUp;
+        glm::vec3 mRight;
 
         bool mChanged{true};
 
