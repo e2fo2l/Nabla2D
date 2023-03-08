@@ -45,9 +45,11 @@ namespace nabla2d
 
         const glm::vec3 &GetPosition() const;
         const glm::vec3 &GetRotation() const;
+        const glm::quat &GetRotationQuat() const;
 
         void SetPosition(const glm::vec3 &aPosition);
         void SetRotation(const glm::vec3 &aRotation);
+        void SetRotation(const glm::quat &aRotation);
 
         void Translate(const glm::vec3 &aTranslation);
         void Rotate(float aAngle, const glm::vec3 &aAxis);

@@ -48,6 +48,11 @@ namespace nabla2d
         return mTransform.GetRotation();
     }
 
+    const glm::quat &Camera::GetRotationQuat() const
+    {
+        return mTransform.GetRotationQuat();
+    }
+
     void Camera::SetPosition(const glm::vec3 &aPosition)
     {
         mNextTransform.SetPosition(aPosition);
@@ -55,6 +60,12 @@ namespace nabla2d
     }
 
     void Camera::SetRotation(const glm::vec3 &aRotation)
+    {
+        mNextTransform.SetRotation(aRotation);
+        mTransformChanged = true;
+    }
+
+    void Camera::SetRotation(const glm::quat &aRotation)
     {
         mNextTransform.SetRotation(aRotation);
         mTransformChanged = true;
