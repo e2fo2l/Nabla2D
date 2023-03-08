@@ -103,6 +103,13 @@ namespace nabla2d
                 aCamera.SetRotation(lerp.GetRotation());
             }
         }
+        else
+        {
+            if (!mIs3Dmode)
+            {
+                aCamera.SetRotation({0.0F, 0.0F, aCamera.GetRotation().z});
+            }
+        }
     }
 
     void Editor::DrawGrid(Renderer *aRenderer, Camera &aCamera)
@@ -216,17 +223,30 @@ namespace nabla2d
         {
             aCamera.SetPosition(cameraPos);
         }
-        glm::vec3 cameraRot = aCamera.GetRotation();
-        GUIVec3Widget("Rotation", cameraRot, 0.1F);
-        if (cameraRot != aCamera.GetRotation())
+        if (mIs3Dmode)
         {
-            aCamera.SetRotation(cameraRot);
+            glm::vec3 cameraRot = aCamera.GetRotation();
+            GUIVec3Widget("Rotation", cameraRot, 0.1F);
+            if (cameraRot != aCamera.GetRotation())
+            {
+                aCamera.SetRotation(cameraRot);
+            }
+            static glm::vec3 cameraTarget = {0.0F, 0.0F, 0.0F};
+            GUIVec3Widget("Target", cameraTarget, 0.1F);
+            if (ImGui::Button("Set target", ImVec2(-1, 0)))
+            {
+                aCamera.LookAt(cameraTarget);
+            }
         }
-        static glm::vec3 cameraTarget = {0.0F, 0.0F, 0.0F};
-        GUIVec3Widget("Target", cameraTarget, 0.1F);
-        if (ImGui::Button("Set target", ImVec2(-1, 0)))
+        else
         {
-            aCamera.LookAt(cameraTarget);
+            ImGui::Text("Rotation");
+            float rotation = aCamera.GetRotation().z;
+            ImGui::DragFloat("z##RotationZ", &rotation, 0.1F);
+            if (rotation != aCamera.GetRotation().z)
+            {
+                aCamera.SetRotation({0.0F, 0.0F, rotation});
+            }
         }
         ImGui::End();
     }
