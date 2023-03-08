@@ -228,7 +228,7 @@ namespace nabla2d
         mAxisTransform.Rotate(90.0F, {0.0F, 0.0F, 1.0F});
         drawParameters.color = {0.0F, 1.0F, 0.0F, 1.0F};
         aRenderer->DrawData(mAxisData, aCamera, mAxisTransform.GetMatrix(), drawParameters);
-        mAxisTransform.Rotate(90.0F, {1.0F, 0.0F, 0.0F});
+        mAxisTransform.SetRotation({0.0F, -90.0F, 0.0F});
 
         if (cameraRotation.x != 0.0F || cameraRotation.y != 0.0F)
         {
