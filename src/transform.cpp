@@ -22,6 +22,7 @@
 
 #include <cmath>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/euler_angles.hpp>
 
 namespace nabla2d
 {
@@ -91,10 +92,16 @@ namespace nabla2d
 
     void Transform::LookAt(const glm::vec3 &aTarget)
     {
-        const glm::vec3 direction = glm::normalize(aTarget - mPosition);
-        mRotation.x = glm::degrees(glm::asin(-direction.y));
-        mRotation.y = 180.0F + glm::degrees(glm::atan(direction.x, direction.z));
-        mRotation.z = 0.0F;
+        if (aTarget == mPosition)
+        {
+            return;
+        }
+
+        glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+        glm::mat4 view = glm::lookAt(mPosition, aTarget, up);
+        glm::quat rotation = glm::quat_cast(view);
+        mRotation = -glm::degrees(glm::eulerAngles(rotation));
+        mChanged = true;
     }
 
     const glm::mat4 &Transform::GetMatrix()
