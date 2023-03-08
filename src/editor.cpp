@@ -20,7 +20,9 @@
 
 #include "editor.hpp"
 
+#include <cmath>
 #include <string>
+#include "logger.hpp"
 
 constexpr const char *kGridVertexShader{R"(
 #version 330 core
@@ -71,14 +73,25 @@ namespace nabla2d
 
     void Editor::Render(Renderer *aRenderer, Camera &aCamera)
     {
+        auto cameraPosition = aCamera.GetPosition();
+        auto cameraRotation = aCamera.GetRotation();
+
         aRenderer->UseShader(mGridShader);
         auto drawParameters = Renderer::DrawParameters();
         drawParameters.lineWidth = 1.0F;
 
-        float gridOffset = (aCamera.GetPosition().z > 0.0F) ? -0.005F : 0.005F;
+        const float scaleIndex = std::max(std::floor(std::log2(std::abs(cameraPosition.z) / 10.0F) + 1.0F), 1.0F);
+        const float scaleFactor = std::pow(2.0F, scaleIndex);
+        mSubgridTransform.SetScale({scaleFactor * 50.0F, scaleFactor * 50.0F, 1.0F});
+        mGridTransform.SetScale({scaleFactor * 50.0F, scaleFactor * 50.0F, 1.0F});
+
+        mSubgridTransform.SetPosition({std::floor(cameraPosition.x / scaleFactor) * scaleFactor, std::floor(cameraPosition.y / scaleFactor) * scaleFactor, 0.0F});
+        mGridTransform.SetPosition({std::floor(cameraPosition.x / scaleFactor) * scaleFactor, std::floor(cameraPosition.y / scaleFactor) * scaleFactor, 0.0F});
+
+        const float gridOffset = (cameraPosition.z > 0.0F) ? -0.005F / scaleFactor : 0.005F / scaleFactor;
         mSubgridTransform.Translate({0.0F, 0.0F, gridOffset});
         mGridTransform.Translate({0.0F, 0.0F, gridOffset});
-        mAxisTransform.Translate({0.0F, 0.0F, gridOffset * 0.75});
+        mAxisTransform.Translate({0.0F, 0.0F, gridOffset * 0.75F});
 
         // Subgrid
         drawParameters.color = {0.45F, 0.45F, 0.45F, 1.0F};
@@ -96,7 +109,6 @@ namespace nabla2d
         aRenderer->DrawData(mAxisData, aCamera, mAxisTransform.GetMatrix(), drawParameters);
         mAxisTransform.Rotate(1.0F, {90.0F, 0.0F, 0.0F});
 
-        auto cameraRotation = aCamera.GetRotation();
         if (cameraRotation.x != 0.0F || cameraRotation.y != 0.0F)
         {
             drawParameters.color = {0.0F, 0.0F, 1.0F, 1.0F};
