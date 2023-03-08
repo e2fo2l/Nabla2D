@@ -67,6 +67,7 @@ namespace nabla2d
 
         virtual int GetWidth() const = 0;
         virtual int GetHeight() const = 0;
+        virtual float GetAspectRatio() const = 0;
         virtual const std::string &GetRendererInfo() const = 0;
 
         virtual bool PollWindowEvents() = 0;
@@ -78,7 +79,7 @@ namespace nabla2d
         virtual DataHandle LoadData(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData) = 0;
         virtual DataHandle LoadDataLines(const std::vector<glm::vec3> &aPoints, const std::vector<unsigned int> &aIndices) = 0;
         virtual void DeleteData(DataHandle aHandle) = 0;
-        virtual void DrawData(DataHandle aHandle, const Camera &aCamera, const glm::mat4 &aTransform, const DrawParameters& aDrawParameters) = 0;
+        virtual void DrawData(DataHandle aHandle, const Camera &aCamera, const glm::mat4 &aTransform, const DrawParameters &aDrawParameters) = 0;
 
         virtual ShaderHandle LoadShader(const std::string &aVertexPath, const std::string &aFragmentPath) = 0;
         virtual void DeleteShader(ShaderHandle aHandle) = 0;

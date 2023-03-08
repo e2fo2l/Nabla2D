@@ -135,6 +135,11 @@ namespace nabla2d
         return mHeight;
     }
 
+    float SDLGLRenderer::GetAspectRatio() const
+    {
+        return static_cast<float>(mWidth) / static_cast<float>(mHeight);
+    }
+
     const std::string &SDLGLRenderer::GetRendererInfo() const
     {
         return mRendererInfo;
@@ -175,10 +180,23 @@ namespace nabla2d
         Input::FeedAxes(axes);
 
         // Mouse (pos + scroll)
+        Input::FeedMouseScroll(aMouseScroll);
         int x, y;
         SDL_GetMouseState(&x, &y);
-        Input::FeedMousePos({(float)x / mWidth - 0.5F, (float)y / mHeight - 0.5F});
-        Input::FeedMouseScroll(aMouseScroll);
+        float localX = static_cast<float>(x) / static_cast<float>(mWidth) - 0.5F;
+        float localY = static_cast<float>(y) / static_cast<float>(mHeight) - 0.5F;
+        auto prevMousePos = Input::GetMousePos();
+        Input::FeedMousePos({localX, localY});
+
+        if (mMouseCapured)
+        {
+            Input::FeedMouseDelta({localX, localY});
+            SDL_WarpMouseInWindow(mWindow, mWidth / 2, mHeight / 2);
+        }
+        else
+        {
+            Input::FeedMouseDelta({localX - prevMousePos.x, localY - prevMousePos.y});
+        }
     }
 
     bool SDLGLRenderer::PollWindowEvents()
@@ -247,6 +265,7 @@ namespace nabla2d
         if (aCapture)
         {
             SDL_SetRelativeMouseMode(SDL_TRUE);
+            SDL_WarpMouseInWindow(mWindow, mWidth / 2, mHeight / 2);
         }
         else
         {

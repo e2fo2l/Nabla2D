@@ -64,6 +64,7 @@ namespace nabla2d
         static void FeedKeys(const std::array<bool, KEY_COUNT> &aKeys);
         static void FeedAxes(const std::array<glm::vec2, AXIS_COUNT> &aAxes);
         static void FeedMousePos(const glm::vec2 &aMousePos);
+        static void FeedMouseDelta(const glm::vec2 &aMouseDelta);
         static void FeedMouseScroll(float aMouseScroll);
 
         static bool KeyDown(Key aKey);
@@ -83,7 +84,7 @@ namespace nabla2d
         static std::array<glm::vec2, AXIS_COUNT> sAxes;
 
         static glm::vec2 sMousePos;
-        static glm::vec2 sPrevMousePos;
+        static glm::vec2 sMouseDelta;
 
         static float sMouseScroll;
     };

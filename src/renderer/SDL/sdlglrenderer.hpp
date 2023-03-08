@@ -45,6 +45,7 @@ namespace nabla2d
 
         int GetWidth() const override;
         int GetHeight() const override;
+        float GetAspectRatio() const override;
         const std::string &GetRendererInfo() const override;
 
         bool PollWindowEvents() override;

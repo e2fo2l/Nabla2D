@@ -31,7 +31,7 @@ namespace nabla2d
     std::array<glm::vec2, Input::AXIS_COUNT> Input::sAxes;
 
     glm::vec2 Input::sMousePos;
-    glm::vec2 Input::sPrevMousePos;
+    glm::vec2 Input::sMouseDelta;
 
     float Input::sMouseScroll;
 
@@ -41,7 +41,7 @@ namespace nabla2d
         sPrevKeys.fill(false);
 
         sMousePos = {0.0F, 0.0F};
-        sPrevMousePos = {0.0F, 0.0F};
+        sMouseDelta = {0.0F, 0.0F};
 
         sMouseScroll = 0.0F;
     }
@@ -49,7 +49,7 @@ namespace nabla2d
     void Input::Update()
     {
         sPrevKeys = sKeys;
-        sPrevMousePos = sMousePos;
+        sMouseDelta = {0.0F, 0.0F};
 
         sMouseScroll = 0.0F;
     }
@@ -74,6 +74,11 @@ namespace nabla2d
     void Input::FeedMousePos(const glm::vec2 &aMousePos)
     {
         sMousePos = aMousePos;
+    }
+
+    void Input::FeedMouseDelta(const glm::vec2 &aMouseDelta)
+    {
+        sMouseDelta = aMouseDelta;
     }
 
     void Input::FeedMouseScroll(float aMouseScroll)
@@ -128,7 +133,7 @@ namespace nabla2d
 
     glm::vec2 Input::GetMouseDelta()
     {
-        return sMousePos - sPrevMousePos;
+        return sMouseDelta;
     }
 
     float Input::GetMouseScroll()
