@@ -94,13 +94,9 @@ jobs:
       run: |
         cd build
         cmake --build . --config $BUILD_TYPE
-
-    - name: Archive build
-      run: |
-        cd build/bin
-        tar -cvzf ../../debug.tar.gz *
+        mv bin/Nabla2D bin/Nabla2D.ubuntu.x64.debug
 
     - uses: actions/upload-artifact@v3
       with:
-        name: debug.tar.gz
-        path: debug.tar.gz
+        name: Nabla2D.ubuntu.x64.debug
+        path: build/bin/Nabla2D.ubuntu.x64.debug
