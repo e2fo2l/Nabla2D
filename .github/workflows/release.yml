@@ -98,16 +98,12 @@ jobs:
       run: |
         cd build
         cmake --build . --config "${{ env.BUILD_TYPE }}"
-
-    - name: Archive build
-      run: |
-        cd build/bin
-        a=$PROJECT_NAME.ubuntu-x64.tar.gz; touch a; tar --exclude $a -cvzf $a .
+        mv bin/${{ env.PROJECT_NAME }} bin/${{ env.PROJECT_NAME }}.ubuntu-x64
 
     - uses: actions/upload-artifact@v3
       with:
-        name: ${{ env.PROJECT_NAME }}.ubuntu-x64.tar.gz
-        path: build/bin/${{ env.PROJECT_NAME }}.ubuntu-x64.tar.gz
+        name: ${{ env.PROJECT_NAME }}.ubuntu-x64
+        path: build/bin/${{ env.PROJECT_NAME }}.ubuntu-x64
 
   build-windows-x86:
     runs-on: windows-latest
@@ -154,13 +150,12 @@ jobs:
       run: |
         cd build
         cmake --build . --config "${{ env.BUILD_TYPE }}"
-        cd bin
-        7z a -tzip ${{ env.PROJECT_NAME }}.windows-x86.zip *
+        move bin\${{ env.PROJECT_NAME }}.exe bin\${{ env.PROJECT_NAME }}.windows-x86.exe
 
     - uses: actions/upload-artifact@v3
       with:
-        name: ${{ env.PROJECT_NAME }}.windows-x86.zip
-        path: build/bin/${{ env.PROJECT_NAME }}.windows-x86.zip
+        name: ${{ env.PROJECT_NAME }}.windows-x86
+        path: build/bin/${{ env.PROJECT_NAME }}.windows-x86.exe
 
   deploy:
     runs-on: ubuntu-latest
@@ -170,12 +165,20 @@ jobs:
     - name: Download Ubuntu x64 release
       uses: actions/download-artifact@v3
       with:
-        name: ${{ env.PROJECT_NAME }}.ubuntu-x64.tar.gz
+        name: ${{ env.PROJECT_NAME }}.ubuntu-x64
+
+    - name: Compress Ubuntu x64 release
+      run: |
+        tar -czf ${{ env.PROJECT_NAME }}.ubuntu-x64.tar.gz ${{ env.PROJECT_NAME }}.ubuntu-x64
 
     - name: Download Windows x86 release
       uses: actions/download-artifact@v3
       with:
-        name: ${{ env.PROJECT_NAME }}.windows-x86.zip
+        name: ${{ env.PROJECT_NAME }}.windows-x86
+
+    - name: Compress Windows x86 release
+      run: |
+        7z a -tzip ${{ env.PROJECT_NAME }}.windows-x86.zip ${{ env.PROJECT_NAME }}.windows-x86
 
     - name: List files
       run: |
