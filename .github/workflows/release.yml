@@ -162,6 +162,8 @@ jobs:
     needs: [build-ubuntu-x64, build-windows-x86]
 
     steps:
+    - uses: actions/checkout@v3
+
     - name: Download Ubuntu x64 release
       uses: actions/download-artifact@v3
       with:
@@ -169,7 +171,7 @@ jobs:
 
     - name: Compress Ubuntu x64 release
       run: |
-        tar -czf ${{ env.PROJECT_NAME }}.ubuntu-x64.tar.gz ${{ env.PROJECT_NAME }}.ubuntu-x64
+        tar -czf ${{ env.PROJECT_NAME }}.ubuntu-x64.tar.gz ${{ env.PROJECT_NAME }}.ubuntu-x64 assets
 
     - name: Download Windows x86 release
       uses: actions/download-artifact@v3
@@ -178,7 +180,7 @@ jobs:
 
     - name: Compress Windows x86 release
       run: |
-        7z a -tzip ${{ env.PROJECT_NAME }}.windows-x86.zip ${{ env.PROJECT_NAME }}.windows-x86
+        7z a -tzip ${{ env.PROJECT_NAME }}.windows-x86.zip ${{ env.PROJECT_NAME }}.windows-x86.exe assets
 
     - name: List files
       run: |
