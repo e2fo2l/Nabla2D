@@ -98,6 +98,7 @@ jobs:
       run: |
         cd build
         cmake --build . --config "${{ env.BUILD_TYPE }}"
+        rm -rf bin/${{ env.PROJECT_NAME }}.ubuntu-x64
         mv bin/${{ env.PROJECT_NAME }} bin/${{ env.PROJECT_NAME }}.ubuntu-x64
 
     - uses: actions/upload-artifact@v3
@@ -150,6 +151,7 @@ jobs:
       run: |
         cd build
         cmake --build . --config "${{ env.BUILD_TYPE }}"
+        Remove-Item -Path bin\${{ env.PROJECT_NAME }}.windows-x86.exe -Force -ErrorAction SilentlyContinue
         move bin\${{ env.PROJECT_NAME }}.exe bin\${{ env.PROJECT_NAME }}.windows-x86.exe
 
     - uses: actions/upload-artifact@v3
