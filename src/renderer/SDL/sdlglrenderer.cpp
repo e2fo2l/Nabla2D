@@ -50,7 +50,12 @@ namespace nabla2d
             return;
         }
 
-        mWindow = SDL_CreateWindow(aTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mWidth, mHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
+        mWindow = SDL_CreateWindow(aTitle.c_str(),
+                                   SDL_WINDOWPOS_CENTERED,
+                                   SDL_WINDOWPOS_CENTERED,
+                                   mWidth,
+                                   mHeight,
+                                   SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
         if (mWindow == nullptr)
         {
             Logger::error("Window could not be created! SDL_Error: %s", SDL_GetError());
