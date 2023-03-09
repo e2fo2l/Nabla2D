@@ -50,6 +50,7 @@ namespace nabla2d
 
         bool PollWindowEvents() override;
         void SetMouseCapture(bool aCapture) override;
+        bool HasBeenResized() const override;
 
         void Clear() override;
         void Render() override;
@@ -72,6 +73,7 @@ namespace nabla2d
         int mWidth;
         int mHeight;
         std::string mRendererInfo;
+        bool mResized{false};
 
         std::shared_ptr<GLShader> mCurrentShader;
         std::shared_ptr<GLTexture> mCurrentTexture;

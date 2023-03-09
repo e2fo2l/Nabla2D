@@ -72,6 +72,7 @@ namespace nabla2d
 
         virtual bool PollWindowEvents() = 0;
         virtual void SetMouseCapture(bool aCapture) = 0;
+        virtual bool HasBeenResized() const = 0;
 
         virtual void Clear() = 0;
         virtual void Render() = 0;

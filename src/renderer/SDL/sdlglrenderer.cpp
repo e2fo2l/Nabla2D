@@ -50,7 +50,7 @@ namespace nabla2d
             return;
         }
 
-        mWindow = SDL_CreateWindow(aTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mWidth, mHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+        mWindow = SDL_CreateWindow(aTitle.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mWidth, mHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN);
         if (mWindow == nullptr)
         {
             Logger::error("Window could not be created! SDL_Error: %s", SDL_GetError());
@@ -201,6 +201,7 @@ namespace nabla2d
 
     bool SDLGLRenderer::PollWindowEvents()
     {
+        mResized = false;
         float mouseScroll = 0.0F;
 
         SDL_Event event;
@@ -211,11 +212,22 @@ namespace nabla2d
             {
                 return false;
             }
-            if (event.type == SDL_WINDOWEVENT && event.window.windowID == SDL_GetWindowID(mWindow))
+            if (event.type == SDL_WINDOWEVENT)
             {
-                if (event.window.event == SDL_WINDOWEVENT_CLOSE)
+                if (event.window.event == SDL_WINDOWEVENT_RESIZED)
                 {
-                    return false;
+                    mResized = true;
+                    mWidth = event.window.data1;
+                    mHeight = event.window.data2;
+                    glViewport(0, 0, mWidth, mHeight);
+                }
+
+                if (event.window.windowID == SDL_GetWindowID(mWindow))
+                {
+                    if (event.window.event == SDL_WINDOWEVENT_CLOSE)
+                    {
+                        return false;
+                    }
                 }
             }
             if (event.type == SDL_MOUSEBUTTONDOWN)
@@ -272,6 +284,11 @@ namespace nabla2d
             SDL_SetRelativeMouseMode(SDL_FALSE);
         }
         mMouseCapured = aCapture;
+    }
+
+    bool SDLGLRenderer::HasBeenResized() const
+    {
+        return mResized;
     }
 
     void SDLGLRenderer::Clear()
