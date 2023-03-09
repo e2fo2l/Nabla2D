@@ -71,6 +71,15 @@ namespace nabla2d
 
         mEditor.Init(mRenderer.get());
 
+        mScene.CreateEntity("entity1");
+        mScene.CreateEntity("entity2");
+        auto entity = mScene.CreateEntity("entity3");
+        mScene.CreateEntity("entity4", entity);
+        entity = mScene.CreateEntity("entity5");
+        mScene.CreateEntity("entity6", entity);
+        entity = mScene.CreateEntity("entity7", entity);
+        mScene.CreateEntity("entity8", entity);
+
         Logger::info("Game created");
     }
 
@@ -101,6 +110,12 @@ namespace nabla2d
             mDeltaTime = std::chrono::duration_cast<std::chrono::duration<float>>(currentTime - lastTime).count();
             lastTime = currentTime;
 
+            if (mRenderer->HasBeenResized())
+            {
+                auto projectionSettings = Camera::ProjectionSettings{45.0F, mRenderer->GetAspectRatio(), 0.1F, 100.0F};
+                mCamera.SetProjectionSettings(projectionSettings);
+            }
+
             mCamera.Update();
 
             mRenderer->Clear();
@@ -118,7 +133,7 @@ namespace nabla2d
             mTestSprite->Draw(mRenderer.get(), mCamera, mTestTransform.GetMatrix());
 
             // --------------- EDITOR ---------------
-            mEditor.DrawGUI(mRenderer.get(), mCamera);
+            mEditor.DrawGUI(mRenderer.get(), mCamera, mScene);
 
             mRenderer->Render();
             Input::Update();

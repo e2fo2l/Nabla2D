@@ -22,6 +22,7 @@
 #define NABLA2D_SCENE_HPP
 
 #include <string>
+#include <vector>
 #include <unordered_map>
 #include <entt/entt.hpp>
 
@@ -30,7 +31,15 @@ namespace nabla2d
     class Scene
     {
     public:
-        Scene() = default;
+        struct EntityNode
+        {
+            entt::entity entity;
+            entt::entity parent;
+            std::vector<EntityNode> children;
+        };
+        typedef EntityNode EntityTree;
+
+        Scene();
         ~Scene() = default;
 
         entt::entity CreateEntity(const std::string &aTag, entt::entity aParent = entt::null);
@@ -39,7 +48,11 @@ namespace nabla2d
         const entt::registry &GetRegistry() const;
         entt::entity GetEntity(const std::string &aTag) const;
         const std::string &GetTag(entt::entity aEntity) const;
+
         entt::entity GetParent(entt::entity aEntity) const;
+        void SetParent(entt::entity aEntity, entt::entity aParent);
+
+        const EntityTree &GetEntityTree() const;
 
     private:
         const std::string mErrorTag{""};
@@ -48,6 +61,10 @@ namespace nabla2d
         std::unordered_map<std::string, entt::entity> mTags;
         std::unordered_map<entt::entity, std::string> mReverseTags;
         std::unordered_map<entt::entity, entt::entity> mParents;
+
+        EntityTree mEntityTree;
+
+        void BuildEntityTree();
     };
 
 } // namespace nabla2d

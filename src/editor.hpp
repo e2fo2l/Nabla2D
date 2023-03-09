@@ -25,6 +25,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "camera.hpp"
+#include "scene.hpp"
 #include "transform.hpp"
 #include "renderer/renderer.hpp"
 
@@ -42,7 +43,7 @@ namespace nabla2d
         void Update(float aDeltaTime, float aTime, Renderer *aRenderer, Camera &aCamera);
 
         void DrawGrid(Renderer *aRenderer, Camera &aCamera);
-        void DrawGUI(Renderer *aRenderer, Camera &aCamera);
+        void DrawGUI(Renderer *aRenderer, Camera &aCamera, Scene &aScene);
 
     private:
         Renderer::ShaderHandle mGridShader;
@@ -78,6 +79,8 @@ namespace nabla2d
         void GUIDrawFPSWindow(Renderer *aRenderer);
         void GUIDrawCameraWindow(Camera &aCamera);
         void GUIDraw2D32Window(Camera &aCamera);
+        void GUIDrawEntityNode(Scene &aScene, Scene::EntityNode &aNode);
+        void GUIDrawEntitiesWindow(Scene &aScene);
 
         static std::vector<glm::vec3> GetGridVertices(float aSize, int aSlices);
         static std::vector<unsigned int> GetGridIndices(int aSlices);

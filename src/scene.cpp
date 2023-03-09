@@ -24,6 +24,11 @@
 
 namespace nabla2d
 {
+    Scene::Scene()
+    {
+        mParents[entt::null] = entt::null;
+    }
+
     entt::entity Scene::CreateEntity(const std::string &aTag, entt::entity aParent)
     {
         if (aTag == mErrorTag)
@@ -38,9 +43,11 @@ namespace nabla2d
         }
 
         auto entity = mRegistry.create();
-        mTags.at(aTag) = entity;
-        mReverseTags.at(entity) = aTag;
-        mParents.at(entity) = aParent;
+        mTags[aTag] = entity;
+        mReverseTags[entity] = aTag;
+        mParents[entity] = aParent;
+
+        BuildEntityTree();
 
         return entity;
     }
@@ -63,6 +70,8 @@ namespace nabla2d
         mTags.erase(tag);
         mReverseTags.erase(aEntity);
         mParents.erase(aEntity);
+
+        BuildEntityTree();
     }
 
     const entt::registry &Scene::GetRegistry() const
@@ -101,6 +110,29 @@ namespace nabla2d
             return entt::null;
         }
         return parent->second;
+    }
+
+    void Scene::SetParent(entt::entity aEntity, entt::entity aParent)
+    {
+        auto entity = mParents.find(aEntity);
+        if (entity == mParents.end())
+        {
+            Logger::error("No entity with the specified id exists!");
+            return;
+        }
+        entity->second = aParent;
+
+        BuildEntityTree();
+    }
+
+    const Scene::EntityTree &Scene::GetEntityTree() const
+    {
+        return mEntityTree;
+    }
+
+    void Scene::BuildEntityTree()
+    {
+        // TODO
     }
 
 } // namespace nabla2d

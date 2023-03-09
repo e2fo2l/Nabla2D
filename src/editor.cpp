@@ -175,11 +175,12 @@ namespace nabla2d
         mAxisTransform.Translate({0.0F, 0.0F, -gridOffset * 0.75});
     }
 
-    void Editor::DrawGUI(Renderer *aRenderer, Camera &aCamera)
+    void Editor::DrawGUI(Renderer *aRenderer, Camera &aCamera, Scene &aScene)
     {
         GUIDrawFPSWindow(aRenderer);
         GUIDrawCameraWindow(aCamera);
         GUIDraw2D32Window(aCamera);
+        GUIDrawEntitiesWindow(aScene);
     }
 
     void Editor::UpdateInput(Renderer *aRenderer, Camera &aCamera)
@@ -393,6 +394,32 @@ namespace nabla2d
             mTransitionEnd = Transform(cameraPos - glm::vec3{-2.0F, 2.0F, 2.0F});
             mTransitionEnd.LookAt({cameraPos.x, cameraPos.y, 0.0F}, {0.0F, 0.0F, 1.0F});
         }
+        ImGui::End();
+    }
+
+    void Editor::GUIDrawEntityNode(Scene &aScene, Scene::EntityNode &aNode)
+    {
+        auto entityTag = aScene.GetTag(aNode.entity);
+        if (ImGui::TreeNode(entityTag.c_str()))
+        {
+            for (auto &child : aNode.children)
+            {
+                GUIDrawEntityNode(aScene, child);
+            }
+            ImGui::TreePop();
+        }
+    }
+
+    void Editor::GUIDrawEntitiesWindow(Scene &aScene)
+    {
+        ImGui::Begin("Entities");
+
+        auto entityTree = aScene.GetEntityTree();
+        for (auto &node : entityTree.children) // Root node is entt::null
+        {
+            GUIDrawEntityNode(aScene, node);
+        }
+
         ImGui::End();
     }
 

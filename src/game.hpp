@@ -26,6 +26,7 @@
 
 #include "camera.hpp"
 #include "editor.hpp"
+#include "scene.hpp"
 #include "sprite.hpp"
 #include "transform.hpp"
 #include "renderer/renderer.hpp"
@@ -47,6 +48,7 @@ namespace nabla2d
         std::shared_ptr<Renderer> mRenderer;
 
         Camera mCamera;
+        Scene mScene;
         Editor mEditor;
 
         Renderer::ShaderHandle mTestShader;
