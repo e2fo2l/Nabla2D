@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="logo.svg"/></td>
   <td id="projectalign">
-   <div id="projectname">Nabla2D<span id="projectnumber">&#160;pre-release</span>
+   <div id="projectname">Nabla2D<span id="projectnumber">&#160;v0.0.1-pre-prelease</span>
    </div>
    <div id="projectbrief">Modern C++ 2D Game Engine</div>
   </td>
@@ -114,6 +114,8 @@ Inheritance diagram for nabla2d::Renderer:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnabla2d_1_1Renderer_1_1DrawParameters.html">DrawParameters</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structnabla2d_1_1Renderer_1_1TextureInfo.html">TextureInfo</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -142,9 +144,24 @@ typedef uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>TextureHa
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a82bad56d5194952313c7bde23bd9c85b"><td class="memItemLeft" align="right" valign="top"><a id="a82bad56d5194952313c7bde23bd9c85b" name="a82bad56d5194952313c7bde23bd9c85b"></a>
+virtual int&#160;</td><td class="memItemRight" valign="bottom"><b>GetWidth</b> () const =0</td></tr>
+<tr class="separator:a82bad56d5194952313c7bde23bd9c85b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4473a7c91229393aa82bc17ff08ee98d"><td class="memItemLeft" align="right" valign="top"><a id="a4473a7c91229393aa82bc17ff08ee98d" name="a4473a7c91229393aa82bc17ff08ee98d"></a>
+virtual int&#160;</td><td class="memItemRight" valign="bottom"><b>GetHeight</b> () const =0</td></tr>
+<tr class="separator:a4473a7c91229393aa82bc17ff08ee98d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24d4acdf57067eb51f5a910e93ac61ec"><td class="memItemLeft" align="right" valign="top"><a id="a24d4acdf57067eb51f5a910e93ac61ec" name="a24d4acdf57067eb51f5a910e93ac61ec"></a>
+virtual float&#160;</td><td class="memItemRight" valign="bottom"><b>GetAspectRatio</b> () const =0</td></tr>
+<tr class="separator:a24d4acdf57067eb51f5a910e93ac61ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a382718dbc9bf6abb47dad7d109f03f52"><td class="memItemLeft" align="right" valign="top"><a id="a382718dbc9bf6abb47dad7d109f03f52" name="a382718dbc9bf6abb47dad7d109f03f52"></a>
+virtual const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetRendererInfo</b> () const =0</td></tr>
+<tr class="separator:a382718dbc9bf6abb47dad7d109f03f52"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2cc967ac9fa092473e8e69c4458cc2b0"><td class="memItemLeft" align="right" valign="top"><a id="a2cc967ac9fa092473e8e69c4458cc2b0" name="a2cc967ac9fa092473e8e69c4458cc2b0"></a>
 virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>PollWindowEvents</b> ()=0</td></tr>
 <tr class="separator:a2cc967ac9fa092473e8e69c4458cc2b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaac624334d720386a2b5c16711cfaaa9"><td class="memItemLeft" align="right" valign="top"><a id="aaac624334d720386a2b5c16711cfaaa9" name="aaac624334d720386a2b5c16711cfaaa9"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetMouseCapture</b> (bool aCapture)=0</td></tr>
+<tr class="separator:aaac624334d720386a2b5c16711cfaaa9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae14e9e98677c846309b52513050a1994"><td class="memItemLeft" align="right" valign="top"><a id="ae14e9e98677c846309b52513050a1994" name="ae14e9e98677c846309b52513050a1994"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Clear</b> ()=0</td></tr>
 <tr class="separator:ae14e9e98677c846309b52513050a1994"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -154,12 +171,15 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Render</b> ()
 <tr class="memitem:ad3d630485b680d0ae95f80f09cc96ce3"><td class="memItemLeft" align="right" valign="top"><a id="ad3d630485b680d0ae95f80f09cc96ce3" name="ad3d630485b680d0ae95f80f09cc96ce3"></a>
 virtual DataHandle&#160;</td><td class="memItemRight" valign="bottom"><b>LoadData</b> (const std::vector&lt; std::pair&lt; glm::vec3, glm::vec2 &gt; &gt; &amp;aData)=0</td></tr>
 <tr class="separator:ad3d630485b680d0ae95f80f09cc96ce3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a727b84c5d2965c028b7167e2edcc6370"><td class="memItemLeft" align="right" valign="top"><a id="a727b84c5d2965c028b7167e2edcc6370" name="a727b84c5d2965c028b7167e2edcc6370"></a>
+virtual DataHandle&#160;</td><td class="memItemRight" valign="bottom"><b>LoadDataLines</b> (const std::vector&lt; glm::vec3 &gt; &amp;aPoints, const std::vector&lt; unsigned int &gt; &amp;aIndices)=0</td></tr>
+<tr class="separator:a727b84c5d2965c028b7167e2edcc6370"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d33c48b09a1ad2bb13f7af765c722d6"><td class="memItemLeft" align="right" valign="top"><a id="a2d33c48b09a1ad2bb13f7af765c722d6" name="a2d33c48b09a1ad2bb13f7af765c722d6"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>DeleteData</b> (DataHandle aHandle)=0</td></tr>
 <tr class="separator:a2d33c48b09a1ad2bb13f7af765c722d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaeedb8797fa0348d132b2ea210237ed4"><td class="memItemLeft" align="right" valign="top"><a id="aaeedb8797fa0348d132b2ea210237ed4" name="aaeedb8797fa0348d132b2ea210237ed4"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>DrawData</b> (DataHandle aHandle, const <a class="el" href="classnabla2d_1_1Camera.html">Camera</a> &amp;aCamera, const glm::mat4 &amp;aTransform, const glm::vec4 &amp;aAtlasInfo)=0</td></tr>
-<tr class="separator:aaeedb8797fa0348d132b2ea210237ed4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a991df4e16ad8c85e07d9c6662dfe719a"><td class="memItemLeft" align="right" valign="top"><a id="a991df4e16ad8c85e07d9c6662dfe719a" name="a991df4e16ad8c85e07d9c6662dfe719a"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>DrawData</b> (DataHandle aHandle, const <a class="el" href="classnabla2d_1_1Camera.html">Camera</a> &amp;aCamera, const glm::mat4 &amp;aTransform, const <a class="el" href="structnabla2d_1_1Renderer_1_1DrawParameters.html">DrawParameters</a> &amp;aDrawParameters)=0</td></tr>
+<tr class="separator:a991df4e16ad8c85e07d9c6662dfe719a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a568f1a2d6ea58ece18cbb602a762166c"><td class="memItemLeft" align="right" valign="top"><a id="a568f1a2d6ea58ece18cbb602a762166c" name="a568f1a2d6ea58ece18cbb602a762166c"></a>
 virtual ShaderHandle&#160;</td><td class="memItemRight" valign="bottom"><b>LoadShader</b> (const std::string &amp;aVertexPath, const std::string &amp;aFragmentPath)=0</td></tr>
 <tr class="separator:a568f1a2d6ea58ece18cbb602a762166c"><td class="memSeparator" colspan="2">&#160;</td></tr>

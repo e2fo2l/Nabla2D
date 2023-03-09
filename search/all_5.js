@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['renderer_0',['Renderer',['../classnabla2d_1_1Renderer.html',1,'nabla2d']]]
+  ['logger_0',['Logger',['../classnabla2d_1_1Logger.html',1,'nabla2d']]]
 ];

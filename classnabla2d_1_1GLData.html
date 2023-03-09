@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="logo.svg"/></td>
   <td id="projectalign">
-   <div id="projectname">Nabla2D<span id="projectnumber">&#160;pre-release</span>
+   <div id="projectname">Nabla2D<span id="projectnumber">&#160;v0.0.1-pre-prelease</span>
    </div>
    <div id="projectbrief">Modern C++ 2D Game Engine</div>
   </td>
@@ -102,9 +102,12 @@ $(document).ready(function(){initNavTree('classnabla2d_1_1GLData.html',''); init
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6b4d79ecf6dd07b94211f330724dbbb4"><td class="memItemLeft" align="right" valign="top"><a id="a6b4d79ecf6dd07b94211f330724dbbb4" name="a6b4d79ecf6dd07b94211f330724dbbb4"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>GLData</b> (const std::vector&lt; float &gt; &amp;aVertices)</td></tr>
-<tr class="separator:a6b4d79ecf6dd07b94211f330724dbbb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84d6d6c4b3fce5967afc02a986bec06b"><td class="memItemLeft" align="right" valign="top"><a id="a84d6d6c4b3fce5967afc02a986bec06b" name="a84d6d6c4b3fce5967afc02a986bec06b"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>GLData</b> (const std::vector&lt; float &gt; &amp;aVertices, GLenum aMode=GL_TRIANGLES)</td></tr>
+<tr class="separator:a84d6d6c4b3fce5967afc02a986bec06b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bb664ea2bdc93aadfeefdd9dd98868c"><td class="memItemLeft" align="right" valign="top"><a id="a2bb664ea2bdc93aadfeefdd9dd98868c" name="a2bb664ea2bdc93aadfeefdd9dd98868c"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>GLData</b> (const std::vector&lt; float &gt; &amp;aVertices, const std::vector&lt; unsigned int &gt; &amp;aIndices, GLenum aMode=GL_TRIANGLES)</td></tr>
+<tr class="separator:a2bb664ea2bdc93aadfeefdd9dd98868c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa72531e0003669cd3b18dedeb6ea4918"><td class="memItemLeft" align="right" valign="top"><a id="aa72531e0003669cd3b18dedeb6ea4918" name="aa72531e0003669cd3b18dedeb6ea4918"></a>
 std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetSize</b> () const</td></tr>
 <tr class="separator:aa72531e0003669cd3b18dedeb6ea4918"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -114,6 +117,12 @@ GLuint&#160;</td><td class="memItemRight" valign="bottom"><b>GetVAO</b> () const
 <tr class="memitem:a3ade6a9c1fe38ba9b8d05cf7715b8313"><td class="memItemLeft" align="right" valign="top"><a id="a3ade6a9c1fe38ba9b8d05cf7715b8313" name="a3ade6a9c1fe38ba9b8d05cf7715b8313"></a>
 GLuint&#160;</td><td class="memItemRight" valign="bottom"><b>GetVBO</b> () const</td></tr>
 <tr class="separator:a3ade6a9c1fe38ba9b8d05cf7715b8313"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9945831ed75477e5729c7d73cc898eb3"><td class="memItemLeft" align="right" valign="top"><a id="a9945831ed75477e5729c7d73cc898eb3" name="a9945831ed75477e5729c7d73cc898eb3"></a>
+GLuint&#160;</td><td class="memItemRight" valign="bottom"><b>GetEBO</b> () const</td></tr>
+<tr class="separator:a9945831ed75477e5729c7d73cc898eb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf265430396819ea0b35bcfe933fd2e3"><td class="memItemLeft" align="right" valign="top"><a id="abf265430396819ea0b35bcfe933fd2e3" name="abf265430396819ea0b35bcfe933fd2e3"></a>
+GLenum&#160;</td><td class="memItemRight" valign="bottom"><b>GetMode</b> () const</td></tr>
+<tr class="separator:abf265430396819ea0b35bcfe933fd2e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/renderer/OpenGL/<a class="el" href="gldata_8hpp_source.html">gldata.hpp</a></li>
