@@ -58,7 +58,6 @@ namespace nabla2d
         void main()
         {
             vec2 texCoord = v_TexCoord * u_AtlasInfo.zw + u_AtlasInfo.xy;
-            texCoord.y = 1.0 - texCoord.y;
             FragColor = texture(u_Texture, texCoord);
         }
         )");
