@@ -36,7 +36,7 @@ endif()
 
 # Warnings
 if(MSVC)
-  target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
+  target_compile_options(${PROJECT_NAME} PRIVATE /W4)
 else()
   target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
 endif()
