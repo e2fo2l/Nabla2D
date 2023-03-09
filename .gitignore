@@ -46,6 +46,7 @@ graph_info.json
 
 # IDE project files
 .vscode/
+.VSCodeCounter/
 .idea/
 *.cbp
 *.workspace
