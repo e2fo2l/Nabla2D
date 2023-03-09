@@ -11,7 +11,7 @@ var annotated_dup =
       [ "Input", "classnabla2d_1_1Input.html", null ],
       [ "Logger", "classnabla2d_1_1Logger.html", null ],
       [ "Renderer", "classnabla2d_1_1Renderer.html", "classnabla2d_1_1Renderer" ],
-      [ "Scene", "classnabla2d_1_1Scene.html", null ],
+      [ "Scene", "classnabla2d_1_1Scene.html", "classnabla2d_1_1Scene" ],
       [ "SDLGLRenderer", "classnabla2d_1_1SDLGLRenderer.html", null ],
       [ "Sprite", "classnabla2d_1_1Sprite.html", null ],
       [ "Transform", "classnabla2d_1_1Transform.html", null ]

@@ -3,6 +3,7 @@ var hierarchy =
     [ "nabla2d::Camera", "classnabla2d_1_1Camera.html", null ],
     [ "nabla2d::Renderer::DrawParameters", "structnabla2d_1_1Renderer_1_1DrawParameters.html", null ],
     [ "nabla2d::Editor", "classnabla2d_1_1Editor.html", null ],
+    [ "nabla2d::Scene::EntityNode", "structnabla2d_1_1Scene_1_1EntityNode.html", null ],
     [ "nabla2d::Game", "classnabla2d_1_1Game.html", null ],
     [ "GL3WProcs", "unionGL3WProcs.html", null ],
     [ "nabla2d::GLData", "classnabla2d_1_1GLData.html", null ],

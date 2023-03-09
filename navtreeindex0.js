@@ -52,6 +52,7 @@ var NAVTREEINDEX0 =
 "structnabla2d_1_1Camera_1_1ProjectionSettings.html":[5,0,0,0,0],
 "structnabla2d_1_1Renderer_1_1DrawParameters.html":[5,0,0,9,0],
 "structnabla2d_1_1Renderer_1_1TextureInfo.html":[5,0,0,9,1],
+"structnabla2d_1_1Scene_1_1EntityNode.html":[5,0,0,10,0],
 "transform_8hpp_source.html":[6,0,0,8],
 "unionGL3WProcs.html":[5,0,1]
 };
