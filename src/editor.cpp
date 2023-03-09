@@ -107,88 +107,7 @@ namespace nabla2d
         }
         else
         {
-            float movementSpeed = 3.0F;
-            if (Input::KeyHeld(Input::KEY_LSHIFT))
-            {
-                movementSpeed *= 2.0F;
-            }
-
-            if (!mIs3Dmode) // 2D MODE
-            {
-                aCamera.SetRotation({0.0F, 0.0F, aCamera.GetRotation().z});
-
-                // --------- CONTROLS ---------
-                auto cameraPos = aCamera.GetPosition();
-                float scroll = Input::GetMouseScroll();
-                if (scroll != 0.0F)
-                {
-                    if ((cameraPos.z > 2.0F || scroll < 0.0F) &&
-                        (cameraPos.z < 80.0F || scroll > 0.0F))
-                    {
-                        aCamera.Translate({0.0F, 0.0F, -scroll * 0.6F});
-                    }
-                }
-
-                if (Input::KeyDown(Input::KEY_MOUSE1))
-                {
-                    aRenderer->SetMouseCapture(true);
-                }
-                if (Input::KeyHeld(Input::KEY_MOUSE1))
-                {
-                    glm::vec2 deltaPos = Input::GetMouseDelta();
-                    aCamera.Translate({deltaPos.x * 8.0F, -deltaPos.y * 8.0F / (16.0F / 9.0F), 0.0F});
-                }
-                if (Input::KeyUp(Input::KEY_MOUSE1))
-                {
-                    aRenderer->SetMouseCapture(false);
-                }
-
-                auto axis = Input::GetAxis(Input::AXIS_LEFT);
-                if (axis.x != 0.0F || axis.y != 0.0F)
-                {
-                    glm::vec3 cameraTranslation = {axis.x, axis.y, 0.0F};
-                    aCamera.Translate(cameraTranslation * mDeltaTime * -movementSpeed);
-                }
-            }
-            else // 3D MODE
-            {
-                // --------- CONTROLS ---------
-
-                // auto cameraPos = aCamera.GetPosition();
-                // auto cameraRot = aCamera.GetRotation();
-
-                if (Input::KeyDown(Input::KEY_MOUSE1))
-                {
-                    aRenderer->SetMouseCapture(true);
-                }
-                if (Input::KeyHeld(Input::KEY_MOUSE1))
-                {
-                    glm::vec2 deltaPos = Input::GetMouseDelta();
-                    glm::vec3 cameraRot = aCamera.GetRotation();
-
-                    cameraRot.x -= deltaPos.y * 100.0F;
-                    cameraRot.y = 0.0F;
-                    cameraRot.z -= deltaPos.x * 100.0F;
-
-                    cameraRot.x = glm::clamp(cameraRot.x, 0.1F, 179.9F);
-
-                    aCamera.SetRotation(cameraRot);
-                }
-                if (Input::KeyUp(Input::KEY_MOUSE1))
-                {
-                    aRenderer->SetMouseCapture(false);
-                }
-
-                auto axis = Input::GetAxis(Input::AXIS_LEFT);
-                if (axis.x != 0.0F || axis.y != 0.0F)
-                {
-                    auto cameraForward = aCamera.GetForward();
-                    auto cameraRight = aCamera.GetRight();
-
-                    glm::vec3 cameraTranslation = cameraForward * axis.y + cameraRight * axis.x;
-                    aCamera.Translate(cameraTranslation * mDeltaTime * -movementSpeed);
-                }
-            }
+            UpdateInput(aRenderer, aCamera);
         }
     }
 
@@ -261,6 +180,92 @@ namespace nabla2d
         GUIDrawFPSWindow(aRenderer);
         GUIDrawCameraWindow(aCamera);
         GUIDraw2D32Window(aCamera);
+    }
+
+    void Editor::UpdateInput(Renderer *aRenderer, Camera &aCamera)
+    {
+        float movementSpeed = 3.0F;
+        if (Input::KeyHeld(Input::KEY_LSHIFT))
+        {
+            movementSpeed *= 2.0F;
+        }
+
+        if (!mIs3Dmode) // 2D MODE
+        {
+            aCamera.SetRotation({0.0F, 0.0F, aCamera.GetRotation().z});
+
+            // --------- CONTROLS ---------
+            auto cameraPos = aCamera.GetPosition();
+            float scroll = Input::GetMouseScroll();
+            if (scroll != 0.0F)
+            {
+                if ((cameraPos.z > 2.0F || scroll < 0.0F) &&
+                    (cameraPos.z < 80.0F || scroll > 0.0F))
+                {
+                    aCamera.Translate({0.0F, 0.0F, -scroll * 0.6F});
+                }
+            }
+
+            if (Input::KeyDown(Input::KEY_MOUSE1))
+            {
+                aRenderer->SetMouseCapture(true);
+            }
+            if (Input::KeyHeld(Input::KEY_MOUSE1))
+            {
+                glm::vec2 deltaPos = Input::GetMouseDelta();
+                aCamera.Translate({deltaPos.x * 8.0F, -deltaPos.y * 8.0F / (16.0F / 9.0F), 0.0F});
+            }
+            if (Input::KeyUp(Input::KEY_MOUSE1))
+            {
+                aRenderer->SetMouseCapture(false);
+            }
+
+            auto axis = Input::GetAxis(Input::AXIS_LEFT);
+            if (axis.x != 0.0F || axis.y != 0.0F)
+            {
+                glm::vec3 cameraTranslation = {axis.x, axis.y, 0.0F};
+                aCamera.Translate(cameraTranslation * mDeltaTime * -movementSpeed);
+            }
+        }
+        else // 3D MODE
+        {
+            // --------- CONTROLS ---------
+
+            // auto cameraPos = aCamera.GetPosition();
+            // auto cameraRot = aCamera.GetRotation();
+
+            if (Input::KeyDown(Input::KEY_MOUSE1))
+            {
+                aRenderer->SetMouseCapture(true);
+            }
+            if (Input::KeyHeld(Input::KEY_MOUSE1))
+            {
+                glm::vec2 deltaPos = Input::GetMouseDelta();
+                glm::vec3 cameraRot = aCamera.GetRotation();
+
+                cameraRot.x -= deltaPos.y * 100.0F;
+                cameraRot.y = 0.0F;
+                cameraRot.z -= deltaPos.x * 100.0F;
+
+                cameraRot.x = glm::clamp(cameraRot.x, 0.1F, 179.9F);
+
+                aCamera.SetRotation(cameraRot);
+            }
+            if (Input::KeyUp(Input::KEY_MOUSE1))
+            {
+                aRenderer->SetMouseCapture(false);
+            }
+
+            auto axis = Input::GetAxis(Input::AXIS_LEFT);
+            if (axis.x != 0.0F || axis.y != 0.0F)
+            {
+                auto cameraForward = aCamera.GetForward();
+                auto cameraRight = aCamera.GetRight();
+
+                glm::vec3 cameraTranslation = cameraForward * axis.y + cameraRight * axis.x;
+                aCamera.Translate(cameraTranslation * mDeltaTime * -movementSpeed);
+            }
+        }
     }
 
     void Editor::GUIVec3Widget(const std::string &aTitle, glm::vec3 &aVec, float aSpeed, const std::string &aXLabel, const std::string &aYLabel, const std::string &aZLabel)

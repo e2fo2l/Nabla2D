@@ -68,6 +68,8 @@ namespace nabla2d
 
         glm::vec3 mCameraTarget{0.0F, 0.0F, 0.0F};
 
+        void UpdateInput(Renderer *aRenderer, Camera &aCamera);
+
         void GUIVec3Widget(const std::string &aTitle, glm::vec3 &aVec, float aSpeed = 0.02F, const std::string &aXLabel = "x", const std::string &aYLabel = "y", const std::string &aZLabel = "z");
 
         void GUIBeginCornerWindow(int aCorner = 0);
