@@ -429,14 +429,13 @@ namespace nabla2d
 
         const bool isBranchOpen = ImGui::TreeNodeEx(fmt::format("{}##Entity", entityTag).c_str(), flags);
 
+        if (ImGui::IsItemClicked())
+        {
+            mSelectedEntity = aNode.entity;
+        }
+
         if (aNode.entity != entt::null)
         {
-            if (ImGui::IsItemClicked())
-            {
-                Logger::info("Selected entity {}", entityTag);
-                mSelectedEntity = aNode.entity;
-            }
-
             if (ImGui::BeginDragDropSource())
             {
                 ImGui::SetDragDropPayload("Entity", &aNode.entity, sizeof(entt::entity));
