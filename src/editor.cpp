@@ -459,7 +459,7 @@ namespace nabla2d
     void Editor::GUIDrawEntityNode(Scene &aScene, Scene::EntityNode &aNode, std::vector<std::pair<entt::entity, entt::entity>> &aNewParents)
     {
         const auto &entityTag = aScene.GetTag(aNode.entity);
-        ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
+        ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
         if (aNode.children.empty())
         {
             flags |= ImGuiTreeNodeFlags_Leaf;
