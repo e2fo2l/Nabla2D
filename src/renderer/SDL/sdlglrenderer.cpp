@@ -235,34 +235,20 @@ namespace nabla2d
                     }
                 }
             }
-            if (event.type == SDL_MOUSEBUTTONDOWN)
+            if (event.type == SDL_MOUSEBUTTONDOWN || event.type == SDL_MOUSEBUTTONUP)
             {
+                bool mouseDown = event.type == SDL_MOUSEBUTTONDOWN;
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
-                    mMouseButtons[0] = true;
+                    mMouseButtons[0] = mouseDown;
                 }
                 if (event.button.button == SDL_BUTTON_RIGHT)
                 {
-                    mMouseButtons[1] = true;
+                    mMouseButtons[1] = mouseDown;
                 }
                 if (event.button.button == SDL_BUTTON_MIDDLE)
                 {
-                    mMouseButtons[2] = true;
-                }
-            }
-            if (event.type == SDL_MOUSEBUTTONUP)
-            {
-                if (event.button.button == SDL_BUTTON_LEFT)
-                {
-                    mMouseButtons[0] = false;
-                }
-                if (event.button.button == SDL_BUTTON_RIGHT)
-                {
-                    mMouseButtons[1] = false;
-                }
-                if (event.button.button == SDL_BUTTON_MIDDLE)
-                {
-                    mMouseButtons[2] = false;
+                    mMouseButtons[2] = mouseDown;
                 }
             }
             if (event.type == SDL_MOUSEWHEEL)
