@@ -422,7 +422,7 @@ namespace nabla2d
             flags |= ImGuiTreeNodeFlags_Leaf;
         }
 
-        if (aNode.entity != entt::null && mSelectedEntity == aNode.entity)
+        if (mSelectedEntity == aNode.entity)
         {
             flags |= ImGuiTreeNodeFlags_Selected;
         }
