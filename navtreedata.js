@@ -27,9 +27,9 @@ var NAVTREE =
   [ "Nabla2D", "index.html", [
     [ "License", "index.html#autotoc_md0", null ],
     [ "Features", "index.html#autotoc_md1", null ],
-    [ "Download", "index.html#autotoc_md2", null ],
-    [ "Screenshots", "index.html#autotoc_md3", null ],
-    [ "Building", "index.html#autotoc_md4", null ],
+    [ "Download", "index.html#autotoc_md3", null ],
+    [ "Screenshots", "index.html#autotoc_md4", null ],
+    [ "Building", "index.html#autotoc_md5", null ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
       [ "Class Index", "classes.html", null ],
