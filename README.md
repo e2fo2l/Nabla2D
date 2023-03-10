@@ -31,6 +31,10 @@ Nabla2D is licensed under the [GNU General Public License v3.0](https://www.gnu.
 * GUI with [ImGui](https://github.com/ocornut/imgui)
 * Powerful Entity Component System
 * Scripting with Lua (w/ optional [LuaJIT](https://luajit.org/) support)
+### Planned features
+* Audio
+* Vulkan renderer
+* Emscripten (build to web)
 
 # Download
 You can download the latest release from the [releases page](https://github.com/e2fo2l/Nabla2D/releases).
