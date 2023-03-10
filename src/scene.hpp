@@ -56,6 +56,7 @@ namespace nabla2d
 
     private:
         const std::string mErrorTag{""};
+        const std::string mRootTag{"Root"};
 
         entt::registry mRegistry;
         std::unordered_map<std::string, entt::entity> mTags;

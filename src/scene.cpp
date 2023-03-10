@@ -26,9 +26,8 @@ namespace nabla2d
 {
     Scene::Scene()
     {
-        const std::string rootTag{"Root"};
-        mTags[rootTag] = entt::null;
-        mReverseTags[entt::null] = rootTag;
+        mTags[mRootTag] = entt::null;
+        mReverseTags[entt::null] = mRootTag;
 
         mParents[entt::null] = entt::null;
         mChildren[entt::null] = {};
@@ -36,7 +35,7 @@ namespace nabla2d
 
     entt::entity Scene::CreateEntity(const std::string &aTag, entt::entity aParent)
     {
-        if (aTag == mErrorTag)
+        if (aTag == mErrorTag || aTag == mRootTag)
         {
             Logger::error("Cannot create entity with reserved tag '{}'!", aTag);
             return entt::null;
