@@ -415,10 +415,7 @@ namespace nabla2d
         ImGui::Begin("Entities");
 
         auto entityTree = aScene.GetEntityTree();
-        for (auto &node : entityTree.children) // Root node is entt::null
-        {
-            GUIDrawEntityNode(aScene, node);
-        }
+        GUIDrawEntityNode(aScene, entityTree);
 
         ImGui::End();
     }

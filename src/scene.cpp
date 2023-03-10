@@ -26,6 +26,10 @@ namespace nabla2d
 {
     Scene::Scene()
     {
+        const std::string rootTag{"Root"};
+        mTags[rootTag] = entt::null;
+        mReverseTags[entt::null] = rootTag;
+
         mParents[entt::null] = entt::null;
         mChildren[entt::null] = {};
     }
