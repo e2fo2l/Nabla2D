@@ -20,6 +20,7 @@
 
 #include "scene.hpp"
 
+#include <fmt/format.h>
 #include "logger.hpp"
 
 namespace nabla2d
@@ -87,6 +88,40 @@ namespace nabla2d
         mParents.erase(aEntity);
 
         BuildEntityTree();
+    }
+
+    bool Scene::IsEntityTagValid(const std::string &aTag, std::string &aReason) const
+    {
+        aReason = "";
+        if (aTag.empty())
+        {
+            aReason = fmt::format("Tags cannot be empty!");
+            return false;
+        }
+        if (aTag == mErrorTag || aTag == mRootTag)
+        {
+            aReason = fmt::format("'{}' is a reserved tag!", aTag);
+            return false;
+        }
+        if (mTags.find(aTag) != mTags.end())
+        {
+            aReason = fmt::format("'{}' already exists!", aTag);
+            return false;
+        }
+        if (aTag[0] >= '0' && aTag[0] <= '9')
+        {
+            aReason = fmt::format("Tags cannot start with a number!");
+            return false;
+        }
+        for (auto c : aTag)
+        {
+            if (c < '0' || (c > '9' && c < 'A') || (c > 'Z' && c < 'a') || c > 'z')
+            {
+                aReason = fmt::format("Invalid character '{}' in tag!", c);
+                return false;
+            }
+        }
+        return true;
     }
 
     const entt::registry &Scene::GetRegistry() const

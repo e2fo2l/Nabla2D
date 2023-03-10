@@ -69,6 +69,8 @@ namespace nabla2d
 
         glm::vec3 mCameraTarget{0.0F, 0.0F, 0.0F};
 
+        std::array<char, 256> mInputBuffer;
+        std::string mErrorMessage;
         entt::entity mSelectedEntity{entt::null};
 
         void UpdateInput(Renderer *aRenderer, Camera &aCamera);

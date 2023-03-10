@@ -45,6 +45,8 @@ namespace nabla2d
         entt::entity CreateEntity(const std::string &aTag, entt::entity aParent = entt::null);
         void DestroyEntity(entt::entity aEntity);
 
+        bool IsEntityTagValid(const std::string &aTag, std::string &aReason) const;
+
         const entt::registry &GetRegistry() const;
         entt::entity GetEntity(const std::string &aTag) const;
         const std::string &GetTag(entt::entity aEntity) const;

@@ -23,6 +23,7 @@
 #include <cmath>
 #include <string>
 #include <numeric>
+#include <algorithm>
 #include <imgui.h>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
@@ -70,6 +71,7 @@ namespace nabla2d
         mAxisTransform = Transform({0.0F, 0.0F, 0.0F}, {0.0F, 0.0F, 0.0F}, {10000.0F, 10000.0F, 10000.0F});
 
         mFPSs.fill(0.0F);
+        mInputBuffer.fill('\0');
     }
 
     void Editor::Destroy(Renderer *aRenderer)
@@ -400,6 +402,47 @@ namespace nabla2d
     void Editor::GUIDrawEntitiesWindow(Scene &aScene)
     {
         ImGui::Begin("Entities");
+
+        ImGui::InputText("##EntityTag", mInputBuffer.data(), mInputBuffer.size());
+        ImGui::SameLine();
+
+        if (ImGui::Button("+##CreateEntity"))
+        {
+            std::string entityTag(mInputBuffer.data());
+
+            // Strip whitespaces
+            entityTag.erase(std::remove_if(entityTag.begin(),
+                                           entityTag.end(), [](char c)
+                                           { return std::isspace(c); }),
+                            entityTag.end());
+
+            if (aScene.IsEntityTagValid(entityTag, mErrorMessage))
+            {
+                aScene.CreateEntity(mInputBuffer.data(), mSelectedEntity);
+                mErrorMessage.clear();
+            }
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("-##DeleteEntity"))
+        {
+            if (mSelectedEntity != entt::null)
+            {
+                aScene.DestroyEntity(mSelectedEntity);
+                mSelectedEntity = entt::null;
+                mErrorMessage.clear();
+            }
+            else
+            {
+                mErrorMessage = "No entity selected!";
+            }
+        }
+
+        if (!mErrorMessage.empty())
+        {
+            ImGui::TextColored(ImVec4(1.0F, 0.0F, 0.0F, 1.0F), "%s", mErrorMessage.c_str());
+        }
+
+        ImGui::Separator();
 
         auto entityTree = aScene.GetEntityTree();
         std::vector<std::pair<entt::entity, entt::entity>> newParents;
