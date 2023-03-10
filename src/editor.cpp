@@ -421,7 +421,10 @@ namespace nabla2d
         {
             flags |= ImGuiTreeNodeFlags_Leaf;
         }
-
+        if (aNode.entity == entt::null)
+        {
+            flags |= ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_Leaf;
+        }
         if (mSelectedEntity == aNode.entity)
         {
             flags |= ImGuiTreeNodeFlags_Selected;
