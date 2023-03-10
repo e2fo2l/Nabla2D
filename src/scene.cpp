@@ -109,14 +109,14 @@ namespace nabla2d
             aReason = fmt::format("'{}' already exists!", aTag);
             return false;
         }
-        if (aTag[0] >= '0' && aTag[0] <= '9')
+        if (std::isdigit(aTag[0]))
         {
             aReason = fmt::format("Tags cannot start with a number!");
             return false;
         }
         for (auto c : aTag)
         {
-            if (c < '0' || (c > '9' && c < 'A') || (c > 'Z' && c < 'a' && c != '_') || c > 'z')
+            if (!std::isalnum(c) && c != '_')
             {
                 aReason = fmt::format("Invalid character '{}' in tag!", c);
                 return false;
