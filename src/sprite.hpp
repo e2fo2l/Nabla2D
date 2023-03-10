@@ -39,9 +39,11 @@ namespace nabla2d
         void Draw(Camera &aCamera, const glm::mat4 &aParentTransform);
 
         const std::string &GetPath() const;
-        const glm::vec2 &GetSize() const;
         const Renderer::TextureFilter &GetFilter() const;
         const Renderer::TextureInfo &GetTextureInfo() const;
+
+        const glm::vec2 &GetSize() const;
+        void SetSize(const glm::vec2 &aSize);
 
         const glm::vec4 &GetAtlasInfo() const;
         void SetAtlasInfo(const glm::vec4 &aAtlasInfo);

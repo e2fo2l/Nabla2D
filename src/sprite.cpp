@@ -61,12 +61,6 @@ namespace nabla2d
             }
         }
 
-        for (auto &v : square)
-        {
-            v.first.x *= mSize.x;
-            v.first.y *= mSize.y;
-        }
-
         mSpriteData = mRenderer->LoadData(square);
     }
 
@@ -81,7 +75,7 @@ namespace nabla2d
         mRenderer->UseTexture(mTexture);
         auto drawParameters = Renderer::DrawParameters();
         drawParameters.atlasInfo = mAtlasInfo;
-        mRenderer->DrawData(mSpriteData, aCamera, aParentTransform, drawParameters);
+        mRenderer->DrawData(mSpriteData, aCamera, glm::scale(aParentTransform, {mSize.x, mSize.y, 1.0F}), drawParameters);
     }
 
     const std::string &Sprite::GetPath() const
@@ -92,6 +86,16 @@ namespace nabla2d
     const glm::vec2 &Sprite::GetSize() const
     {
         return mSize;
+    }
+
+    void Sprite::SetSize(const glm::vec2 &aSize)
+    {
+        mSize = aSize;
+    }
+
+    const glm::vec4 &Sprite::GetAtlasInfo() const
+    {
+        return mAtlasInfo;
     }
 
     const Renderer::TextureFilter &Sprite::GetFilter() const
