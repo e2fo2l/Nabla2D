@@ -116,7 +116,7 @@ namespace nabla2d
         }
         for (auto c : aTag)
         {
-            if (c < '0' || (c > '9' && c < 'A') || (c > 'Z' && c < 'a') || c > 'z')
+            if (c < '0' || (c > '9' && c < 'A') || (c > 'Z' && c < 'a' && c != '_') || c > 'z')
             {
                 aReason = fmt::format("Invalid character '{}' in tag!", c);
                 return false;
