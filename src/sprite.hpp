@@ -23,6 +23,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include <glm/glm.hpp>
 
 #include "renderer/renderer.hpp"
@@ -32,11 +33,10 @@ namespace nabla2d
     class Sprite
     {
     public:
-        Sprite(Renderer *mRenderer, const std::string &aPath, const glm::vec2 &aSize, Renderer::TextureFilter aFilter = Renderer::TextureFilter::LINEAR);
-        ~Sprite() = default;
-        void Clear(Renderer *mRenderer);
+        Sprite(std::shared_ptr<Renderer> aRenderer, const std::string &aPath, const glm::vec2 &aSize, Renderer::TextureFilter aFilter = Renderer::TextureFilter::LINEAR);
+        ~Sprite();
 
-        void Draw(Renderer *mRenderer, Camera &mCamera, const glm::mat4 &aParentTransform);
+        void Draw(Camera &aCamera, const glm::mat4 &aParentTransform);
 
         const std::string &GetPath() const;
         const glm::vec2 &GetSize() const;
@@ -47,6 +47,7 @@ namespace nabla2d
         void SetAtlasInfo(const glm::vec4 &aAtlasInfo);
 
     private:
+        std::shared_ptr<Renderer> mRenderer;
         std::string mPath;
         glm::vec2 mSize;
         Renderer::TextureFilter mFilter;

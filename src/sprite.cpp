@@ -32,10 +32,11 @@ namespace nabla2d
         {{0.5F, 0.5F, 0.0F}, {1.0, 1.0}},
         {{0.5F, -0.5F, 0.0F}, {1.0, 0.0}}};
 
-    Sprite::Sprite(Renderer *mRenderer,
+    Sprite::Sprite(std::shared_ptr<Renderer> aRenderer,
                    const std::string &aPath,
                    const glm::vec2 &aSize,
-                   Renderer::TextureFilter aFilter) : mPath(aPath),
+                   Renderer::TextureFilter aFilter) : mRenderer(aRenderer),
+                                                      mPath(aPath),
                                                       mSize(aSize),
                                                       mFilter(aFilter)
     {
@@ -69,18 +70,18 @@ namespace nabla2d
         mSpriteData = mRenderer->LoadData(square);
     }
 
-    void Sprite::Clear(Renderer *mRenderer)
+    Sprite::~Sprite()
     {
         mRenderer->DeleteData(mSpriteData);
         mRenderer->DeleteTexture(mTexture);
     }
 
-    void Sprite::Draw(Renderer *mRenderer, Camera &mCamera, const glm::mat4 &aParentTransform)
+    void Sprite::Draw(Camera &aCamera, const glm::mat4 &aParentTransform)
     {
         mRenderer->UseTexture(mTexture);
         auto drawParameters = Renderer::DrawParameters();
         drawParameters.atlasInfo = mAtlasInfo;
-        mRenderer->DrawData(mSpriteData, mCamera, aParentTransform, drawParameters);
+        mRenderer->DrawData(mSpriteData, aCamera, aParentTransform, drawParameters);
     }
 
     const std::string &Sprite::GetPath() const

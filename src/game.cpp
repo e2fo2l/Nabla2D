@@ -62,7 +62,7 @@ namespace nabla2d
         }
         )");
 
-        mTestSprite = std::shared_ptr<Sprite>(new Sprite(mRenderer.get(),
+        mTestSprite = std::shared_ptr<Sprite>(new Sprite(mRenderer,
                                                          "assets/logo.png",
                                                          {1.0F, 1.0F},
                                                          Renderer::NEAREST));
@@ -84,7 +84,6 @@ namespace nabla2d
 
     Game::~Game()
     {
-        mTestSprite->Clear(mRenderer.get());
         mRenderer->DeleteShader(mTestShader);
 
         mEditor.Destroy(mRenderer.get());
@@ -129,7 +128,7 @@ namespace nabla2d
             // --------------- TEST SPRITE ---------------
 
             mRenderer->UseShader(mTestShader);
-            mTestSprite->Draw(mRenderer.get(), mCamera, mTestTransform.GetMatrix());
+            mTestSprite->Draw(mCamera, mTestTransform.GetMatrix());
 
             // --------------- EDITOR ---------------
             mEditor.DrawGUI(mRenderer.get(), mCamera, mScene);
