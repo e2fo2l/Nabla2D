@@ -79,8 +79,8 @@ namespace nabla2d
         void GUIDrawFPSWindow(Renderer *aRenderer);
         void GUIDrawCameraWindow(Camera &aCamera);
         void GUIDraw2D32Window(Camera &aCamera);
-        void GUIDrawEntityNode(Scene &aScene, Scene::EntityNode &aNode);
         void GUIDrawEntitiesWindow(Scene &aScene);
+        void GUIDrawEntityNode(Scene &aScene, Scene::EntityNode &aNode, std::vector<std::pair<entt::entity, entt::entity>> &aNewParents);
 
         static std::vector<glm::vec3> GetGridVertices(float aSize, int aSlices);
         static std::vector<unsigned int> GetGridIndices(int aSlices);

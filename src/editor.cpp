@@ -397,27 +397,52 @@ namespace nabla2d
         ImGui::End();
     }
 
-    void Editor::GUIDrawEntityNode(Scene &aScene, Scene::EntityNode &aNode)
-    {
-        auto entityTag = aScene.GetTag(aNode.entity);
-        if (ImGui::TreeNode(entityTag.c_str()))
-        {
-            for (auto &child : aNode.children)
-            {
-                GUIDrawEntityNode(aScene, child);
-            }
-            ImGui::TreePop();
-        }
-    }
-
     void Editor::GUIDrawEntitiesWindow(Scene &aScene)
     {
         ImGui::Begin("Entities");
 
         auto entityTree = aScene.GetEntityTree();
-        GUIDrawEntityNode(aScene, entityTree);
+        std::vector<std::pair<entt::entity, entt::entity>> newParents;
+        GUIDrawEntityNode(aScene, entityTree, newParents);
+
+        for (auto &[entity, newParent] : newParents)
+        {
+            aScene.SetParent(entity, newParent);
+        }
 
         ImGui::End();
+    }
+
+    void Editor::GUIDrawEntityNode(Scene &aScene, Scene::EntityNode &aNode, std::vector<std::pair<entt::entity, entt::entity>> &aNewParents)
+    {
+        auto entityTag = aScene.GetTag(aNode.entity);
+        const bool isBranchOpen = ImGui::TreeNode(fmt::format("{}##Entity", entityTag).c_str());
+
+        if (aNode.entity != entt::null && ImGui::BeginDragDropSource())
+        {
+            ImGui::SetDragDropPayload("Entity", &aNode.entity, sizeof(entt::entity));
+            ImGui::Text("%s", entityTag.c_str());
+            ImGui::EndDragDropSource();
+        }
+
+        if (ImGui::BeginDragDropTarget())
+        {
+            if (const ImGuiPayload *payload = ImGui::AcceptDragDropPayload("Entity"))
+            {
+                entt::entity entity = *(entt::entity *)payload->Data;
+                aNewParents.emplace_back(entity, aNode.entity);
+            }
+            ImGui::EndDragDropTarget();
+        }
+
+        if (isBranchOpen)
+        {
+            for (auto &child : aNode.children)
+            {
+                GUIDrawEntityNode(aScene, child, aNewParents);
+            }
+            ImGui::TreePop();
+        }
     }
 
     std::vector<glm::vec3> Editor::GetGridVertices(float aSize, int aSlices)
