@@ -415,14 +415,34 @@ namespace nabla2d
 
     void Editor::GUIDrawEntityNode(Scene &aScene, Scene::EntityNode &aNode, std::vector<std::pair<entt::entity, entt::entity>> &aNewParents)
     {
-        auto entityTag = aScene.GetTag(aNode.entity);
-        const bool isBranchOpen = ImGui::TreeNode(fmt::format("{}##Entity", entityTag).c_str());
-
-        if (aNode.entity != entt::null && ImGui::BeginDragDropSource())
+        const auto &entityTag = aScene.GetTag(aNode.entity);
+        ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_None;
+        if (aNode.children.empty())
         {
-            ImGui::SetDragDropPayload("Entity", &aNode.entity, sizeof(entt::entity));
-            ImGui::Text("%s", entityTag.c_str());
-            ImGui::EndDragDropSource();
+            flags |= ImGuiTreeNodeFlags_Leaf;
+        }
+
+        if (aNode.entity != entt::null && mSelectedEntity == aNode.entity)
+        {
+            flags |= ImGuiTreeNodeFlags_Selected;
+        }
+
+        const bool isBranchOpen = ImGui::TreeNodeEx(fmt::format("{}##Entity", entityTag).c_str(), flags);
+
+        if (aNode.entity != entt::null)
+        {
+            if (ImGui::IsItemClicked())
+            {
+                Logger::info("Selected entity {}", entityTag);
+                mSelectedEntity = aNode.entity;
+            }
+
+            if (ImGui::BeginDragDropSource())
+            {
+                ImGui::SetDragDropPayload("Entity", &aNode.entity, sizeof(entt::entity));
+                ImGui::Text("%s", entityTag.c_str());
+                ImGui::EndDragDropSource();
+            }
         }
 
         if (ImGui::BeginDragDropTarget())

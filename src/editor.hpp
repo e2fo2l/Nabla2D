@@ -69,6 +69,8 @@ namespace nabla2d
 
         glm::vec3 mCameraTarget{0.0F, 0.0F, 0.0F};
 
+        entt::entity mSelectedEntity{entt::null};
+
         void UpdateInput(Renderer *aRenderer, Camera &aCamera);
         void UpdateInput2D(Renderer *aRenderer, Camera &aCamera, float aMovementSpeed);
         void UpdateInput3D(Renderer *aRenderer, Camera &aCamera, float aMovementSpeed);
