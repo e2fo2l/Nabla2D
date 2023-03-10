@@ -79,6 +79,7 @@ namespace nabla2d
         for (auto child : mChildren.at(aEntity))
         {
             mParents[child] = parent;
+            parentChildren.push_back(child);
         }
 
         mRegistry.destroy(aEntity);
