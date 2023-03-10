@@ -27,6 +27,7 @@ namespace nabla2d
     Scene::Scene()
     {
         mParents[entt::null] = entt::null;
+        mChildren[entt::null] = {};
     }
 
     entt::entity Scene::CreateEntity(const std::string &aTag, entt::entity aParent)
@@ -46,6 +47,8 @@ namespace nabla2d
         mTags[aTag] = entity;
         mReverseTags[entity] = aTag;
         mParents[entity] = aParent;
+        mChildren[aParent].push_back(entity);
+        mChildren[entity] = {};
 
         BuildEntityTree();
 
@@ -65,8 +68,17 @@ namespace nabla2d
             Logger::error("Cannot delete entity, it doesn't appear to be valid!");
         }
 
+        auto parent = mParents.at(aEntity);
+        auto &parentChildren = mChildren.at(parent);
+        parentChildren.erase(std::remove(parentChildren.begin(), parentChildren.end(), aEntity), parentChildren.end());
+
+        for (auto child : mChildren.at(aEntity))
+        {
+            mParents[child] = parent;
+        }
+
         mRegistry.destroy(aEntity);
-        std::string tag = mReverseTags.at(aEntity);
+        const auto tag = mReverseTags.at(aEntity);
         mTags.erase(tag);
         mReverseTags.erase(aEntity);
         mParents.erase(aEntity);
@@ -120,7 +132,13 @@ namespace nabla2d
             Logger::error("No entity with the specified id exists!");
             return;
         }
-        entity->second = aParent;
+
+        auto &parent = entity->second;
+        auto &parentChildren = mChildren.at(parent);
+        parentChildren.erase(std::remove(parentChildren.begin(), parentChildren.end(), aEntity), parentChildren.end());
+
+        parent = aParent;
+        mChildren[aParent].push_back(aEntity);
 
         BuildEntityTree();
     }
@@ -132,7 +150,19 @@ namespace nabla2d
 
     void Scene::BuildEntityTree()
     {
-        // TODO
+        mEntityTree = {};
+        BuildEntityTreeRecursive(mEntityTree, entt::null);
+    }
+
+    void Scene::BuildEntityTreeRecursive(EntityNode &aNode, entt::entity aEntity)
+    {
+        aNode.entity = aEntity;
+        for (auto child : mChildren.at(aEntity))
+        {
+            EntityNode childNode;
+            BuildEntityTreeRecursive(childNode, child);
+            aNode.children.push_back(childNode);
+        }
     }
 
 } // namespace nabla2d

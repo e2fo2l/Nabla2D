@@ -61,10 +61,12 @@ namespace nabla2d
         std::unordered_map<std::string, entt::entity> mTags;
         std::unordered_map<entt::entity, std::string> mReverseTags;
         std::unordered_map<entt::entity, entt::entity> mParents;
+        std::unordered_map<entt::entity, std::vector<entt::entity>> mChildren;
 
         EntityTree mEntityTree;
 
         void BuildEntityTree();
+        void BuildEntityTreeRecursive(EntityNode &aNode, entt::entity aEntity);
     };
 
 } // namespace nabla2d
