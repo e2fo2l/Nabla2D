@@ -10,6 +10,7 @@
 
 <p align="center">
 <img src="https://img.shields.io/github/license/e2fo2l/Nabla2D">
+<img alt="Lines of code" src="https://img.shields.io/tokei/lines/github/e2fo2l/Nabla2D">
 <a href="https://www.codefactor.io/repository/github/e2fo2l/nabla2d"><img src="https://www.codefactor.io/repository/github/e2fo2l/nabla2d/badge" alt="CodeFactor" /></a>
 <a href="https://github.com/e2fo2l/Nabla2D/actions"><img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/e2fo2l/Nabla2D/debug.yml"></a>
 <a href="https://github.com/e2fo2l/Nabla2D/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/e2fo2l/Nabla2D"></a>

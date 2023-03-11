@@ -1,0 +1,8 @@
+# Directories
+.github/
+build/
+docs/
+
+# ImGui
+imgui_impl_*.h
+imgui_impl_*.cpp
