@@ -24,7 +24,7 @@
 
 namespace nabla2d
 {
-    const std::vector<std::pair<glm::vec3, glm::vec2>> kDefaultSquare = {
+    const std::vector<std::pair<glm::vec3, glm::vec2>> Sprite::kDefaultSquare = {
         {{-0.5F, -0.5F, 0.0F}, {0.0, 0.0}},
         {{-0.5F, 0.5F, 0.0F}, {0.0, 1.0}},
         {{0.5F, -0.5F, 0.0F}, {1.0, 0.0}},
@@ -32,42 +32,34 @@ namespace nabla2d
         {{0.5F, 0.5F, 0.0F}, {1.0, 1.0}},
         {{0.5F, -0.5F, 0.0F}, {1.0, 0.0}}};
 
-    Sprite::Sprite(std::shared_ptr<Renderer> aRenderer,
-                   const std::string &aPath,
-                   const glm::vec2 &aSize,
-                   Renderer::TextureFilter aFilter) : mRenderer(aRenderer),
-                                                      mPath(aPath),
-                                                      mSize(aSize),
-                                                      mFilter(aFilter)
-    {
-        mTexture = mRenderer->LoadTexture(mPath, mFilter);
-        mTextureInfo = mRenderer->GetTextureInfo(mTexture);
-
-        const float ratio = (float)mTextureInfo.width / (float)mTextureInfo.height;
-        auto square = kDefaultSquare;
-
-        if (ratio > 1.0F)
-        {
-            for (auto &v : square)
-            {
-                v.first.y /= ratio;
-            }
-        }
-        else
-        {
-            for (auto &v : square)
-            {
-                v.first.x *= ratio;
-            }
-        }
-
-        mSpriteData = mRenderer->LoadData(square);
-    }
-
     Sprite::~Sprite()
     {
-        mRenderer->DeleteData(mSpriteData);
-        mRenderer->DeleteTexture(mTexture);
+        if (mSpriteData != 0)
+        {
+            mRenderer->DeleteData(mSpriteData);
+        }
+        if (mTexture != 0)
+        {
+            mRenderer->DeleteTexture(mTexture);
+        }
+    }
+
+    Sprite *Sprite::FromPNG(std::shared_ptr<Renderer> aRenderer,
+                            const std::string &aPath,
+                            const glm::vec2 &aSize,
+                            const Renderer::TextureFilter &aFilter)
+    {
+        Sprite *sprite = new Sprite();
+        sprite->mRenderer = aRenderer;
+        sprite->mPath = aPath;
+        sprite->mSize = aSize;
+
+        sprite->mTexture = sprite->mRenderer->LoadTexture(sprite->mPath, aFilter);
+        sprite->mTextureInfo = sprite->mRenderer->GetTextureInfo(sprite->mTexture);
+
+        sprite->mSpriteData = sprite->mRenderer->LoadData(GetSquare({sprite->mTextureInfo.width, sprite->mTextureInfo.height}));
+
+        return sprite;
     }
 
     void Sprite::Draw(Camera &aCamera, const glm::mat4 &aParentTransform)
@@ -111,6 +103,29 @@ namespace nabla2d
     void Sprite::SetAtlasInfo(const glm::vec4 &aAtlasInfo)
     {
         mAtlasInfo = aAtlasInfo;
+    }
+
+    std::vector<std::pair<glm::vec3, glm::vec2>> Sprite::GetSquare(const glm::vec2 &aSize)
+    {
+        auto square = kDefaultSquare;
+        const float ratio = (float)aSize.x / (float)aSize.y;
+
+        if (ratio > 1.0F)
+        {
+            for (auto &v : square)
+            {
+                v.first.y /= ratio;
+            }
+        }
+        else
+        {
+            for (auto &v : square)
+            {
+                v.first.x *= ratio;
+            }
+        }
+
+        return square;
     }
 
 } // namespace nabla2d

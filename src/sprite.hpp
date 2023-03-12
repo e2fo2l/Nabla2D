@@ -33,8 +33,15 @@ namespace nabla2d
     class Sprite
     {
     public:
-        Sprite(std::shared_ptr<Renderer> aRenderer, const std::string &aPath, const glm::vec2 &aSize, Renderer::TextureFilter aFilter = Renderer::TextureFilter::LINEAR);
         ~Sprite();
+
+        static Sprite *FromPNG(std::shared_ptr<Renderer> aRenderer,
+                               const std::string &aPath,
+                               const glm::vec2 &aSize = {1.0F, 1.0F},
+                               const Renderer::TextureFilter &aFilter = Renderer::TextureFilter::NEAREST);
+        static Sprite *FromJSON(std::shared_ptr<Renderer> aRenderer,
+                                const std::string &aPath,
+                                const Renderer::TextureFilter &aFilter = Renderer::TextureFilter::NEAREST);
 
         void Draw(Camera &aCamera, const glm::mat4 &aParentTransform);
 
@@ -49,13 +56,18 @@ namespace nabla2d
         void SetAtlasInfo(const glm::vec4 &aAtlasInfo);
 
     private:
+        Sprite() = default;
+        static std::vector<std::pair<glm::vec3, glm::vec2>> GetSquare(const glm::vec2 &aSize);
+
+        static const std::vector<std::pair<glm::vec3, glm::vec2>> kDefaultSquare;
+
         std::shared_ptr<Renderer> mRenderer;
         std::string mPath;
         glm::vec2 mSize;
         Renderer::TextureFilter mFilter;
         Renderer::TextureInfo mTextureInfo;
 
-        Renderer::TextureHandle mTexture;
+        Renderer::TextureHandle mTexture{0};
         Renderer::DataHandle mSpriteData{0};
         glm::vec4 mAtlasInfo{0.0F, 0.0F, 1.0F, 1.0F};
     };

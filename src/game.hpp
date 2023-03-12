@@ -52,7 +52,7 @@ namespace nabla2d
         Editor mEditor;
 
         Renderer::ShaderHandle mTestShader;
-        std::shared_ptr<Sprite> mTestSprite;
+        std::vector<std::shared_ptr<Sprite>> mSprites;
         Transform mTestTransform;
 
         void DrawEditorWindows();

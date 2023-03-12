@@ -90,6 +90,8 @@ namespace nabla2d
         virtual void DeleteTexture(TextureHandle aHandle) = 0;
         virtual void UseTexture(TextureHandle aHandle) = 0;
         virtual TextureInfo GetTextureInfo(TextureHandle aHandle) = 0;
+
+        // TODO : Define a way to get the "error" handle, don't hardcode it to 0 everywhere
     };
 } // namespace nabla2d
 
