@@ -34,7 +34,6 @@ namespace nabla2d
         struct EntityNode
         {
             entt::entity entity;
-            entt::entity parent;
             std::vector<EntityNode> children;
         };
         typedef EntityNode EntityTree;
