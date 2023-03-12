@@ -4,6 +4,7 @@ fmt/9.1.0
 glew/2.2.0
 glm/cci.20230113
 imgui/1.89.2
+nlohmann_json/3.11.2
 opengl/system
 sdl/2.26.1
 stb/cci.20220909
