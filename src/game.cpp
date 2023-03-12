@@ -63,6 +63,7 @@ namespace nabla2d
         )");
 
         mSprites.emplace_back(Sprite::FromPNG(mRenderer, "assets/logo.png"));
+        mSprites.emplace_back(Sprite::FromJSON(mRenderer, "assets/ball.json"));
         mTestTransform = Transform({0.5F, 0.5F, 0.0F}, {0.0F, 0.0F, 0.0F}, {1.0F, 1.0F, 1.0F});
 
         mEditor.Init(mRenderer.get());
@@ -125,7 +126,7 @@ namespace nabla2d
             // --------------- TEST SPRITE ---------------
 
             mRenderer->UseShader(mTestShader);
-            mSprites.at(0)->Draw(mCamera, mTestTransform.GetMatrix());
+            mSprites.at(1)->Draw(mCamera, mTestTransform.GetMatrix());
 
             // --------------- EDITOR ---------------
             mEditor.DrawGUI(mRenderer.get(), mCamera, mScene);

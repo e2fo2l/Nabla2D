@@ -20,11 +20,17 @@
 
 #include "sprite.hpp"
 
+#include <fstream>
+#include <filesystem>
+#include <nlohmann/json.hpp>
 #include "logger.hpp"
+
+using json = nlohmann::json;
 
 namespace nabla2d
 {
     const std::vector<std::pair<glm::vec3, glm::vec2>> Sprite::kDefaultSquare = {
+        /* Position             UV      */
         {{-0.5F, -0.5F, 0.0F}, {0.0, 0.0}},
         {{-0.5F, 0.5F, 0.0F}, {0.0, 1.0}},
         {{0.5F, -0.5F, 0.0F}, {1.0, 0.0}},
@@ -58,6 +64,58 @@ namespace nabla2d
         sprite->mTextureInfo = sprite->mRenderer->GetTextureInfo(sprite->mTexture);
 
         sprite->mSpriteData = sprite->mRenderer->LoadData(GetSquare({sprite->mTextureInfo.width, sprite->mTextureInfo.height}));
+
+        return sprite;
+    }
+
+    Sprite *Sprite::FromJSON(std::shared_ptr<Renderer> aRenderer,
+                             const std::string &aPath,
+                             const glm::vec2 &aSize,
+                             const std::string &aDefaultAnimation,
+                             const Renderer::TextureFilter &aFilter)
+    {
+        Sprite *sprite = new Sprite();
+        sprite->mRenderer = aRenderer;
+        sprite->mPath = aPath;
+        sprite->mSize = aSize;
+
+        std::ifstream jsonFile(aPath);
+        if (!jsonFile.is_open())
+        {
+            Logger::error("Sprite::FromJSON: Failed to open file '{}'", aPath);
+            return nullptr;
+        }
+
+        json spriteJson;
+        try
+        {
+            spriteJson = json::parse(jsonFile);
+        }
+        catch (json::parse_error &e)
+        {
+            Logger::error("Sprite::FromJSON: Failed to parse file '{}': {}", aPath, e.what());
+            return nullptr;
+        }
+
+        std::string imageName;
+        try
+        {
+            imageName = spriteJson["meta"]["image"].get<std::string>();
+        }
+        catch (json::type_error &e)
+        {
+            Logger::error("Sprite::FromJSON: Failed to get image name from file '{}': {}", aPath, e.what());
+            return nullptr;
+        }
+
+        auto baseDir = std::filesystem::path(aPath).parent_path();
+        const std::string texturePath = baseDir / imageName;
+
+        sprite->mTexture = sprite->mRenderer->LoadTexture(texturePath, aFilter);
+        sprite->mTextureInfo = sprite->mRenderer->GetTextureInfo(sprite->mTexture);
+        sprite->mSpriteData = sprite->mRenderer->LoadData(GetSquare({sprite->mTextureInfo.width, sprite->mTextureInfo.height}));
+
+        (void)aDefaultAnimation;
 
         return sprite;
     }

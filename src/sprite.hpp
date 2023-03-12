@@ -41,6 +41,8 @@ namespace nabla2d
                                const Renderer::TextureFilter &aFilter = Renderer::TextureFilter::NEAREST);
         static Sprite *FromJSON(std::shared_ptr<Renderer> aRenderer,
                                 const std::string &aPath,
+                                const glm::vec2 &aSize = {1.0F, 1.0F},
+                                const std::string &aDefaultAnimation = "",
                                 const Renderer::TextureFilter &aFilter = Renderer::TextureFilter::NEAREST);
 
         void Draw(Camera &aCamera, const glm::mat4 &aParentTransform);
@@ -62,10 +64,10 @@ namespace nabla2d
         static const std::vector<std::pair<glm::vec3, glm::vec2>> kDefaultSquare;
 
         std::shared_ptr<Renderer> mRenderer;
-        std::string mPath;
-        glm::vec2 mSize;
-        Renderer::TextureFilter mFilter;
-        Renderer::TextureInfo mTextureInfo;
+        std::string mPath{""};
+        glm::vec2 mSize{1.0F, 1.0F};
+        Renderer::TextureFilter mFilter{Renderer::TextureFilter::NEAREST};
+        Renderer::TextureInfo mTextureInfo{0, 0, 0};
 
         Renderer::TextureHandle mTexture{0};
         Renderer::DataHandle mSpriteData{0};
