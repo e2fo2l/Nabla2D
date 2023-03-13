@@ -104,7 +104,7 @@ namespace nabla2d
         std::vector<Frame> mFrames;
         std::string mAnimationTag{""};
         Animation *mCurrentAnimation;
-        int mCurrentFrameindex{0};
+        int mCurrentFrameIndex{0};
     };
 } // namespace nabla2d
 

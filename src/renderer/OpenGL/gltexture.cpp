@@ -32,7 +32,7 @@ namespace nabla2d
 {
     GLTexture::GLTexture(const std::string &aPath, GLTextureFilter aFilter)
     {
-        stbi_set_flip_vertically_on_load(1);
+        stbi_set_flip_vertically_on_load(0);
         uint8_t *data = stbi_load(aPath.c_str(), &mWidth, &mHeight, &mChannels, 0);
 
         if (data == nullptr)
@@ -47,8 +47,8 @@ namespace nabla2d
 
         auto filter = static_cast<GLTextureFilter>(aFilter);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 

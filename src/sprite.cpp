@@ -31,12 +31,12 @@ namespace nabla2d
 {
     const std::vector<std::pair<glm::vec3, glm::vec2>> Sprite::kDefaultSquare = {
         /* Position             UV      */
-        {{-0.5F, -0.5F, 0.0F}, {0.0, 0.0}},
-        {{-0.5F, 0.5F, 0.0F}, {0.0, 1.0}},
-        {{0.5F, -0.5F, 0.0F}, {1.0, 0.0}},
-        {{-0.5F, 0.5F, 0.0F}, {0.0, 1.0}},
-        {{0.5F, 0.5F, 0.0F}, {1.0, 1.0}},
-        {{0.5F, -0.5F, 0.0F}, {1.0, 0.0}}};
+        {{-0.5F, -0.5F, 0.0F}, {0.0, 1.0}},
+        {{-0.5F, 0.5F, 0.0F}, {0.0, 0.0}},
+        {{0.5F, -0.5F, 0.0F}, {1.0, 1.0}},
+        {{-0.5F, 0.5F, 0.0F}, {0.0, 0.0}},
+        {{0.5F, 0.5F, 0.0F}, {1.0, 0.0}},
+        {{0.5F, -0.5F, 0.0F}, {1.0, 1.0}}};
 
     Sprite::~Sprite()
     {
@@ -192,11 +192,11 @@ namespace nabla2d
 
         mTimeElapsed += aDeltaTime;
 
-        if (mTimeElapsed >= mFrames[mCurrentFrameindex].duration)
+        if (mTimeElapsed >= mFrames[mCurrentFrameIndex].duration)
         {
             mTimeElapsed = 0.0F;
 
-            int nextFrameIndex = mCurrentFrameindex + mAnimationDirection;
+            int nextFrameIndex = mCurrentFrameIndex + mAnimationDirection;
             if (nextFrameIndex < mCurrentAnimation->startIndex || nextFrameIndex > mCurrentAnimation->endIndex)
             {
                 switch (mCurrentAnimation->type)
@@ -217,7 +217,7 @@ namespace nabla2d
                 }
             }
 
-            mCurrentFrameindex = nextFrameIndex;
+            mCurrentFrameIndex = nextFrameIndex;
         }
     }
 
@@ -225,7 +225,7 @@ namespace nabla2d
     {
         mRenderer->UseTexture(mTexture);
         auto drawParameters = Renderer::DrawParameters();
-        drawParameters.atlasInfo = mFrames.at(mCurrentFrameindex).atlasInfo;
+        drawParameters.atlasInfo = mFrames.at(mCurrentFrameIndex).atlasInfo;
         mRenderer->DrawData(mSpriteData, aCamera, glm::scale(aParentTransform, {mSize.x, mSize.y, 1.0F}), drawParameters);
     }
 
@@ -265,7 +265,7 @@ namespace nabla2d
         {
             mCurrentAnimation = &mAnimations.at(aAnimation);
             mAnimationTag = aAnimation;
-            mCurrentFrameindex = mCurrentAnimation->startIndex;
+            mCurrentFrameIndex = mCurrentAnimation->startIndex;
             mTimeElapsed = 0.0F;
             mAnimationDirection = mCurrentAnimation->type == AnimationType::BACKWARD ? -1 : 1;
         }
