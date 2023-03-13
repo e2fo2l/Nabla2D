@@ -67,7 +67,7 @@ namespace nabla2d
         mSprites[1]->SetAnimation("roll");
         mTestTransform = Transform({0.5F, 0.5F, 0.0F}, {0.0F, 0.0F, 0.0F}, {1.0F, 1.0F, 1.0F});
 
-        mEditor.Init(mRenderer.get());
+        mEditor.Init(mRenderer);
 
         mScene.CreateEntity("entity1");
         mScene.CreateEntity("entity2");
@@ -85,7 +85,7 @@ namespace nabla2d
     {
         mSprites.clear();
 
-        mEditor.Destroy(mRenderer.get());
+        mEditor.Destroy();
 
         Logger::info("Game destroyed");
     }
@@ -121,8 +121,8 @@ namespace nabla2d
             totalDelta += mDeltaTime;
 
             // --------------- EDITOR ---------------
-            mEditor.Update(mDeltaTime, totalDelta, mRenderer.get(), mCamera);
-            mEditor.DrawGrid(mRenderer.get(), mCamera);
+            mEditor.Update(mDeltaTime, totalDelta, mCamera);
+            mEditor.DrawGrid(mCamera);
 
             // --------------- TEST SPRITE ---------------
 
@@ -131,7 +131,7 @@ namespace nabla2d
             mSprites.at(1)->Draw(mCamera, mTestTransform.GetMatrix());
 
             // --------------- EDITOR ---------------
-            mEditor.DrawGUI(mRenderer.get(), mCamera, mScene);
+            mEditor.DrawGUI(mCamera, mScene);
 
             mRenderer->Render();
             Input::Update();

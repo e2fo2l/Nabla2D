@@ -58,13 +58,14 @@ void main()
 
 namespace nabla2d
 {
-    void Editor::Init(Renderer *aRenderer)
+    void Editor::Init(std::shared_ptr<Renderer> aRenderer)
     {
-        mGridShader = aRenderer->LoadShader(kGridVertexShader, kGridFragmentShader);
+        mRenderer = aRenderer;
+        mGridShader = mRenderer->LoadShader(kGridVertexShader, kGridFragmentShader);
 
-        mGridData = aRenderer->LoadDataLines(GetGridVertices(1.0F, 50), GetGridIndices(50));
-        mSubgridData = aRenderer->LoadDataLines(GetGridVertices(1.0F, 500), GetGridIndices(500));
-        mAxisData = aRenderer->LoadDataLines({{0.0F, 0.0F, 0.0F}, {1.0F, 0.0F, 0.0F}}, {0, 1});
+        mGridData = mRenderer->LoadDataLines(GetGridVertices(1.0F, 50), GetGridIndices(50));
+        mSubgridData = mRenderer->LoadDataLines(GetGridVertices(1.0F, 500), GetGridIndices(500));
+        mAxisData = mRenderer->LoadDataLines({{0.0F, 0.0F, 0.0F}, {1.0F, 0.0F, 0.0F}}, {0, 1});
 
         mGridTransform = Transform({0.0F, 0.0F, 0.0F}, {0.0F, 0.0F, 0.0F}, {50.0F, 50.0F, 50.0F});
         mSubgridTransform = Transform({0.0F, 0.0F, 0.0F}, {0.0F, 0.0F, 0.0F}, {50.0F, 50.0F, 50.0F});
@@ -74,15 +75,17 @@ namespace nabla2d
         mInputBuffer.fill('\0');
     }
 
-    void Editor::Destroy(Renderer *aRenderer)
+    void Editor::Destroy()
     {
-        aRenderer->DeleteData(mGridData);
-        aRenderer->DeleteData(mSubgridData);
-        aRenderer->DeleteData(mAxisData);
-        aRenderer->DeleteShader(mGridShader);
+        mRenderer->DeleteData(mGridData);
+        mRenderer->DeleteData(mSubgridData);
+        mRenderer->DeleteData(mAxisData);
+        mRenderer->DeleteShader(mGridShader);
+
+        mRenderer.reset();
     }
 
-    void Editor::Update(float aDeltaTime, float aTime, Renderer *aRenderer, Camera &aCamera)
+    void Editor::Update(float aDeltaTime, float aTime, Camera &aCamera)
     {
         mDeltaTime = aDeltaTime;
         mTime = aTime;
@@ -109,15 +112,15 @@ namespace nabla2d
         }
         else
         {
-            UpdateInput(aRenderer, aCamera);
+            UpdateInput(aCamera);
         }
     }
 
-    void Editor::DrawGrid(Renderer *aRenderer, Camera &aCamera)
+    void Editor::DrawGrid(Camera &aCamera)
     {
         auto cameraPosition = aCamera.GetPosition();
 
-        aRenderer->UseShader(mGridShader);
+        mRenderer->UseShader(mGridShader);
         auto drawParameters = Renderer::DrawParameters();
         drawParameters.lineWidth = 1.0F;
 
@@ -136,18 +139,18 @@ namespace nabla2d
 
         // Subgrid
         drawParameters.color = {0.45F, 0.45F, 0.45F, 1.0F};
-        aRenderer->DrawData(mSubgridData, aCamera, mSubgridTransform.GetMatrix(), drawParameters);
+        mRenderer->DrawData(mSubgridData, aCamera, mSubgridTransform.GetMatrix(), drawParameters);
 
         // Grid
         drawParameters.color = {0.125F, 0.125F, 0.125F, 1.0F};
-        aRenderer->DrawData(mGridData, aCamera, mGridTransform.GetMatrix(), drawParameters);
+        mRenderer->DrawData(mGridData, aCamera, mGridTransform.GetMatrix(), drawParameters);
 
         // Axes
         drawParameters.color = {1.0F, 0.0F, 0.0F, 1.0F};
-        aRenderer->DrawData(mAxisData, aCamera, mAxisTransform.GetMatrix(), drawParameters);
+        mRenderer->DrawData(mAxisData, aCamera, mAxisTransform.GetMatrix(), drawParameters);
         mAxisTransform.Rotate(90.0F, {0.0F, 0.0F, 1.0F});
         drawParameters.color = {0.0F, 1.0F, 0.0F, 1.0F};
-        aRenderer->DrawData(mAxisData, aCamera, mAxisTransform.GetMatrix(), drawParameters);
+        mRenderer->DrawData(mAxisData, aCamera, mAxisTransform.GetMatrix(), drawParameters);
         mAxisTransform.SetRotation({0.0F, -90.0F, 0.0F});
 
         if (mIs3Dmode || mIsTransitioningMode)
@@ -168,7 +171,7 @@ namespace nabla2d
             }
 
             drawParameters.color = {0.0F, 0.0F, 1.0F, alpha};
-            aRenderer->DrawData(mAxisData, aCamera, mAxisTransform.GetMatrix(), drawParameters);
+            mRenderer->DrawData(mAxisData, aCamera, mAxisTransform.GetMatrix(), drawParameters);
         }
 
         mAxisTransform.SetRotation({0.0F, 0.0F, 0.0F});
@@ -177,15 +180,15 @@ namespace nabla2d
         mAxisTransform.Translate({0.0F, 0.0F, -gridOffset * 0.75});
     }
 
-    void Editor::DrawGUI(Renderer *aRenderer, Camera &aCamera, Scene &aScene)
+    void Editor::DrawGUI(Camera &aCamera, Scene &aScene)
     {
-        GUIDrawFPSWindow(aRenderer);
+        GUIDrawFPSWindow();
         GUIDrawCameraWindow(aCamera);
         GUIDraw2D32Window(aCamera);
         GUIDrawEntitiesWindow(aScene);
     }
 
-    void Editor::UpdateInput(Renderer *aRenderer, Camera &aCamera)
+    void Editor::UpdateInput(Camera &aCamera)
     {
         float movementSpeed = 3.0F;
         if (Input::KeyHeld(Input::KEY_LSHIFT))
@@ -195,15 +198,15 @@ namespace nabla2d
 
         if (!mIs3Dmode) // 2D MODE
         {
-            UpdateInput2D(aRenderer, aCamera, movementSpeed);
+            UpdateInput2D(aCamera, movementSpeed);
         }
         else // 3D MODE
         {
-            UpdateInput3D(aRenderer, aCamera, movementSpeed);
+            UpdateInput3D(aCamera, movementSpeed);
         }
     }
 
-    void Editor::UpdateInput2D(Renderer *aRenderer, Camera &aCamera, float aMovementSpeed)
+    void Editor::UpdateInput2D(Camera &aCamera, float aMovementSpeed)
     {
         aCamera.SetRotation({0.0F, 0.0F, aCamera.GetRotation().z});
 
@@ -220,7 +223,7 @@ namespace nabla2d
 
         if (Input::KeyDown(Input::KEY_MOUSE1))
         {
-            aRenderer->SetMouseCapture(true);
+            mRenderer->SetMouseCapture(true);
         }
         if (Input::KeyHeld(Input::KEY_MOUSE1))
         {
@@ -229,7 +232,7 @@ namespace nabla2d
         }
         if (Input::KeyUp(Input::KEY_MOUSE1))
         {
-            aRenderer->SetMouseCapture(false);
+            mRenderer->SetMouseCapture(false);
         }
 
         auto axis = Input::GetAxis(Input::AXIS_LEFT);
@@ -240,11 +243,11 @@ namespace nabla2d
         }
     }
 
-    void Editor::UpdateInput3D(Renderer *aRenderer, Camera &aCamera, float aMovementSpeed)
+    void Editor::UpdateInput3D(Camera &aCamera, float aMovementSpeed)
     {
         if (Input::KeyDown(Input::KEY_MOUSE1))
         {
-            aRenderer->SetMouseCapture(true);
+            mRenderer->SetMouseCapture(true);
         }
         if (Input::KeyHeld(Input::KEY_MOUSE1))
         {
@@ -261,7 +264,7 @@ namespace nabla2d
         }
         if (Input::KeyUp(Input::KEY_MOUSE1))
         {
-            aRenderer->SetMouseCapture(false);
+            mRenderer->SetMouseCapture(false);
         }
 
         auto axis = Input::GetAxis(Input::AXIS_LEFT);
@@ -307,14 +310,14 @@ namespace nabla2d
         ImGui::Begin(fmt::format("##CornerWindow{}", aCorner).c_str(), nullptr, window_flags);
     }
 
-    void Editor::GUIDrawFPSWindow(Renderer *aRenderer)
+    void Editor::GUIDrawFPSWindow()
     {
         GUIBeginCornerWindow(0);
         ImGui::Text("Nabla2D");
         ImGui::Text("Efflam - 2023");
         ImGui::Text("Built on %s %s", __DATE__, __TIME__);
-        ImGui::Text("Renderer: %s", aRenderer->GetRendererInfo().c_str());
-        ImGui::Text("Resolution: %dx%d", aRenderer->GetWidth(), aRenderer->GetHeight());
+        ImGui::Text("Renderer: %s", mRenderer->GetRendererInfo().c_str());
+        ImGui::Text("Resolution: %dx%d", mRenderer->GetWidth(), mRenderer->GetHeight());
         ImGui::Text("FPS: %d", static_cast<int>(std::round(mAverageFPS)));
         ImGui::PlotLines("", mFPSs.data(), mFPSs.size(), 0, nullptr, 0);
         ImGui::End();

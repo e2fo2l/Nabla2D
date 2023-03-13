@@ -22,6 +22,7 @@
 #define NABLA2D_EDITOR_HPP
 
 #include <array>
+#include <memory>
 #include <vector>
 #include <glm/glm.hpp>
 #include "camera.hpp"
@@ -37,15 +38,17 @@ namespace nabla2d
         Editor() = default;
         ~Editor() = default;
 
-        void Init(Renderer *aRenderer);
-        void Destroy(Renderer *aRenderer);
+        void Init(std::shared_ptr<Renderer> aRenderer);
+        void Destroy();
 
-        void Update(float aDeltaTime, float aTime, Renderer *aRenderer, Camera &aCamera);
+        void Update(float aDeltaTime, float aTime, Camera &aCamera);
 
-        void DrawGrid(Renderer *aRenderer, Camera &aCamera);
-        void DrawGUI(Renderer *aRenderer, Camera &aCamera, Scene &aScene);
+        void DrawGrid(Camera &aCamera);
+        void DrawGUI(Camera &aCamera, Scene &aScene);
 
     private:
+        std::shared_ptr<Renderer> mRenderer;
+
         Renderer::ShaderHandle mGridShader;
         Renderer::DataHandle mGridData;
         Renderer::DataHandle mSubgridData;
@@ -73,14 +76,14 @@ namespace nabla2d
         std::string mErrorMessage;
         entt::entity mSelectedEntity{entt::null};
 
-        void UpdateInput(Renderer *aRenderer, Camera &aCamera);
-        void UpdateInput2D(Renderer *aRenderer, Camera &aCamera, float aMovementSpeed);
-        void UpdateInput3D(Renderer *aRenderer, Camera &aCamera, float aMovementSpeed);
+        void UpdateInput(Camera &aCamera);
+        void UpdateInput2D(Camera &aCamera, float aMovementSpeed);
+        void UpdateInput3D(Camera &aCamera, float aMovementSpeed);
 
         void GUIVec3Widget(const std::string &aTitle, glm::vec3 &aVec, float aSpeed = 0.02F, const std::string &aXLabel = "x", const std::string &aYLabel = "y", const std::string &aZLabel = "z");
 
         void GUIBeginCornerWindow(int aCorner = 0);
-        void GUIDrawFPSWindow(Renderer *aRenderer);
+        void GUIDrawFPSWindow();
         void GUIDrawCameraWindow(Camera &aCamera);
         void GUIDraw2D32Window(Camera &aCamera);
         void GUIDrawEntitiesWindow(Scene &aScene);
