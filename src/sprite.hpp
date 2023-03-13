@@ -21,10 +21,13 @@
 #ifndef NABLA2D_SPRITE_HPP
 #define NABLA2D_SPRITE_HPP
 
+#include <cstdint>
 #include <string>
-#include <vector>
 #include <memory>
+#include <vector>
+#include <unordered_map>
 #include <glm/glm.hpp>
+#include <nlohmann/json.hpp>
 
 #include "renderer/renderer.hpp"
 
@@ -33,11 +36,32 @@ namespace nabla2d
     class Sprite
     {
     public:
+        struct Frame
+        {
+            float duration = 1.0F;
+            glm::vec4 atlasInfo = {0.0F, 0.0F, 1.0F, 1.0F};
+        };
+
+        enum AnimationType
+        {
+            STATIC,
+            FORWARD,
+            BACKWARD,
+            PINGPONG
+        };
+        struct Animation
+        {
+            AnimationType type = AnimationType::STATIC;
+            int startIndex = 0;
+            int endIndex = 0;
+        };
+
         ~Sprite();
 
         static Sprite *FromPNG(std::shared_ptr<Renderer> aRenderer,
                                const std::string &aPath,
                                const glm::vec2 &aSize = {1.0F, 1.0F},
+                               const Animation &aAnimation = {AnimationType::STATIC, 0, 0},
                                const Renderer::TextureFilter &aFilter = Renderer::TextureFilter::NEAREST);
         static Sprite *FromJSON(std::shared_ptr<Renderer> aRenderer,
                                 const std::string &aPath,
@@ -45,6 +69,7 @@ namespace nabla2d
                                 const std::string &aDefaultAnimation = "",
                                 const Renderer::TextureFilter &aFilter = Renderer::TextureFilter::NEAREST);
 
+        void UpdateAnimation(float aDeltaTime);
         void Draw(Camera &aCamera, const glm::mat4 &aParentTransform);
 
         const std::string &GetPath() const;
@@ -54,12 +79,15 @@ namespace nabla2d
         const glm::vec2 &GetSize() const;
         void SetSize(const glm::vec2 &aSize);
 
-        const glm::vec4 &GetAtlasInfo() const;
-        void SetAtlasInfo(const glm::vec4 &aAtlasInfo);
+        const std::string &GetAnimation() const;
+        void SetAnimation(const std::string &aAnimation);
 
     private:
         Sprite() = default;
         static std::vector<std::pair<glm::vec3, glm::vec2>> GetSquare(const glm::vec2 &aSize);
+
+        float mTimeElapsed{0.0F};
+        int mAnimationDirection{1};
 
         static const std::vector<std::pair<glm::vec3, glm::vec2>> kDefaultSquare;
 
@@ -71,7 +99,12 @@ namespace nabla2d
 
         Renderer::TextureHandle mTexture{0};
         Renderer::DataHandle mSpriteData{0};
-        glm::vec4 mAtlasInfo{0.0F, 0.0F, 1.0F, 1.0F};
+
+        std::unordered_map<std::string, Animation> mAnimations;
+        std::vector<Frame> mFrames;
+        std::string mAnimationTag{""};
+        Animation *mCurrentAnimation;
+        int mCurrentFrameindex{0};
     };
 } // namespace nabla2d
 

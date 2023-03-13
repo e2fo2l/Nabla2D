@@ -64,6 +64,7 @@ namespace nabla2d
 
         mSprites.emplace_back(Sprite::FromPNG(mRenderer, "assets/logo.png"));
         mSprites.emplace_back(Sprite::FromJSON(mRenderer, "assets/ball.json"));
+        mSprites[1]->SetAnimation("roll");
         mTestTransform = Transform({0.5F, 0.5F, 0.0F}, {0.0F, 0.0F, 0.0F}, {1.0F, 1.0F, 1.0F});
 
         mEditor.Init(mRenderer.get());
@@ -125,6 +126,7 @@ namespace nabla2d
 
             // --------------- TEST SPRITE ---------------
 
+            mSprites.at(1)->UpdateAnimation(mDeltaTime);
             mRenderer->UseShader(mTestShader);
             mSprites.at(1)->Draw(mCamera, mTestTransform.GetMatrix());
 

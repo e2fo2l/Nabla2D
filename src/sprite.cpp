@@ -53,6 +53,7 @@ namespace nabla2d
     Sprite *Sprite::FromPNG(std::shared_ptr<Renderer> aRenderer,
                             const std::string &aPath,
                             const glm::vec2 &aSize,
+                            const Animation &aAnimation,
                             const Renderer::TextureFilter &aFilter)
     {
         Sprite *sprite = new Sprite();
@@ -62,8 +63,11 @@ namespace nabla2d
 
         sprite->mTexture = sprite->mRenderer->LoadTexture(sprite->mPath, aFilter);
         sprite->mTextureInfo = sprite->mRenderer->GetTextureInfo(sprite->mTexture);
-
         sprite->mSpriteData = sprite->mRenderer->LoadData(GetSquare({sprite->mTextureInfo.width, sprite->mTextureInfo.height}));
+
+        sprite->mAnimations[""] = aAnimation;
+        sprite->mFrames.emplace_back();
+        sprite->SetAnimation("");
 
         return sprite;
     }
@@ -115,37 +119,119 @@ namespace nabla2d
         sprite->mTextureInfo = sprite->mRenderer->GetTextureInfo(sprite->mTexture);
         sprite->mSpriteData = sprite->mRenderer->LoadData(GetSquare({sprite->mTextureInfo.width, sprite->mTextureInfo.height}));
 
-        (void)aDefaultAnimation;
+        try
+        {
+            for (auto &frame : spriteJson["frames"])
+            {
+                Frame newFrame;
+                newFrame.duration = frame["duration"].get<float>() / 1000.0F;
+                newFrame.atlasInfo = {
+                    frame["frame"]["x"].get<float>() / sprite->mTextureInfo.width,
+                    frame["frame"]["y"].get<float>() / sprite->mTextureInfo.height,
+                    frame["frame"]["w"].get<float>() / sprite->mTextureInfo.width,
+                    frame["frame"]["h"].get<float>() / sprite->mTextureInfo.height};
+                sprite->mFrames.push_back(newFrame);
+            }
+        }
+        catch (json::type_error &e)
+        {
+            Logger::error("Sprite::FromJSON: Failed to get frames from file '{}': {}", aPath, e.what());
+            return nullptr;
+        }
+
+        try
+        {
+            for (auto &animation : spriteJson["meta"]["frameTags"])
+            {
+                std::string animName = animation["name"].get<std::string>();
+                sprite->mAnimations[animName] = {};
+                auto &newAnimation = sprite->mAnimations[animName];
+
+                std::string typeString = animation["direction"].get<std::string>();
+                if (typeString == "forward")
+                {
+                    newAnimation.type = FORWARD;
+                }
+                else if (typeString == "backward")
+                {
+                    newAnimation.type = BACKWARD;
+                }
+                else if (typeString == "pingpong")
+                {
+                    newAnimation.type = PINGPONG;
+                }
+                else if (typeString == "static")
+                {
+                    newAnimation.type = STATIC;
+                }
+
+                newAnimation.startIndex = animation["from"].get<int>();
+                newAnimation.endIndex = animation["to"].get<int>();
+            }
+        }
+        catch (json::type_error &e)
+        {
+            Logger::error("Sprite::FromJSON: Failed to get animations from file '{}': {}", aPath, e.what());
+            return nullptr;
+        }
+
+        int framesSize = static_cast<int>(sprite->mFrames.size());
+        sprite->mAnimations[""] = {STATIC, framesSize, framesSize};
+        sprite->mFrames.emplace_back();
+        sprite->SetAnimation(aDefaultAnimation);
 
         return sprite;
+    }
+
+    void Sprite::UpdateAnimation(float aDeltaTime)
+    {
+        if (mCurrentAnimation->type == STATIC)
+        {
+            return;
+        }
+
+        mTimeElapsed += aDeltaTime;
+
+        if (mTimeElapsed >= mFrames[mCurrentFrameindex].duration)
+        {
+            mTimeElapsed = 0.0F;
+
+            int nextFrameIndex = mCurrentFrameindex + mAnimationDirection;
+            if (nextFrameIndex < mCurrentAnimation->startIndex || nextFrameIndex > mCurrentAnimation->endIndex)
+            {
+                switch (mCurrentAnimation->type)
+                {
+                case FORWARD:
+                    nextFrameIndex = mCurrentAnimation->startIndex;
+                    break;
+                case BACKWARD:
+                    nextFrameIndex = mCurrentAnimation->endIndex;
+                    break;
+                case PINGPONG:
+                    mAnimationDirection *= -1;
+                    nextFrameIndex += mAnimationDirection * 2;
+                    break;
+                default:
+                    nextFrameIndex = 0;
+                    break;
+                }
+            }
+
+            mCurrentFrameindex = nextFrameIndex;
+        }
     }
 
     void Sprite::Draw(Camera &aCamera, const glm::mat4 &aParentTransform)
     {
         mRenderer->UseTexture(mTexture);
         auto drawParameters = Renderer::DrawParameters();
-        drawParameters.atlasInfo = mAtlasInfo;
+        drawParameters.atlasInfo = mFrames.at(mCurrentFrameindex).atlasInfo;
         mRenderer->DrawData(mSpriteData, aCamera, glm::scale(aParentTransform, {mSize.x, mSize.y, 1.0F}), drawParameters);
     }
 
     const std::string &Sprite::GetPath() const
     {
         return mPath;
-    }
-
-    const glm::vec2 &Sprite::GetSize() const
-    {
-        return mSize;
-    }
-
-    void Sprite::SetSize(const glm::vec2 &aSize)
-    {
-        mSize = aSize;
-    }
-
-    const glm::vec4 &Sprite::GetAtlasInfo() const
-    {
-        return mAtlasInfo;
     }
 
     const Renderer::TextureFilter &Sprite::GetFilter() const
@@ -158,9 +244,35 @@ namespace nabla2d
         return mTextureInfo;
     }
 
-    void Sprite::SetAtlasInfo(const glm::vec4 &aAtlasInfo)
+    const glm::vec2 &Sprite::GetSize() const
     {
-        mAtlasInfo = aAtlasInfo;
+        return mSize;
+    }
+
+    void Sprite::SetSize(const glm::vec2 &aSize)
+    {
+        mSize = aSize;
+    }
+
+    const std::string &Sprite::GetAnimation() const
+    {
+        return mAnimationTag;
+    }
+
+    void Sprite::SetAnimation(const std::string &aAnimation)
+    {
+        try
+        {
+            mCurrentAnimation = &mAnimations.at(aAnimation);
+            mAnimationTag = aAnimation;
+            mCurrentFrameindex = mCurrentAnimation->startIndex;
+            mTimeElapsed = 0.0F;
+            mAnimationDirection = mCurrentAnimation->type == AnimationType::BACKWARD ? -1 : 1;
+        }
+        catch (std::out_of_range &e)
+        {
+            Logger::error("Sprite::SetAnimation: Animation '{}' not found", aAnimation);
+        }
     }
 
     std::vector<std::pair<glm::vec3, glm::vec2>> Sprite::GetSquare(const glm::vec2 &aSize)
