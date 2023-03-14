@@ -20,20 +20,34 @@
 
 #include "gldata.hpp"
 
+#include <algorithm>
 #include "glvertex.hpp"
 
 namespace nabla2d
 {
-    GLData::GLData(const std::vector<float> &aVertices, GLenum aMode) : mSize(aVertices.size()),
-                                                                        mEBO(0),
-                                                                        mMode(aMode)
+    GLData::GLData(const std::vector<float> &aVertices,
+                   const std::vector<unsigned int> &aIndices,
+                   GLenum aMode,
+                   GLenum aDrawUsage) : mMode(aMode),
+                                        mDrawUsage(aDrawUsage)
     {
         glGenVertexArrays(1, &mVAO);
-        glGenBuffers(1, &mVBO);
+
+        mSize = std::max(aVertices.size(), aIndices.size());
+        mLargestSize = aDrawUsage != GL_STATIC_DRAW ? mSize * 2 : mSize;
 
         glBindVertexArray(mVAO);
+        glGenBuffers(1, &mVBO);
         glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-        glBufferData(GL_ARRAY_BUFFER, mSize * sizeof(float), aVertices.data(), GL_STATIC_DRAW);
+        if (mDrawUsage != GL_STATIC_DRAW)
+        {
+            glBufferData(GL_ARRAY_BUFFER, mLargestSize * sizeof(float), nullptr, mDrawUsage);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, mSize * sizeof(float), aVertices.data());
+        }
+        else
+        {
+            glBufferData(GL_ARRAY_BUFFER, aVertices.size() * sizeof(float), aVertices.data(), mDrawUsage);
+        }
 
         GLsizei stride = GetStride(mMode);
 
@@ -48,39 +62,29 @@ namespace nabla2d
             glEnableVertexAttribArray(1);
         }
 
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-    }
-
-    GLData::GLData(const std::vector<float> &aVertices, const std::vector<unsigned int> &aIndices, GLenum aMode) : mSize(aVertices.size()),
-                                                                                                                   mMode(aMode)
-    {
-        glGenVertexArrays(1, &mVAO);
-        glGenBuffers(1, &mVBO);
-        glGenBuffers(1, &mEBO);
-
-        glBindVertexArray(mVAO);
-        glBindBuffer(GL_ARRAY_BUFFER, mVBO);
-        glBufferData(GL_ARRAY_BUFFER, mSize * sizeof(float), aVertices.data(), GL_STATIC_DRAW);
-
-        GLsizei stride = GetStride(mMode);
-
-        // Position (x, y, z)
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * static_cast<GLsizei>(sizeof(float)), (void *)0);
-        glEnableVertexAttribArray(0);
-
-        if (mMode == GL_TRIANGLES)
+        if (!aIndices.empty())
         {
-            // Texture coordinates (u, v)
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride * static_cast<GLsizei>(sizeof(float)), (void *)(3 * sizeof(float)));
-            glEnableVertexAttribArray(1);
+            glGenBuffers(1, &mEBO);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEBO);
+            if (mDrawUsage != GL_STATIC_DRAW)
+            {
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, mLargestSize * sizeof(unsigned int), nullptr, mDrawUsage);
+                glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, mSize * sizeof(unsigned int), aIndices.data());
+            }
+            else
+            {
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, aIndices.size() * sizeof(unsigned int), aIndices.data(), mDrawUsage);
+            }
+        }
+        else
+        {
+            mEBO = 0;
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         }
 
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, aIndices.size() * sizeof(unsigned int), aIndices.data(), GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     GLData::~GLData()
@@ -97,6 +101,70 @@ namespace nabla2d
         {
             glDeleteBuffers(1, &mEBO);
         }
+    }
+
+    void GLData::ChangeData(const std::vector<float> &aVertices, const std::vector<unsigned int> &aIndices)
+    {
+        if (mVAO == 0 || mVBO == 0)
+        {
+            return;
+        }
+
+        glBindVertexArray(mVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+
+        size_t nextSize = mSize;
+        size_t nextLargestSize = mLargestSize;
+
+        if (aVertices.size() > mLargestSize)
+        {
+            nextSize = std::max(aVertices.size(), aIndices.size());
+            nextLargestSize = nextSize * 2;
+            glBufferData(GL_ARRAY_BUFFER, nextLargestSize * sizeof(float), nullptr, mDrawUsage);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, aVertices.size() * sizeof(float), aVertices.data());
+        }
+        else
+        {
+            glBufferSubData(GL_ARRAY_BUFFER, 0, aVertices.size() * sizeof(float), aVertices.data());
+        }
+
+        if (!aIndices.empty())
+        {
+            bool hadNoEBO = mEBO == 0;
+            if (hadNoEBO)
+            {
+                glGenBuffers(1, &mEBO);
+            }
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mEBO);
+
+            if (hadNoEBO || aIndices.size() > mLargestSize)
+            {
+                nextSize = std::max(aVertices.size(), aIndices.size());
+                nextLargestSize = nextSize * 2;
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER, nextLargestSize * sizeof(unsigned int), nullptr, mDrawUsage);
+                glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, aIndices.size() * sizeof(unsigned int), aIndices.data());
+            }
+            else
+            {
+                glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, aIndices.size() * sizeof(unsigned int), aIndices.data());
+            }
+        }
+        else
+        {
+            if (mEBO != 0)
+            {
+                glDeleteBuffers(1, &mEBO);
+                mEBO = 0;
+            }
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        }
+
+        mSize = nextSize;
+        mLargestSize = nextLargestSize;
+
+        glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     std::size_t GLData::GetSize() const
@@ -122,6 +190,11 @@ namespace nabla2d
     GLenum GLData::GetMode() const
     {
         return mMode;
+    }
+
+    GLenum GLData::GetDrawUsage() const
+    {
+        return mDrawUsage;
     }
 
     GLsizei GLData::GetStride(GLenum aMode)

@@ -29,22 +29,26 @@ namespace nabla2d
     class GLData
     {
     public:
-        explicit GLData(const std::vector<float> &aVertices, GLenum aMode = GL_TRIANGLES);
-        explicit GLData(const std::vector<float> &aVertices, const std::vector<unsigned int> &aIndices, GLenum aMode = GL_TRIANGLES);
+        explicit GLData(const std::vector<float> &aVertices, const std::vector<unsigned int> &aIndices = {}, GLenum aMode = GL_TRIANGLES, GLenum aDrawUsage = GL_STATIC_DRAW);
         ~GLData();
+
+        void ChangeData(const std::vector<float> &aVertices, const std::vector<unsigned int> &aIndices);
 
         std::size_t GetSize() const;
         GLuint GetVAO() const;
         GLuint GetVBO() const;
         GLuint GetEBO() const;
         GLenum GetMode() const;
+        GLenum GetDrawUsage() const;
 
     private:
         std::size_t mSize{0};
+        std::size_t mLargestSize{0};
         GLuint mVAO{0};
         GLuint mVBO{0};
         GLuint mEBO;
         GLenum mMode;
+        GLenum mDrawUsage;
 
         static GLsizei GetStride(GLenum aMode);
     };

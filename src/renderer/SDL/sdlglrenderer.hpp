@@ -56,7 +56,11 @@ namespace nabla2d
         void Render() override;
 
         DataHandle LoadData(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData) override;
+        DataHandle LoadData(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData, const std::vector<unsigned int> &aIndices) override;
+        DataHandle LoadDataDynamic(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData) override;
+        DataHandle LoadDataDynamic(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData, const std::vector<unsigned int> &aIndices) override;
         DataHandle LoadDataLines(const std::vector<glm::vec3> &aPoints, const std::vector<unsigned int> &aIndices) override;
+        void UpdateData(DataHandle aHandle, const std::vector<float> &aVertices, const std::vector<unsigned int> &aIndices) override;
         void DeleteData(DataHandle aHandle) override;
         void DrawData(DataHandle aHandle, const Camera &aCamera, const glm::mat4 &aTransform, const DrawParameters &aDrawParameters) override;
 
@@ -70,6 +74,8 @@ namespace nabla2d
         TextureInfo GetTextureInfo(TextureHandle aHandle) override;
 
     private:
+        DataHandle LoadDataInternal(const std::vector<float> &aVertices, const std::vector<unsigned int> &aIndices, GLenum aDrawMode, GLenum aDrawUsage);
+
         int mWidth;
         int mHeight;
         std::string mRendererInfo;

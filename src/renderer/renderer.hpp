@@ -78,7 +78,11 @@ namespace nabla2d
         virtual void Render() = 0;
 
         virtual DataHandle LoadData(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData) = 0;
+        virtual DataHandle LoadData(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData, const std::vector<unsigned int> &aIndices) = 0;
+        virtual DataHandle LoadDataDynamic(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData) = 0;
+        virtual DataHandle LoadDataDynamic(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData, const std::vector<unsigned int> &aIndices) = 0;
         virtual DataHandle LoadDataLines(const std::vector<glm::vec3> &aPoints, const std::vector<unsigned int> &aIndices) = 0;
+        virtual void UpdateData(DataHandle aHandle, const std::vector<float> &aVertices, const std::vector<unsigned int> &aIndices) = 0;
         virtual void DeleteData(DataHandle aHandle) = 0;
         virtual void DrawData(DataHandle aHandle, const Camera &aCamera, const glm::mat4 &aTransform, const DrawParameters &aDrawParameters) = 0;
 

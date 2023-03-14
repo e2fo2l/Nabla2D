@@ -300,23 +300,11 @@ namespace nabla2d
         SDL_GL_SwapWindow(mWindow);
     }
 
-    Renderer::DataHandle SDLGLRenderer::LoadData(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData)
+    Renderer::DataHandle SDLGLRenderer::LoadDataInternal(const std::vector<float> &aVertices, const std::vector<unsigned int> &aIndices, GLenum aDrawMode, GLenum aDrawUsage)
     {
         try
         {
-            std::vector<float> vertices{};
-            vertices.reserve(aData.size() * 5);
-            for (auto &vertex : aData)
-            {
-                // Position
-                vertices.push_back(vertex.first.x);
-                vertices.push_back(vertex.first.y);
-                vertices.push_back(vertex.first.z);
-                // Texture coordinates
-                vertices.push_back(vertex.second.x);
-                vertices.push_back(vertex.second.y);
-            }
-            auto data = std::make_shared<GLData>(vertices);
+            auto data = std::make_shared<GLData>(aVertices, aIndices, aDrawMode, aDrawUsage);
             mData[data->GetVAO()] = data;
             return data->GetVAO();
         }
@@ -327,29 +315,76 @@ namespace nabla2d
         }
     }
 
+    Renderer::DataHandle SDLGLRenderer::LoadData(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData)
+    {
+        return LoadData(aData, {});
+    }
+
+    Renderer::DataHandle SDLGLRenderer::LoadData(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData, const std::vector<unsigned int> &aIndices)
+    {
+
+        std::vector<float> vertices{};
+        vertices.reserve(aData.size() * 5);
+        for (auto &vertex : aData)
+        {
+            // Position
+            vertices.push_back(vertex.first.x);
+            vertices.push_back(vertex.first.y);
+            vertices.push_back(vertex.first.z);
+            // Texture coordinates
+            vertices.push_back(vertex.second.x);
+            vertices.push_back(vertex.second.y);
+        }
+        return LoadDataInternal(vertices, aIndices, GL_TRIANGLES, GL_STATIC_DRAW);
+    }
+
+    Renderer::DataHandle SDLGLRenderer::LoadDataDynamic(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData)
+    {
+        return LoadDataDynamic(aData, {});
+    }
+
+    Renderer::DataHandle SDLGLRenderer::LoadDataDynamic(const std::vector<std::pair<glm::vec3, glm::vec2>> &aData, const std::vector<unsigned int> &aIndices)
+    {
+        std::vector<float> vertices{};
+        vertices.reserve(aData.size() * 5);
+        for (auto &vertex : aData)
+        {
+            // Position
+            vertices.push_back(vertex.first.x);
+            vertices.push_back(vertex.first.y);
+            vertices.push_back(vertex.first.z);
+            // Texture coordinates
+            vertices.push_back(vertex.second.x);
+            vertices.push_back(vertex.second.y);
+        }
+        return LoadDataInternal(vertices, aIndices, GL_TRIANGLES, GL_DYNAMIC_DRAW);
+    }
+
     Renderer::DataHandle SDLGLRenderer::LoadDataLines(const std::vector<glm::vec3> &aPoints, const std::vector<unsigned int> &aIndices)
     {
-        try
+        std::vector<float> vertices{};
+        vertices.reserve(aPoints.size() * 3);
+        for (auto &point : aPoints)
         {
-            std::vector<float> vertices{};
-            vertices.reserve(aPoints.size() * 3);
-            for (auto &point : aPoints)
-            {
-                // Position
-                vertices.push_back(point.x);
-                vertices.push_back(point.y);
-                vertices.push_back(point.z);
-            }
-            auto data = std::make_shared<GLData>(vertices, aIndices, GL_LINES);
-            mData[data->GetVAO()] = data;
-            return data->GetVAO();
+            // Position
+            vertices.push_back(point.x);
+            vertices.push_back(point.y);
+            vertices.push_back(point.z);
         }
-        catch (std::runtime_error &e)
+
+        return LoadDataInternal(vertices, aIndices, GL_LINES, GL_STATIC_DRAW);
+    }
+
+    void SDLGLRenderer::UpdateData(DataHandle aHandle, const std::vector<float> &aVertices, const std::vector<unsigned int> &aIndices)
+    {
+        auto data = mData.find(aHandle);
+        if (data == mData.end())
         {
-            Logger::error("Failed to load data: {}", e.what());
-            return 0;
+            Logger::warn("Tried to draw data #{}, which does not exist", aHandle);
+            return;
         }
-        return 0;
+
+        data->second->ChangeData(aVertices, aIndices);
     }
 
     void SDLGLRenderer::DeleteData(DataHandle aHandle)
