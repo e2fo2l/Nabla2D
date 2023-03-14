@@ -90,6 +90,7 @@ namespace nabla2d
         std::ifstream jsonFile(aPath);
         if (!jsonFile.is_open())
         {
+            delete sprite;
             Logger::error("Sprite::FromJSON: Failed to open file '{}'", aPath);
             return nullptr;
         }
@@ -101,6 +102,7 @@ namespace nabla2d
         }
         catch (json::parse_error &e)
         {
+            delete sprite;
             Logger::error("Sprite::FromJSON: Failed to parse file '{}': {}", aPath, e.what());
             return nullptr;
         }
@@ -112,6 +114,7 @@ namespace nabla2d
         }
         catch (json::type_error &e)
         {
+            delete sprite;
             Logger::error("Sprite::FromJSON: Failed to get image name from file '{}': {}", aPath, e.what());
             return nullptr;
         }
@@ -139,6 +142,7 @@ namespace nabla2d
         }
         catch (json::type_error &e)
         {
+            delete sprite;
             Logger::error("Sprite::FromJSON: Failed to get frames from file '{}': {}", aPath, e.what());
             return nullptr;
         }
@@ -175,6 +179,7 @@ namespace nabla2d
         }
         catch (json::type_error &e)
         {
+            delete sprite;
             Logger::error("Sprite::FromJSON: Failed to get animations from file '{}': {}", aPath, e.what());
             return nullptr;
         }
