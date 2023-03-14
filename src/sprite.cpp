@@ -20,6 +20,7 @@
 
 #include "sprite.hpp"
 
+#include <cmath>
 #include <fstream>
 #include <filesystem>
 #include <nlohmann/json.hpp>
@@ -194,7 +195,7 @@ namespace nabla2d
 
         if (mTimeElapsed >= mFrames[mCurrentFrameIndex].duration)
         {
-            mTimeElapsed = 0.0F;
+            mTimeElapsed = std::fmod(mTimeElapsed, mFrames[mCurrentFrameIndex].duration);
 
             int nextFrameIndex = mCurrentFrameIndex + mAnimationDirection;
             if (nextFrameIndex < mCurrentAnimation->startIndex || nextFrameIndex > mCurrentAnimation->endIndex)
