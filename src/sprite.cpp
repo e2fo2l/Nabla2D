@@ -41,13 +41,16 @@ namespace nabla2d
 
     Sprite::~Sprite()
     {
-        if (mSpriteData != 0)
+        if (mRenderer != nullptr)
         {
-            mRenderer->DeleteData(mSpriteData);
-        }
-        if (mTexture != 0)
-        {
-            mRenderer->DeleteTexture(mTexture);
+            if (mSpriteData != 0)
+            {
+                mRenderer->DeleteData(mSpriteData);
+            }
+            if (mTexture != 0)
+            {
+                mRenderer->DeleteTexture(mTexture);
+            }
         }
     }
 
